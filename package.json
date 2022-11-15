@@ -1,0 +1,20 @@
+{
+  "name": "checkers_referee",
+  "version": "1.0.0",
+  "description": "Hello World!",
+  "main": "server/src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cd server && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/web840/CheckersReferee.git"
+  },
+  "author": "Shazhko Dmitriy & Aleksandr Cheh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/web840/CheckersReferee/issues"
+  },
+  "homepage": "https://gitlab.com/web840/CheckersReferee#readme"
+}
