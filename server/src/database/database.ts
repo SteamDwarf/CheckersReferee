@@ -17,6 +17,12 @@ export const connectToDatabase = () => {
     .catch(error => console.error(error));
 }
 
+export const findDocuments = (collectionName: string) => {
+    if(database) {
+        return database.collection(collectionName).find({}).toArray();
+    }
+}
+
 export const findDocument = (collectionName: string, filter: object) => {
     if (database) {
         return database.collection(collectionName).findOne(filter);

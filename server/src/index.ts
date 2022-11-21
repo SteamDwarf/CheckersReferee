@@ -1,10 +1,12 @@
 import express from 'express';
+import path from "path";
 import * as dotenv from 'dotenv';
 import errorHandler from './middlewares/errorHandler.middleware';
 import notFoundHandler from './middlewares/notFoundHandler.middleware';
 import { connectToDatabase } from './database/database';
-import { handleAuth } from './controllers/auth.controller';
-import bcrypt from "bcrypt";
+import authRouter from './routes/auth.router';
+import playersRouter from './routes/players.router';
+import sportsCategoriesRouter from './routes/sportsCategories.router';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -14,8 +16,18 @@ const app = express();
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+app.use(express.static(path.resolve('../client')))
 
-app.use('/auth', handleAuth);
+app.get('/', (request, response) => {
+    response.sendFile(path.resolve('../client/index.html'));
+})
+
+
+
+
+app.use('/auth', authRouter);
+app.use('/players', playersRouter);
+app.use('/sports-categories', sportsCategoriesRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
