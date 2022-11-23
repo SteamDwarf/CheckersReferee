@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { findDocument } from "../database/database";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import { CollectionNames } from "../database/enums";
 
-//TODO ПОЛУЧАТЬ ДАННЫЕ ИЗ ЗАПРОСА ЧЕРЕЗ ДЕСТРУКТУРИЗАЦИЮ
 export const handleAuth = (request: Request, response: Response, next: NextFunction) => {
     const {login, password} = request.body;
     const isEmptyData = Object.keys(request.body).length === 0
@@ -16,7 +16,7 @@ export const handleAuth = (request: Request, response: Response, next: NextFunct
         throw new Error("Необходимо ввести логин и пароль");
     }
 
-    findDocument('users', {login: login})
+    findDocument(CollectionNames.USERS, {login: login})
     ?.then(user => {
         if(!user) {
             response.status(400);

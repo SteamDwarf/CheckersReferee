@@ -1,15 +1,31 @@
+import { DiffieHellmanGroup } from "crypto";
 import { NextFunction, Request, Response } from "express";
+import { MongoServerError } from "mongodb";
 
-//TODO переделать 
+interface ResponseError {
+    status: number,
+    message: string,
+    details?: any
+}
+
+
 const errorHandler = (error: Error, request: Request, response: Response, next: NextFunction) => {
-    const responseStatus = response.statusCode && response.statusCode !== 200 ? response.statusCode : 500;
-    const errorMessage = responseStatus === 500 ? "Внутрення ошибка сервера" : error.message;
+    let sendedError:ResponseError = {
+        status: 500,
+        message: "",
+    }
 
-    console.error(error.message);
-    response.status(responseStatus).json({
-        status: responseStatus, 
-        message: errorMessage
-    });
+    if(error.message === "Document failed validation") {
+        sendedError.status = 400;
+        sendedError.message = "Документ не прошел проверку. Некорректный тип данных";
+        sendedError.details = error;
+    } else {
+        sendedError.status = response.statusCode !== 200 ? response.statusCode : 500;
+        sendedError.message = sendedError.status === 500 ? "Внутрення ошибка сервера" : error.message;
+    }
+
+    console.error(error);
+    response.status(sendedError.status).json(sendedError);
 }
 
 export default errorHandler;

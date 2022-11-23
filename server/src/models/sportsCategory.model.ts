@@ -1,4 +1,4 @@
-interface ISportsCategory {
+export interface ISportsCategory {
     title: string,
     shortTitle: string
 }
