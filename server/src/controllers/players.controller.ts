@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import { createDocument, findDocument, findDocuments, deleteDocument, updateDocument, collections } from "../database/database";
 import { IPlayerData, IPlayerDocument } from "../models/players.model";
+import { ISportsCategoryDocument } from "../models/sportsCategory.model";
 
 
 export const createPlayer = (request: Request, response: Response, next: NextFunction) => {
@@ -9,17 +10,17 @@ export const createPlayer = (request: Request, response: Response, next: NextFun
     const playerDocument:IPlayerDocument = {
         ...playerData,
         birthday: new Date(playerData.birthday),
-        sportsCategory: new ObjectId(playerData.sportsCategory)
+        sportsCategory: new ObjectId(playerData.sportsCategory),
+        playerStats: playerData.playerStats?.map(id => new ObjectId(id)) || []
     };
 
-    findDocument(collections.players, {"_id": new ObjectId(playerData.sportsCategory)})
+    findDocument(collections.sportsCategories, {"_id": new ObjectId(playerData.sportsCategory)})
     ?.then(sportCategory => {
         if(!sportCategory) {
             response.status(400);
             throw new Error("Указанный спортивный разряд не найден");
         }
-
-        playerDocument.sportsCategory = new ObjectId(sportCategory?._id);
+        setSportCategory(sportCategory as ISportsCategoryDocument, playerDocument)
     })
     .then(() => createDocument(collections.players, playerDocument))
     .then(result => response.json(result))
@@ -46,7 +47,8 @@ export const updatePlayer = (request: Request, response: Response, next: NextFun
     const playerDocument: IPlayerDocument = {
         ...playerData,
         birthday: new Date(playerData.birthday),
-        sportsCategory: new ObjectId(playerData.sportsCategory)
+        sportsCategory: new ObjectId(playerData.sportsCategory),
+        playerStats: playerData.playerStats?.map(id => new ObjectId(id)) || []
     }
 
     updateDocument(collections.players, id, playerDocument)
@@ -60,5 +62,17 @@ export const deletePlayer = (request: Request, response: Response, next: NextFun
     deleteDocument(collections.players, id)
     ?.then(res => response.json(res))
     .catch(error => next(error));
+}
+
+
+const setSportCategory = (sportCategory: ISportsCategoryDocument, playerDocument: IPlayerDocument) => {
+    const sportCategoryDoc = sportCategory as ISportsCategoryDocument;
+
+    playerDocument.sportsCategory = new ObjectId(sportCategory?._id);
+    playerDocument.sportsCategoryAbbr = sportCategoryDoc.shortTitle;
+    
+    if(!playerDocument.currentAdamovichRank) {
+        playerDocument.currentAdamovichRank = sportCategoryDoc.minAdamovichRank;
+    }
 }
 

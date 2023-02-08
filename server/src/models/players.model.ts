@@ -1,4 +1,6 @@
 import { ObjectId } from "mongodb"
+import { ISportsCategoryData } from "./sportsCategory.model"
+
 
 interface IPlayer {
     firstName: string,
@@ -6,25 +8,37 @@ interface IPlayer {
     lastName: string,
     birthday: Date,
     region: string,
+    sportsCategoryAbbr: string,
+    sportsOrganization: string,
     currentAdamovichRank: number,
-    previousAdamovichRank?: number,
-    gorinRank?: number,
-    allAdamovichRanks?: string
+    previousAdamovichRank?: number
 }
 
 export interface IPlayerData extends IPlayer {
     sportsCategory: string,
+    playerStats?: string[] | []
 }
 
 export interface IPlayerDocument extends IPlayer{
-    sportsCategory: ObjectId
+    sportsCategory: ObjectId,
+    playerStats?: ObjectId[] | []
 }
 
 const playersSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["firstName", "middleName", "lastName", "birthday", "region", "sportsCategory"],
+            required: [
+                "firstName", 
+                "middleName", 
+                "lastName", 
+                "birthday", 
+                "region", 
+                "sportsCategory", 
+                "sportsCategoryAbbr",
+                "sportsOrganization",
+                "currentAdamovichRank"
+            ],
             properties: {
                 "firstName": {
                     bsonType: "string",
@@ -47,22 +61,29 @@ const playersSchema = {
                     description: "Поле region (регион) является обязательным и должно быть строкой"
                 },
                 "currentAdamovichRank": {
-                    bsonType: "double"
+                    bsonType: "number",
+                    description: "Поле currentAdamovichRank является обязательным и должно быть числом"
                 },
                 "previousAdamovichRank": {
-                    bsonType: "double"
-                },
-                "gorinRank": {
-                    bsonType: "int"
+                    bsonType: "number",
+                    description: "Поле previousAdamovichRank должно быть числом"
                 },
                 "sportsCategory": {
                     bsonType: "objectId",
-                    description: "Поле sportsCategory (спортивный разряд) является обязательным и должно быть строкой"
+                    description: "Поле sportsCategory (спортивный разряд) является обязательным и должно быть objectId"
                 },
-                "allAdamovichRanks": {
-                    bsonType: "objectId",
-                }
-
+                "sportsCategoryAbbr": {
+                    bsonType: "string",
+                    description: "Поле sportsCategoryAbbr (спортивный разряд краткая форма) является обязательным и должно быть строкой"
+                },
+                "sportsOrganization": {
+                    bsonType: "string",
+                    description: "Поле sportsOrganization (спортивная организация) является обязательным и должно быть строкой"
+                },
+                "playerStats": {
+                    bsonType: "array",
+                    description: "Поле playerStats (статистика игрока) должно быть массивом"
+                },
             }
         }
     }

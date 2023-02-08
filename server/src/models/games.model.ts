@@ -17,6 +17,7 @@ export interface IGameDocument extends IGame {
     _id: ObjectId
 }
 
+//TODO добавить в БД
 const gamesSchema = {
     validator: {
         $jsonSchema: {

@@ -18,9 +18,7 @@ export const connectToDatabase = (callback?: () => void) => {
         console.log(`Успешно установлено подключение к базе данных ${URL}`);
         database = client.db("checkers_referee");
 
-        collections.players = database.collection(CollectionNames.PLAYERS);
-        collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
-        collections.users = database.collection(CollectionNames.USERS);
+        setCollections();
     })
     .then(() => callback ? callback(): undefined)
     .catch(error => console.error(error));
@@ -44,4 +42,11 @@ export const deleteDocument = (collection: Collection | undefined, id: string) =
 
 export const updateDocument = (collection: Collection | undefined, id: string, newDocument: DocumentTypes) => {
     return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument});
+}
+
+const setCollections = () => {
+    collections.players = database.collection(CollectionNames.PLAYERS);
+    collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
+    collections.users = database.collection(CollectionNames.USERS);
+    collections.tournaments = database.collection(CollectionNames.TOURNAMENTS);
 }

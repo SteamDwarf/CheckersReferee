@@ -4,11 +4,11 @@ import * as dotenv from 'dotenv';
 import errorHandler from './middlewares/errorHandler.middleware';
 import notFoundHandler from './middlewares/notFoundHandler.middleware';
 import { connectToDatabase } from './database/database';
+import { getNewAdamovichRank } from './utils/playerCalculations';
 import authRouter from './routes/auth.router';
 import playersRouter from './routes/players.router';
 import sportsCategoriesRouter from './routes/sportsCategories.router';
-import { getNewAdamovichRank } from './utils/playerCalculations';
-import { ObjectId } from 'mongodb';
+import tournamentsRouter from './routes/tournaments.router';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -30,6 +30,7 @@ app.get('/', (request, response) => {
 app.use('/auth', authRouter);
 app.use('/players', playersRouter);
 app.use('/sports-categories', sportsCategoriesRouter);
+app.use('/tournaments', tournamentsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
@@ -37,7 +38,7 @@ app.use(errorHandler);
 app.listen(PORT, () => {
     console.log(`Сервер запущен по адресу ${URI}:${PORT}`);
     //TODO убрать коллбэк
-    connectToDatabase(() => {
+    connectToDatabase(/* () => {
         getNewAdamovichRank({
             firstName: "Амур123",
             middleName: "Амуров",
@@ -49,7 +50,7 @@ app.listen(PORT, () => {
         }, [], 12, 12)
         .then(res => console.log(res))
         .catch(error => console.error(error))
-    });
+    } */);
 });
 
 /* bcrypt.hash("admin123", 10)
