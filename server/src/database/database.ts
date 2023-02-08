@@ -1,7 +1,7 @@
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, ObjectId, Collection } from "mongodb";
 import * as dotenv from 'dotenv';
 import { CollectionNames } from "./enums";
-import { DocumentTypes } from "./types";
+import { DocumentTypes, IDBCollections } from "./types";
 
 dotenv.config({path: `${__dirname}/../../.env`});
 
@@ -10,29 +10,38 @@ const client = new MongoClient(URL);
 
 let database: Db;
 
-export const connectToDatabase = () => {
+export const collections: IDBCollections = {};
+
+export const connectToDatabase = (callback?: () => void) => {
     client.connect()
     .then(() => {
         console.log(`Успешно установлено подключение к базе данных ${URL}`);
         database = client.db("checkers_referee");
+
+        collections.players = database.collection(CollectionNames.PLAYERS);
+        collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
+        collections.users = database.collection(CollectionNames.USERS);
     })
+    .then(() => callback ? callback(): undefined)
     .catch(error => console.error(error));
 }
 
-export const findDocuments = (collectionName: CollectionNames) => {
-    if(database) {
-        return database.collection(collectionName).find({}).toArray();
-    }
+export const findDocuments = (collection: Collection | undefined) => {
+    return collection?.find({}).toArray();
 }
 
-export const findDocument = (collectionName: CollectionNames, filter: object) => {
-    if (database) {
-        return database.collection(collectionName).findOne(filter);
-    }
+export const findDocument = (collection: Collection | undefined, filter: object) => {
+    return collection?.findOne(filter);
 }
 
-export const createDocument = (collectionName: CollectionNames, data: DocumentTypes) => {
-    if(database) {
-        return database.collection(collectionName).insertOne(data);
-    }
+export const createDocument = (collection: Collection | undefined, data: DocumentTypes) => {
+    return collection?.insertOne(data);
+}
+
+export const deleteDocument = (collection: Collection | undefined, id: string) => {
+    return collection?.deleteOne({_id: new ObjectId(id)});
+}
+
+export const updateDocument = (collection: Collection | undefined, id: string, newDocument: DocumentTypes) => {
+    return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument});
 }

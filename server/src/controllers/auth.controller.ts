@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { findDocument } from "../database/database";
+import { collections, findDocument } from "../database/database";
 import validator from "validator";
 import bcrypt from "bcrypt";
-import { CollectionNames } from "../database/enums";
 
 export const handleAuth = (request: Request, response: Response, next: NextFunction) => {
     const {login, password} = request.body;
@@ -16,7 +15,7 @@ export const handleAuth = (request: Request, response: Response, next: NextFunct
         throw new Error("Необходимо ввести логин и пароль");
     }
 
-    findDocument(CollectionNames.USERS, {login: login})
+    findDocument(collections.users, {login: login})
     ?.then(user => {
         if(!user) {
             response.status(400);

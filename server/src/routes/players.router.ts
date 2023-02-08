@@ -10,6 +10,6 @@ router.route('/')
 router.route('/:id')
     .get(getPlayer)
     .put(updatePlayer)
-    .delete(deletePlayer)
+    .delete(deletePlayer);
 
 export default router;

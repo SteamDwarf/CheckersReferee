@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb"
 
-export interface IPlayer {
+interface IPlayer {
     firstName: string,
     middleName: string,
     lastName: string,
     birthday: Date,
     region: string,
-    currentAdamovichRank?: number,
+    currentAdamovichRank: number,
     previousAdamovichRank?: number,
     gorinRank?: number,
     allAdamovichRanks?: string
