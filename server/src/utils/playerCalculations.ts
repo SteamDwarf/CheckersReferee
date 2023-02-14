@@ -14,17 +14,9 @@ export const getNewAdamovichRank = async(player: IPlayerData, competitors: IPlay
     const newRank = (20 * player.currentAdamovichRank + sumCompetitorsRank + 5000/15 * (2 * score - games)) / (20 + games);
     
     return findDocument(collections.sportsCategories, {_id: new ObjectId(player.sportsCategory)})
-    ?.then(res => {
-        const category = res as ISportsCategoryDocument;
-
-        return clamp(newRank, category.minAdamovichRank, category.maxAdamovichRank);
-    })
+            ?.then(category => clampAdamovichRank(category as ISportsCategoryDocument, newRank));
 }
 
-/* export const getDefaultAdamovichRank = (sportCategory: ISportsCategory) => {
-
+export const clampAdamovichRank = (sportCategory: ISportsCategoryDocument, newRank: number) => {
+    return clamp(newRank, sportCategory.minAdamovichRank, sportCategory.maxAdamovichRank);
 }
-
-export const clampAdamovichRank = (sportCategory: ISportsCategory, adamovichRank: number) => {
-
-} */

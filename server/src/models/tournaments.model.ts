@@ -19,7 +19,6 @@ export interface ITournamentData extends ITournament {
 export interface ITournamentDocument extends ITournament {
     players: ObjectId[] | [],
     games: ObjectId[] | [],
-    
 }
 
 

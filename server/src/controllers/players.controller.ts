@@ -3,7 +3,12 @@ import { ObjectId } from "mongodb";
 import { createDocument, findDocument, findDocuments, deleteDocument, updateDocument, collections } from "../database/database";
 import { IPlayerData, IPlayerDocument } from "../models/players.model";
 import { ISportsCategoryDocument } from "../models/sportsCategory.model";
+import { paginateData } from "../utils/controllersUtils";
 
+interface IGetPlayersRequest {
+    page?: string
+    limit?: string
+}
 
 export const createPlayer = (request: Request, response: Response, next: NextFunction) => {
     const playerData: IPlayerData = request.body;
@@ -35,15 +40,21 @@ export const getPlayer = (request: Request, response: Response, next: NextFuncti
     .catch(error => next(error))
 }
 
-export const getPlayers = (request: Request, response: Response, next: NextFunction) => {
+
+
+export const getPlayers = (request: Request<{}, {}, {}, IGetPlayersRequest>, response: Response, next: NextFunction) => {
+    const page = request.query.page || "1";
+    const limit = request.query.limit || "10";
+
     findDocuments(collections.players)
-    ?.then(players => response.json(players))
+    ?.then(players => response.json(paginateData(players, +limit, +page)))
     .catch(error => next(error));
 }
 
 export const updatePlayer = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
     const playerData: IPlayerData = request.body;
+
     const playerDocument: IPlayerDocument = {
         ...playerData,
         birthday: new Date(playerData.birthday),
