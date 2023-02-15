@@ -4,9 +4,9 @@ import { ITournamentData, ITournamentDocument } from "../models/tournaments.mode
 import { ObjectId } from "mongodb";
 import { shuffle } from "../utils/math";
 import { makeRoundRobinDraw } from "../utils/tournaments.utils";
-import { Game, IGameData } from "../models/games.model";
+import { Game, IGameData, IGameDocumentWithId } from "../models/games.model";
 import { IPlayerDocument, IPlayerDocumentWithId } from "../models/players.model";
-import { paginateData } from "../utils/controllersUtils";
+import { paginateData } from "../utils/controllers.utils";
 
 export const getTournaments = (request: Request, response: Response, next: NextFunction) => {
     const page = request.query.page || "1";
@@ -56,6 +56,7 @@ export const updateTournament = (request: Request, response: Response, next: Nex
 export const startTournament = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
     let tournamentDocument: ITournamentDocument | undefined = undefined;
+    let games: IGameDocumentWithId | undefined = undefined
 
     findDocumentById(collections.tournaments, id)
     ?.then(result  => {
@@ -72,14 +73,22 @@ export const startTournament = (request: Request, response: Response, next: Next
     })
     .then(players => {
         const games = makeRoundRobinDraw(players as IPlayerDocumentWithId[]);
+        return Promise.all(games.map(game => createDocument(collections.games, game)))
+        //return updateDocument(collections.tournaments, id, {games});
 
-        return updateDocument(collections.tournaments, id, {games});
+
         //tournamentDocument ? tournamentDocument.games = games : null;
         //response.json(tournamentDocument);
     })
+    .then(gameDocuments => {
+        if(tournamentDocument) {
+            tournamentDocument.isStarted = true;
+            tournamentDocument.games = gameDocuments.map(game => game?._id);
+        }
+        return updateDocument(collections.tournaments, id, tournamentDocument);
+    })
     .then(result => response.json(result))
     .catch(error => next(error));
-    //.then(() => findDocument(collections.tournaments, {"_id": new ObjectId(id)}))
 }
 export const finishTournament = (request: Request, response: Response, next: NextFunction) => {
     response.json("Турнир завершился");

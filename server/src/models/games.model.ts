@@ -1,15 +1,15 @@
 import { ObjectId, WithId } from "mongodb";
 
 interface IGame {
-    player1Name?: string,
-    player2Name?: string,
+    player1Name: string,
+    player2Name: string,
     player1Score: number,
     player2Score: number
 }
 
 export interface IGameData extends IGame {
-    player1Id?: string,
-    player2Id?: string,
+    player1Id: string,
+    player2Id: string,
 }
 
 export interface IGameDocument extends IGame {
@@ -20,7 +20,7 @@ export interface IGameDocumentWithId extends IGameDocument, WithId<Document>{
     _id: ObjectId,
 }
 
-export const Game = (player1Id?: string, player1Name?: string, player2Id?: string, player2Name?: string):IGameData => {
+export const Game = (player1Id: ObjectId, player1Name: string, player2Id: ObjectId, player2Name: string):IGameDocument => {
     return {
         player1Id,
         player1Name,
@@ -31,20 +31,19 @@ export const Game = (player1Id?: string, player1Name?: string, player2Id?: strin
     }
 }
 
-//TODO добавить в БД
 const gamesSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["player1", "player2", "player1Name", "player2Name"],
+            required: ["player1Id", "player2Id", "player1Name", "player2Name", "player1Score", "player2Score"],
             properties: {
-                "player1": {
+                "player1Id": {
                     bsonType: "objectId",
-                    description: "Поле player1 является обязательным и должно быть objectId"
+                    description: "Поле player1Id является обязательным и должно быть objectId"
                 },
-                "player2": {
+                "player2Id": {
                     bsonType: "objectId",
-                    description: "Поле player2 является обязательным и должно быть objectId"
+                    description: "Поле player2Id является обязательным и должно быть objectId"
                 },
                 "player1Name": {
                     bsonType: "string",
@@ -56,11 +55,11 @@ const gamesSchema = {
                 },
                 "playe1Score": {
                     bsonType: "number",
-                    description: "Поле playe1Score должно быть числом"
+                    description: "Поле playe1Score является обязательным и должно быть числом"
                 },
                 "playe2Score": {
                     bsonType: "number",
-                    description: "Поле playe2Score должно быть числом"
+                    description: "Поле playe2Score является обязательным и должно быть числом"
                 }
             }
         }

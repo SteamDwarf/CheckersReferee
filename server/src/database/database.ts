@@ -12,6 +12,14 @@ let database: Db;
 
 export const collections: IDBCollections = {};
 
+const setCollections = () => {
+    collections.players = database.collection(CollectionNames.PLAYERS);
+    collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
+    collections.users = database.collection(CollectionNames.USERS);
+    collections.tournaments = database.collection(CollectionNames.TOURNAMENTS);
+    collections.games = database.collection(CollectionNames.GAMES);
+}
+
 export const connectToDatabase = (callback?: () => void) => {
     client.connect()
     .then(() => {
@@ -37,7 +45,8 @@ export const findDocumentById = (collection: Collection | undefined, id: string)
 }
 
 export const createDocument = (collection: Collection | undefined, data: DocumentTypes) => {
-    return collection?.insertOne(data);
+    return collection?.insertOne(data)
+            .then(result => collection.findOne({_id: new ObjectId(result.insertedId)}));
 }
 
 export const deleteDocument = (collection: Collection | undefined, id: string) => {
@@ -49,9 +58,5 @@ export const updateDocument = (collection: Collection | undefined, id: string, n
             .then(() => collection.findOne({_id: new ObjectId(id)}))
 }
 
-const setCollections = () => {
-    collections.players = database.collection(CollectionNames.PLAYERS);
-    collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
-    collections.users = database.collection(CollectionNames.USERS);
-    collections.tournaments = database.collection(CollectionNames.TOURNAMENTS);
-}
+
+

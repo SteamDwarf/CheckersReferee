@@ -17,16 +17,17 @@ interface ITournament {
     toursCount?: number,
     tournamentSystem: string,
     drawType?: string,
-    games: IGameData[][] | [][],
 }
 
 export interface ITournamentData extends ITournament {
     _id: string,
     players: string[] | [],
+    games: (string | undefined)[],
 }
 export interface ITournamentDocument extends ITournament {
     _id: ObjectId,
     players: ObjectId[] | [],
+    games: (ObjectId | undefined)[]
 }
 
 

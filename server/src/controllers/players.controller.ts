@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { createDocument, findDocuments, deleteDocument, updateDocument, collections, findDocumentById } from "../database/database";
 import { IPlayerData, IPlayerDocument } from "../models/players.model";
 import { ISportsCategoryDocument } from "../models/sportsCategory.model";
-import { paginateData } from "../utils/controllersUtils";
+import { paginateData } from "../utils/controllers.utils";
 
 interface IGetPlayersRequest {
     page?: string

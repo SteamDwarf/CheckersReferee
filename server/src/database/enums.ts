@@ -3,4 +3,5 @@ export enum CollectionNames {
     USERS = "users",
     SPORTS_CATEGORIES = "sportsCategories",
     TOURNAMENTS = "tournaments",
+    GAMES = "games"
 }
