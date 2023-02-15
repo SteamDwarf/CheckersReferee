@@ -6,10 +6,14 @@ import { shuffle } from "../utils/math";
 import { makeRoundRobinDraw } from "../utils/tournaments.utils";
 import { Game, IGameData } from "../models/games.model";
 import { IPlayerDocument, IPlayerDocumentWithId } from "../models/players.model";
+import { paginateData } from "../utils/controllersUtils";
 
 export const getTournaments = (request: Request, response: Response, next: NextFunction) => {
+    const page = request.query.page || "1";
+    const limit = request.query.limit || "10";
+
     findDocuments(collections.tournaments)
-    ?.then(data => response.json(data))
+    ?.then(data => response.json(paginateData(data, +limit, +page)))
     .catch(error => next(error));
 }
 export const getTournament = (request: Request, response: Response, next: NextFunction) => {
@@ -24,7 +28,7 @@ export const postTournament = (request: Request, response: Response, next: NextF
     const tournamentDocument: ITournamentDocument = {
         ...tournamentData,
         _id: new ObjectId(tournamentData._id),
-        players: tournamentData.players.map(id => new ObjectId(id)),
+        players: tournamentData.players?.map(id => new ObjectId(id)) || [],
         games: []
     }
     
@@ -68,7 +72,7 @@ export const startTournament = (request: Request, response: Response, next: Next
     })
     .then(players => {
         const games = makeRoundRobinDraw(players as IPlayerDocumentWithId[]);
-        
+
         return updateDocument(collections.tournaments, id, {games});
         //tournamentDocument ? tournamentDocument.games = games : null;
         //response.json(tournamentDocument);
