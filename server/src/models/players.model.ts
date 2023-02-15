@@ -1,27 +1,30 @@
-import { ObjectId } from "mongodb"
+import { ObjectId, WithId } from "mongodb"
 import { ISportsCategoryData } from "./sportsCategory.model"
 
 
-interface IPlayer {
-    firstName: string,
-    middleName: string,
-    lastName: string,
-    birthday: Date,
-    region: string,
-    sportsCategoryAbbr: string,
-    sportsOrganization: string,
-    currentAdamovichRank: number,
-    previousAdamovichRank?: number
+export interface IPlayer {
+    firstName: string,                  //Имя
+    middleName: string,                 //Отчество
+    lastName: string,                   //Фамилия
+    birthday: Date,                     //Дата рождения
+    region: string,                     //Место проживания
+    sportsCategoryAbbr: string,         //Краткое название разряда
+    sportsOrganization: string,         //Спортивная организация
+    currentAdamovichRank: number,       //Текущий рейтинг Адамовича
+    previousAdamovichRank?: number      //Предыдущий рейтинг Адамовича
 }
 
 export interface IPlayerData extends IPlayer {
-    sportsCategory: string,
-    playerStats?: string[] | []
+    sportsCategory: string,             //ID спортивного разряда
+    playerStats?: string[] | []         //Массив ID статистики игрока в турнирах
 }
 
 export interface IPlayerDocument extends IPlayer{
     sportsCategory: ObjectId,
     playerStats?: ObjectId[] | []
+}
+export interface IPlayerDocumentWithId extends IPlayerDocument, WithId<Document>{
+    _id: ObjectId,
 }
 
 const playersSchema = {

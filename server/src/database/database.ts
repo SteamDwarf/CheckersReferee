@@ -40,7 +40,7 @@ export const deleteDocument = (collection: Collection | undefined, id: string) =
     return collection?.deleteOne({_id: new ObjectId(id)});
 }
 
-export const updateDocument = (collection: Collection | undefined, id: string, newDocument: DocumentTypes) => {
+export const updateDocument = (collection: Collection | undefined, id: string, newDocument: any) => {
     return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument});
 }
 

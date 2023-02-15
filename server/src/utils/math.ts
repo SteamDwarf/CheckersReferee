@@ -20,3 +20,26 @@ export const clamp = (value: number, min: number, max: number) => {
     return value;
 }
 
+export const shuffle = (array: any[]) => {
+    let shuffledArray = [...array];
+
+    for(let i = shuffledArray.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+
+        [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    }
+
+    return shuffledArray;
+}
+
+export const getRandomItem = <T>(array: T[], currentIndex?: number) => {
+    let index = Math.floor(Math.random() * array.length);
+
+    if(currentIndex) {
+        while(index === currentIndex) {
+            index = Math.floor(Math.random() * array.length);
+        }
+    }
+    return [array[index], index];
+}
+

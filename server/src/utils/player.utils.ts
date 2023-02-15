@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { getSportCategoryById } from "../controllers/sportsCategories.controller";
 import { collections, findDocument } from "../database/database";
 import { CollectionNames } from "../database/enums";
-import { IPlayerData } from "../models/players.model"
+import { IPlayer, IPlayerData } from "../models/players.model"
 import { ISportsCategoryDocument} from "../models/sportsCategory.model"
 import { clamp } from "./math";
 
@@ -19,4 +19,8 @@ export const getNewAdamovichRank = async(player: IPlayerData, competitors: IPlay
 
 export const clampAdamovichRank = (sportCategory: ISportsCategoryDocument, newRank: number) => {
     return clamp(newRank, sportCategory.minAdamovichRank, sportCategory.maxAdamovichRank);
+}
+
+export const getPlayerName = (player: {firstName: string, middleName: string, lastName: string}) => {
+    return [player.firstName, player.middleName, player.lastName].join(" ").trim();
 }

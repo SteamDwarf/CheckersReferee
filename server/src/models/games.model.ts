@@ -1,20 +1,34 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 
 interface IGame {
-    player1: ObjectId,
-    player1Name: string,
-    player2: ObjectId,
-    player2Name: string,
+    player1Name?: string,
+    player2Name?: string,
     player1Score: number,
     player2Score: number
 }
 
 export interface IGameData extends IGame {
-    _id: string
+    player1Id?: string,
+    player2Id?: string,
 }
 
 export interface IGameDocument extends IGame {
-    _id: ObjectId
+    player1Id: ObjectId,
+    player2Id: ObjectId,
+}
+export interface IGameDocumentWithId extends IGameDocument, WithId<Document>{
+    _id: ObjectId,
+}
+
+export const Game = (player1Id?: string, player1Name?: string, player2Id?: string, player2Name?: string):IGameData => {
+    return {
+        player1Id,
+        player1Name,
+        player2Id,
+        player2Name,
+        player1Score: 0,
+        player2Score: 0
+    }
 }
 
 //TODO добавить в БД
