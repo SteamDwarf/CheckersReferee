@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import { createDocument, findDocument, findDocuments, deleteDocument, updateDocument, collections } from "../database/database";
+import { createDocument, findDocuments, deleteDocument, updateDocument, collections, findDocumentById } from "../database/database";
 import { IPlayerData, IPlayerDocument } from "../models/players.model";
 import { ISportsCategoryDocument } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllersUtils";
@@ -19,7 +19,7 @@ export const createPlayer = (request: Request, response: Response, next: NextFun
         playerStats: playerData.playerStats?.map(id => new ObjectId(id)) || []
     };
 
-    findDocument(collections.sportsCategories, {"_id": new ObjectId(playerData.sportsCategory)})
+    findDocumentById(collections.sportsCategories, playerData.sportsCategory)
     ?.then(sportCategory => {
         if(!sportCategory) {
             response.status(400);
@@ -35,7 +35,7 @@ export const createPlayer = (request: Request, response: Response, next: NextFun
 export const getPlayer = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
 
-    findDocument(collections.players, {"_id": new ObjectId(id)})
+    findDocumentById(collections.players, id)
     ?.then(player => response.json(player))
     .catch(error => next(error))
 }

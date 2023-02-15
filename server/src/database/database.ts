@@ -32,6 +32,10 @@ export const findDocument = (collection: Collection | undefined, filter: object)
     return collection?.findOne(filter);
 }
 
+export const findDocumentById = (collection: Collection | undefined, id: string) => {
+    return collection?.findOne({_id: new ObjectId(id)});
+}
+
 export const createDocument = (collection: Collection | undefined, data: DocumentTypes) => {
     return collection?.insertOne(data);
 }
@@ -41,7 +45,8 @@ export const deleteDocument = (collection: Collection | undefined, id: string) =
 }
 
 export const updateDocument = (collection: Collection | undefined, id: string, newDocument: any) => {
-    return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument});
+    return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument})
+            .then(() => collection.findOne({_id: new ObjectId(id)}))
 }
 
 const setCollections = () => {

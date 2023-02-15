@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { collections, createDocument, deleteDocument, findDocument, findDocuments, updateDocument } from "../database/database";
+import { collections, createDocument, deleteDocument, findDocument, findDocumentById, findDocuments, updateDocument } from "../database/database";
 import { ITournamentData, ITournamentDocument } from "../models/tournaments.model";
 import { ObjectId } from "mongodb";
 import { shuffle } from "../utils/math";
@@ -19,7 +19,7 @@ export const getTournaments = (request: Request, response: Response, next: NextF
 export const getTournament = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
 
-    findDocument(collections.tournaments, {"_id": new ObjectId(id)})
+    findDocumentById(collections.tournaments, id)
     ?.then(data => response.json(data))
     .catch(error => next(error));
 }
@@ -57,7 +57,7 @@ export const startTournament = (request: Request, response: Response, next: Next
     const {id} = request.params;
     let tournamentDocument: ITournamentDocument | undefined = undefined;
 
-    findDocument(collections.tournaments, {"_id": new ObjectId(id)})
+    findDocumentById(collections.tournaments, id)
     ?.then(result  => {
         tournamentDocument = result as ITournamentDocument;
         
@@ -77,9 +77,9 @@ export const startTournament = (request: Request, response: Response, next: Next
         //tournamentDocument ? tournamentDocument.games = games : null;
         //response.json(tournamentDocument);
     })
-    .then(() => findDocument(collections.tournaments, {"_id": new ObjectId(id)}))
     .then(result => response.json(result))
     .catch(error => next(error));
+    //.then(() => findDocument(collections.tournaments, {"_id": new ObjectId(id)}))
 }
 export const finishTournament = (request: Request, response: Response, next: NextFunction) => {
     response.json("Турнир завершился");
