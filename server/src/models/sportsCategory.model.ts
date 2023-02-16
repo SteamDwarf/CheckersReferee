@@ -14,12 +14,14 @@ export interface ISportsCategoryData extends ISportsCategory {
     _id: string
 }
 
-const sportsCategorySchema = {
+export const sportsCategorySchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
             required: ["title", "shortTitle", "minAdamovichRank", "maxAdamovichRank"],
+            additionalProperties: false,
             properties: {
+                "_id": {},
                 "title": {
                     bsonType: "string",
                     description: "Поле title является обязательным и должно быть строкой"

@@ -42,7 +42,7 @@ export const PlayerStat = (player: IPlayerDocumentWithId, tournament: ITournamen
     return playerStat;
 }
 
-const playerStatsSchema = {
+export const playerStatsSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",

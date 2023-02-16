@@ -2,6 +2,12 @@ import { MongoClient, Db, ObjectId, Collection } from "mongodb";
 import * as dotenv from 'dotenv';
 import { CollectionNames } from "./enums";
 import { DocumentTypes, IDBCollections } from "./types";
+import { playersSchema } from "../models/players.model";
+import { sportsCategorySchema } from "../models/sportsCategory.model";
+import { userSchema } from "../models/users.model";
+import { tournamentSchema } from "../models/tournaments.model";
+import { gamesSchema } from "../models/games.model";
+import { playerStatsSchema } from "../models/playerStats.model";
 
 dotenv.config({path: `${__dirname}/../../.env`});
 
@@ -30,6 +36,15 @@ const setCollections = () => {
     collections.playerStats = database.collection(CollectionNames.PLAYER_STATS);
 }
 
+const validateCollections = () => {
+    return database.command({collMod: CollectionNames.PLAYERS, validator: playersSchema.validator})
+    .then(() => database.command({collMod: CollectionNames.SPORTS_CATEGORIES, validator: sportsCategorySchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.USERS, validator: userSchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.TOURNAMENTS, validator: tournamentSchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.GAMES, validator: gamesSchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.PLAYER_STATS, validator: playerStatsSchema.validator}))
+}
+
 export const connectToDatabase = (callback?: () => void) => {
     client.connect()
     .then(() => {
@@ -37,6 +52,7 @@ export const connectToDatabase = (callback?: () => void) => {
         database = client.db("checkers_referee");
 
         setCollections();
+        return validateCollections();
     })
     .then(() => callback ? callback(): undefined)
     .catch(error => console.error(error));

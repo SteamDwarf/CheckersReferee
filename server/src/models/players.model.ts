@@ -27,7 +27,7 @@ export interface IPlayerDocumentWithId extends IPlayerDocument, WithId<Document>
     _id: ObjectId,
 }
 
-const playersSchema = {
+export const playersSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",

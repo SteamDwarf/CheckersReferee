@@ -18,7 +18,7 @@ const User = (login: string, password: string, role: UserRoles = UserRoles.GUEST
     }
 }
 
-const userSchema = {
+export const userSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",

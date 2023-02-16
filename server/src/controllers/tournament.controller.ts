@@ -63,6 +63,11 @@ export const startTournament = (request: Request, response: Response, next: Next
     ?.then(result  => {
         tournamentDocument = result as ITournamentDocumentWithId;
         
+        if(tournamentDocument.players.length < 3) {
+            response.status(400);
+            throw new Error("Для старта турнира нужно как минимум 3 участника");
+        }
+
         return Promise.all(tournamentDocument.players.map(playerId => {
             return findDocument(getDBCollections().players, {"_id": new ObjectId(playerId)});
         }));

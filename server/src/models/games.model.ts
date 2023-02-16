@@ -31,7 +31,7 @@ export const Game = (player1Id: ObjectId, player1Name: string, player2Id: Object
     }
 }
 
-const gamesSchema = {
+export const gamesSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",

@@ -34,7 +34,7 @@ export interface ITournamentDocumentWithId extends ITournamentDocument{
 }
 
 
-const tournamentSchema = {
+export const tournamentSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
