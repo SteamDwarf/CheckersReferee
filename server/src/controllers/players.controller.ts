@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import { createDocument, findDocuments, deleteDocument, updateDocument, collections, findDocumentById } from "../database/database";
+import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById } from "../database/database";
 import { IPlayerData, IPlayerDocument } from "../models/players.model";
 import { ISportsCategoryDocument } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
@@ -19,7 +19,7 @@ export const createPlayer = (request: Request, response: Response, next: NextFun
         playerStats: playerData.playerStats?.map(id => new ObjectId(id)) || []
     };
 
-    findDocumentById(collections.sportsCategories, playerData.sportsCategory)
+    findDocumentById(getDBCollections().sportsCategories, playerData.sportsCategory)
     ?.then(sportCategory => {
         if(!sportCategory) {
             response.status(400);
@@ -27,7 +27,7 @@ export const createPlayer = (request: Request, response: Response, next: NextFun
         }
         setSportCategory(sportCategory as ISportsCategoryDocument, playerDocument)
     })
-    .then(() => createDocument(collections.players, playerDocument))
+    .then(() => createDocument(getDBCollections().players, playerDocument))
     .then(result => response.json(result))
     .catch(error => next(error))
 }
@@ -35,7 +35,7 @@ export const createPlayer = (request: Request, response: Response, next: NextFun
 export const getPlayer = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
 
-    findDocumentById(collections.players, id)
+    findDocumentById(getDBCollections().players, id)
     ?.then(player => response.json(player))
     .catch(error => next(error))
 }
@@ -46,7 +46,7 @@ export const getPlayers = (request: Request<{}, {}, {}, IGetPlayersRequest>, res
     const page = request.query.page || "1";
     const limit = request.query.limit || "10";
 
-    findDocuments(collections.players)
+    findDocuments(getDBCollections().players)
     ?.then(players => response.json(paginateData(players, +limit, +page)))
     .catch(error => next(error));
 }
@@ -62,7 +62,7 @@ export const updatePlayer = (request: Request, response: Response, next: NextFun
         playerStats: playerData.playerStats?.map(id => new ObjectId(id)) || []
     }
 
-    updateDocument(collections.players, id, playerDocument)
+    updateDocument(getDBCollections().players, id, playerDocument)
     ?.then(res => response.json(res))
     .catch(error => next(error));
 }
@@ -70,7 +70,7 @@ export const updatePlayer = (request: Request, response: Response, next: NextFun
 export const deletePlayer = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
 
-    deleteDocument(collections.players, id)
+    deleteDocument(getDBCollections().players, id)
     ?.then(res => response.json(res))
     .catch(error => next(error));
 }

@@ -10,7 +10,16 @@ const client = new MongoClient(URL);
 
 let database: Db;
 
-export const collections: IDBCollections = {};
+const collections: IDBCollections = {
+    players: undefined,
+    sportsCategories: undefined,
+    users: undefined,
+    tournaments: undefined,
+    games: undefined,
+    playerStats: undefined
+};
+
+export const getDBCollections = (): IDBCollections => Object.assign({}, collections);
 
 const setCollections = () => {
     collections.players = database.collection(CollectionNames.PLAYERS);

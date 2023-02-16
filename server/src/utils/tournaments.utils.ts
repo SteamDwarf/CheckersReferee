@@ -3,7 +3,6 @@ import { getRandomItem } from "./math";
 import { IPlayerDocument, IPlayerDocumentWithId } from "../models/players.model";
 import { Game, IGameData, IGameDocument } from "../models/games.model";
 import { getPlayerName } from "./player.utils";
-import { collections, createDocument } from "../database/database";
 
 const playerDummy = {
     _id: new ObjectId("000000000000000000000000"),

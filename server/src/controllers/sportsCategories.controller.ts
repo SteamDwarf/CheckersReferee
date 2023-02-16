@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import { collections, findDocumentById, findDocuments } from "../database/database";
+import { getDBCollections, findDocumentById, findDocuments } from "../database/database";
 
 export const getSportsCategories = (request: Request, response: Response, next: NextFunction) => {
-    findDocuments(collections.sportsCategories)
+    findDocuments(getDBCollections().sportsCategories)
         ?.then(categories => response.json(categories))
         .catch(error => next(error))
 }
@@ -11,7 +11,7 @@ export const getSportsCategories = (request: Request, response: Response, next: 
 export const getSportCategoryById = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
 
-    findDocumentById(collections.sportsCategories, id)
+    findDocumentById(getDBCollections().sportsCategories, id)
         ?.then(category => response.send(category))
         .catch(error => next(error));
 }

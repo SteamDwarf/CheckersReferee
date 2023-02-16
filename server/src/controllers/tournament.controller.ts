@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { collections, createDocument, deleteDocument, findDocument, findDocumentById, findDocuments, updateDocument } from "../database/database";
+import { getDBCollections, createDocument, deleteDocument, findDocument, findDocumentById, findDocuments, updateDocument} from "../database/database";
 import { ITournamentData, ITournamentDocument, ITournamentDocumentWithId } from "../models/tournaments.model";
 import { ObjectId, WithId } from "mongodb";
 import { shuffle } from "../utils/math";
@@ -13,14 +13,14 @@ export const getTournaments = (request: Request, response: Response, next: NextF
     const page = request.query.page || "1";
     const limit = request.query.limit || "10";
 
-    findDocuments(collections.tournaments)
+    findDocuments(getDBCollections().tournaments)
     ?.then(data => response.json(paginateData(data, +limit, +page)))
     .catch(error => next(error));
 }
 export const getTournament = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
 
-    findDocumentById(collections.tournaments, id)
+    findDocumentById(getDBCollections().tournaments, id)
     ?.then(data => response.json(data))
     .catch(error => next(error));
 }
@@ -33,14 +33,14 @@ export const postTournament = (request: Request, response: Response, next: NextF
         games: []
     }
     
-    createDocument(collections.tournaments, tournamentDocument)
+    createDocument(getDBCollections().tournaments, tournamentDocument)
     ?.then(data => response.json(data))
     .catch(error => next(error))
 }
 export const deleteTournament = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
 
-    deleteDocument(collections.tournaments, id)
+    deleteDocument(getDBCollections().tournaments, id)
     ?.then(data => response.json(data))
     .catch(error => next(error));
 }
@@ -48,7 +48,7 @@ export const updateTournament = (request: Request, response: Response, next: Nex
     const {id} = request.params;
     const {body} = request;
 
-    updateDocument(collections.tournaments, id, body)
+    updateDocument(getDBCollections().tournaments, id, body)
     ?.then(data => response.json(data))
     .catch(error => next(error));
 }
@@ -59,12 +59,12 @@ export const startTournament = (request: Request, response: Response, next: Next
     let tournamentDocument: ITournamentDocumentWithId;
     let playersDocuments: IPlayerDocumentWithId[];
 
-    findDocumentById(collections.tournaments, id)
+    findDocumentById(getDBCollections().tournaments, id)
     ?.then(result  => {
         tournamentDocument = result as ITournamentDocumentWithId;
         
         return Promise.all(tournamentDocument.players.map(playerId => {
-            return findDocument(collections.players, {"_id": new ObjectId(playerId)});
+            return findDocument(getDBCollections().players, {"_id": new ObjectId(playerId)});
         }));
     })
     .then(players => {
@@ -73,19 +73,19 @@ export const startTournament = (request: Request, response: Response, next: Next
         return Promise.all(players.map(player => {
             const playserStat = PlayerStat(player as IPlayerDocumentWithId, tournamentDocument);
 
-            return createDocument(collections.playerStats, playserStat);
+            return createDocument(getDBCollections().playerStats, playserStat);
         }));
     })
     .then(() => {
         const games = makeRoundRobinDraw(playersDocuments as IPlayerDocumentWithId[]);
-        return Promise.all(games.map(game => createDocument(collections.games, game)))
+        return Promise.all(games.map(game => createDocument(getDBCollections().games, game)))
     })
     .then(gameDocuments => {
         if(tournamentDocument) {
             tournamentDocument.isStarted = true;
             tournamentDocument.games = gameDocuments.map(game => game?._id);
         }
-        return updateDocument(collections.tournaments, id, tournamentDocument);
+        return updateDocument(getDBCollections().tournaments, id, tournamentDocument);
     })
     .then(result => response.json(result))
     .catch(error => next(error));
