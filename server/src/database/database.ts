@@ -18,6 +18,7 @@ const setCollections = () => {
     collections.users = database.collection(CollectionNames.USERS);
     collections.tournaments = database.collection(CollectionNames.TOURNAMENTS);
     collections.games = database.collection(CollectionNames.GAMES);
+    collections.playerStats = database.collection(CollectionNames.PLAYER_STATS);
 }
 
 export const connectToDatabase = (callback?: () => void) => {

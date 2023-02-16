@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { IGameData } from "./games.model";
 
 interface ITournament {
@@ -25,9 +25,12 @@ export interface ITournamentData extends ITournament {
     games: (string | undefined)[],
 }
 export interface ITournamentDocument extends ITournament {
-    _id: ObjectId,
     players: ObjectId[] | [],
     games: (ObjectId | undefined)[]
+}
+
+export interface ITournamentDocumentWithId extends ITournamentDocument{
+    _id: ObjectId,
 }
 
 

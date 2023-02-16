@@ -9,6 +9,7 @@ import authRouter from './routes/auth.router';
 import playersRouter from './routes/players.router';
 import sportsCategoriesRouter from './routes/sportsCategories.router';
 import tournamentsRouter from './routes/tournaments.router';
+import gamesRouter from './routes/games.router';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -31,6 +32,7 @@ app.use('/auth', authRouter);
 app.use('/players', playersRouter);
 app.use('/sports-categories', sportsCategoriesRouter);
 app.use('/tournaments', tournamentsRouter);
+app.use('/games', gamesRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
