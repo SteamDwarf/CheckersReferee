@@ -76,3 +76,21 @@ playerForm.addEventListener('submit', (event) => {
     .then(data => console.log(data))
     .catch(error => error.json().then(errorData => console.error(errorData)))
 });
+
+
+//Функция для разбиения игр по турам
+const gamesSplitByTours = (games, playersCount) => {
+    const tours = playersCount % 2 === 0 ? playersCount - 1 : playersCount;
+    const gamesInTour = (tours + 1) / 2;
+    const splitedGames = [];
+
+    for(let i = 0; i < tours; i++) {
+        const tour = [];
+
+        for(let j = i * gamesInTour; j < i * gamesInTour + gamesInTour; j++) {
+            tour.push(games[j]);
+        }
+
+        splitedGames.push(tour);
+    }
+}

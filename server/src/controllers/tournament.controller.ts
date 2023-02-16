@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import { collections, createDocument, deleteDocument, findDocument, findDocumentById, findDocuments, updateDocument } from "../database/database";
 import { ITournamentData, ITournamentDocument } from "../models/tournaments.model";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { shuffle } from "../utils/math";
 import { makeRoundRobinDraw } from "../utils/tournaments.utils";
 import { Game, IGameData, IGameDocumentWithId } from "../models/games.model";
@@ -56,29 +56,18 @@ export const updateTournament = (request: Request, response: Response, next: Nex
 export const startTournament = (request: Request, response: Response, next: NextFunction) => {
     const {id} = request.params;
     let tournamentDocument: ITournamentDocument | undefined = undefined;
-    let games: IGameDocumentWithId | undefined = undefined
 
     findDocumentById(collections.tournaments, id)
     ?.then(result  => {
         tournamentDocument = result as ITournamentDocument;
         
-        return Promise.all(tournamentDocument.players.map(playerId => findDocument(collections.players, {"_id": new ObjectId(playerId)})));
-        //ournament.players = shuffle(tournament.players);
-        //tournament.isStarted = true;
-
-        //response.json(makeRoundRobinDraw(tournament.players));
-        //tournamentDocument = tournament;
-
-        //return tournament;
+        return Promise.all(tournamentDocument.players.map(playerId => {
+            return findDocument(collections.players, {"_id": new ObjectId(playerId)});
+        }));
     })
     .then(players => {
         const games = makeRoundRobinDraw(players as IPlayerDocumentWithId[]);
         return Promise.all(games.map(game => createDocument(collections.games, game)))
-        //return updateDocument(collections.tournaments, id, {games});
-
-
-        //tournamentDocument ? tournamentDocument.games = games : null;
-        //response.json(tournamentDocument);
     })
     .then(gameDocuments => {
         if(tournamentDocument) {
@@ -93,3 +82,5 @@ export const startTournament = (request: Request, response: Response, next: Next
 export const finishTournament = (request: Request, response: Response, next: NextFunction) => {
     response.json("Турнир завершился");
 }
+
+
