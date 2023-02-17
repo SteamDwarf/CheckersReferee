@@ -3,6 +3,8 @@ import { IPlayerDocument, IPlayerDocumentWithId } from "./players.model"
 import { ITournamentDocument, ITournamentDocumentWithId } from "./tournaments.model"
 import { getPlayerName } from "../utils/player.utils"
 
+//TODO проверить модель
+//TODO добавить конвертер из одного типа в другой
 export interface IPlayerStats {
     playerName: string
     tournamentTitle: string,

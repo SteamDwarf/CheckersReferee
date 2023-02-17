@@ -10,9 +10,7 @@ export interface ISportsCategoryDocument extends ISportsCategory {
     _id: ObjectId
 }
 
-export interface ISportsCategoryData extends ISportsCategory {
-    _id: string
-}
+export interface ISportsCategoryData extends ISportsCategory {}
 
 export const sportsCategorySchema = {
     validator: {

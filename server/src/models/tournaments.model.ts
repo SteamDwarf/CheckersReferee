@@ -1,6 +1,8 @@
 import { ObjectId, WithId } from "mongodb";
 import { IGameData } from "./games.model";
 
+//TODO проверить модель
+//TODO добавить конвертер из одного типа в другой
 interface ITournament {
     title: string,
     startDate?: Date,

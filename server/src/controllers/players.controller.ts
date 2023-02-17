@@ -5,11 +5,6 @@ import { IPlayerData, IPlayerDocument } from "../models/players.model";
 import { ISportsCategoryDocument } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
 
-interface IGetPlayersRequest {
-    page?: string
-    limit?: string
-}
-
 export const createPlayer = (request: Request, response: Response, next: NextFunction) => {
     const playerData: IPlayerData = request.body;
     const playerDocument:IPlayerDocument = {
@@ -42,7 +37,7 @@ export const getPlayer = (request: Request, response: Response, next: NextFuncti
 
 
 
-export const getPlayers = (request: Request<{}, {}, {}, IGetPlayersRequest>, response: Response, next: NextFunction) => {
+export const getPlayers = (request: Request, response: Response, next: NextFunction) => {
     const page = request.query.page || "1";
     const limit = request.query.limit || "10";
 

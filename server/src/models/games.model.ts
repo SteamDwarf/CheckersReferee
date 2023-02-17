@@ -1,5 +1,6 @@
 import { ObjectId, WithId } from "mongodb";
 
+//TODO добавить конвертер из одного типа в другой
 interface IGame {
     player1Name: string,
     player2Name: string,
@@ -16,7 +17,7 @@ export interface IGameDocument extends IGame {
     player1Id: ObjectId,
     player2Id: ObjectId,
 }
-export interface IGameDocumentWithId extends IGameDocument, WithId<Document>{
+export interface IGameDocumentWithId extends IGameDocument{
     _id: ObjectId,
 }
 

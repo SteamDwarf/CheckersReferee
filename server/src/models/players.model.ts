@@ -1,12 +1,11 @@
 import { ObjectId, WithId } from "mongodb"
 import { ISportsCategoryData } from "./sportsCategory.model"
 
-
+//TODO добавить конвертер из одного типа в другой
 export interface IPlayer {
     firstName: string,                  //Имя
     middleName: string,                 //Отчество
     lastName: string,                   //Фамилия
-    birthday: Date,                     //Дата рождения
     region: string,                     //Место проживания
     sportsCategoryAbbr: string,         //Краткое название разряда
     sportsOrganization: string,         //Спортивная организация
@@ -15,15 +14,17 @@ export interface IPlayer {
 }
 
 export interface IPlayerData extends IPlayer {
+    birthday: string,                     //Дата рождения
     sportsCategory: string,             //ID спортивного разряда
     playerStats?: string[] | []         //Массив ID статистики игрока в турнирах
 }
 
 export interface IPlayerDocument extends IPlayer{
+    birthday: Date, 
     sportsCategory: ObjectId,
     playerStats?: ObjectId[] | []
 }
-export interface IPlayerDocumentWithId extends IPlayerDocument, WithId<Document>{
+export interface IPlayerDocumentWithId extends IPlayerDocument{
     _id: ObjectId,
 }
 
