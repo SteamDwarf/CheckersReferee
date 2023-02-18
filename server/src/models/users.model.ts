@@ -10,13 +10,6 @@ interface IUser {
     role?: UserRoles
 }
 
-const User = (login: string, password: string, role: UserRoles = UserRoles.GUEST): IUser => {
-    return {
-        login,
-        password,
-        role
-    }
-}
 
 export const userSchema = {
     validator: {

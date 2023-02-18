@@ -1,5 +1,4 @@
 import { ObjectId, WithId } from "mongodb"
-import { ISportsCategoryData } from "./sportsCategory.model"
 
 //TODO добавить конвертер из одного типа в другой
 export interface IPlayer {

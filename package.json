@@ -5,7 +5,8 @@
   "main": "server/src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server-dev": "cd server && npm run dev"
+    "server-dev": "cd server && npm run dev",
+    "eslint": "cd server && npm run eslint"
   },
   "repository": {
     "type": "git",

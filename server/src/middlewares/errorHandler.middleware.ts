@@ -10,7 +10,7 @@ interface ResponseError {
 
 
 const errorHandler = (error: Error, request: Request, response: Response, next: NextFunction) => {
-    let sendedError:ResponseError = {
+    const sendedError:ResponseError = {
         status: 500,
         message: "",
     }
