@@ -1,10 +1,10 @@
-import { MongoClient, Db, ObjectId, Collection } from "mongodb";
+import { MongoClient, Db, ObjectId, Collection, OptionalId } from "mongodb";
 import * as dotenv from 'dotenv';
 import { CollectionNames } from "./enums";
-import { DocumentTypes, IDBCollections } from "./types";
+import { DBCollections, DocumentTypes, IDBCollections } from "./types";
 import { playersSchema } from "../models/players.model";
 import { sportsCategorySchema } from "../models/sportsCategory.model";
-import { userSchema } from "../models/users.model";
+import { IUser, userSchema } from "../models/users.model";
 import { tournamentSchema } from "../models/tournaments.model";
 import { gamesSchema } from "../models/games.model";
 import { playerStatsSchema } from "../models/playerStats.model";
@@ -28,9 +28,9 @@ const collections: IDBCollections = {
 export const getDBCollections = (): IDBCollections => Object.assign({}, collections);
 
 const setCollections = () => {
+    collections.users = database.collection<OptionalId<IUser>>(CollectionNames.USERS);
     collections.players = database.collection(CollectionNames.PLAYERS);
     collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
-    collections.users = database.collection(CollectionNames.USERS);
     collections.tournaments = database.collection(CollectionNames.TOURNAMENTS);
     collections.games = database.collection(CollectionNames.GAMES);
     collections.playerStats = database.collection(CollectionNames.PLAYER_STATS);
@@ -62,7 +62,7 @@ export const findDocuments = (collection: Collection | undefined) => {
     return collection?.find({}).toArray();
 }
 
-export const findDocument = (collection: Collection | undefined, filter: object) => {
+export const findDocument = (collection: DBCollections | undefined, filter: object) => {
     return collection?.findOne(filter);
 }
 

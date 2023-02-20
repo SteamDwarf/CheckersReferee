@@ -10,6 +10,7 @@ import playersRouter from './routes/players.router';
 import sportsCategoriesRouter from './routes/sportsCategories.router';
 import tournamentsRouter from './routes/tournaments.router';
 import gamesRouter from './routes/games.router';
+import { ServerError } from './utils/ServerError';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -37,22 +38,12 @@ app.use('/games', gamesRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+
 app.listen(PORT, () => {
     console.log(`Сервер запущен по адресу ${URI}:${PORT}`);
-    //TODO убрать коллбэк
-    connectToDatabase(/* () => {
-        getNewAdamovichRank({
-            firstName: "Амур123",
-            middleName: "Амуров",
-            lastName: "Амурович",
-            birthday: new Date("2022-11-22T12:40:30.787Z"),
-            region: "Амурляндия",
-            sportsCategory: "63e266c772da5f772b235594",
-            currentAdamovichRank: 920
-        }, [], 12, 12)
-        .then(res => console.log(res))
-        .catch(error => console.error(error))
-    } */);
+    
+    connectToDatabase();
+
 });
 
 /* bcrypt.hash("admin123", 10)

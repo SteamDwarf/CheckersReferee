@@ -1,40 +1,50 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { getDBCollections, findDocument } from "../database/database";
+import expressAsyncHandler from "express-async-handler";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import { IUser } from "../models/users.model";
+import { ServerError } from "../utils/ServerError";
 
-export const handleAuth = (request: Request, response: Response, next: NextFunction) => {
+export const handleAuth = expressAsyncHandler(async(request: Request, response: Response) => {
     const {login, password} = request.body;
-    const isEmptyData = Object.keys(request.body).length === 0
-                        || validator.isEmpty(login) 
+
+    checkEmptyData(login, password);
+                        
+    const user = await findUser(login) as IUser;
+    await comparePassword(password, user);
+
+    sendUserData(user, response);
+});
+
+
+function checkEmptyData(login: string | undefined, password: string | undefined) {
+    const isEmptyData = !login || !password
+                        ||validator.isEmpty(login, {ignore_whitespace: true}) 
                         || validator.isEmpty(password, {ignore_whitespace: true});
-    let findedUser: any = null;
-
-    if(isEmptyData) {
-        response.status(400)
-        throw new Error("Необходимо ввести логин и пароль");
-    }
-
-    findDocument(getDBCollections().users, {login: login})
-    ?.then(user => {
-        if(!user) {
-            response.status(400);
-            throw new Error("Пользователь с данным логином не найден");
-        }
-
-        findedUser = user;
-        return bcrypt.compare(password, findedUser.password)
-    })
-    .then(isPasswordCorrect => {
-        if(isPasswordCorrect) {
-            const {password: _, ...userData} = findedUser;
-            return response.json(userData);
-        }
-
-        response.status(400);
-        throw new Error("Вы ввели неверный пароль");
-    })
-    .catch(error => {
-        next(error);
-    });
+                        
+    if(isEmptyData) throw new ServerError("Ошибка авторизации", "Необходимо ввести логин и пароль", 400);
 }
+
+async function findUser (login: string) {
+    const user = await findDocument(getDBCollections().users, {login});
+
+    if(!user) throw new ServerError("Ошибка авторизации", "Пользователь с данным логином не найден", 400);
+
+    return user;
+}
+
+async function comparePassword(password: string, user: IUser) {
+    const isPasswordCompare = await bcrypt.compare(password, user.password);
+
+    if(!isPasswordCompare) throw new ServerError("Ошибка авторизации", "Вы ввели неверный пароль", 400);
+}
+
+function sendUserData(user: IUser, response: Response) {
+    const {password: _, ...userData} = user;
+
+    response.json(userData);
+}
+
+
+
