@@ -1,3 +1,11 @@
+export enum ErrorNames {
+  VALIDATION_ERROR = "Ошибка проверки данных",
+  INPUT_ERROR = "Ошибка ввода данных",
+  NOT_FOUND_ERROR = "Данные не найдены",
+  SERVER_ERROR = "Ошибка сервера",
+  AUTH_ERROR = "Ошибка авторизации"
+}
+
 export class ServerError extends Error {
   public readonly message: string;
   public readonly status?: number;
@@ -15,8 +23,33 @@ export class ServerError extends Error {
   }
 }
 
+export class NotFoundError extends ServerError {
+  constructor(message: string, details?: object | string) {
+    super(ErrorNames.NOT_FOUND_ERROR, message, 404, details);
+  }
+}
+
+export class InputError extends ServerError {
+  constructor(message: string, details?: object | string) {
+    super(ErrorNames.INPUT_ERROR, message, 400, details);
+  }
+}
+
+export class AuthError extends ServerError {
+  constructor(message: string, details?: object | string) {
+    super(ErrorNames.AUTH_ERROR, message, 400, details);
+  }
+}
+
+export class InternalServerError extends ServerError {
+  constructor(details?: object | string) {
+    super(ErrorNames.SERVER_ERROR, "Внутренняя ошибка сервера", 500, details);
+  }
+}
+
+
 export class DataBaseError extends ServerError {
   constructor(details?: object | string) {
-    super("Ошибка проверки данных", "Документ не прошел проверку. Некорректный тип данных", 400, details);
+    super(ErrorNames.VALIDATION_ERROR, "Документ не прошел проверку. Некорректный тип данных", 400, details);
   }
 }

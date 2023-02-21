@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { DataBaseError, ServerError } from "../utils/ServerError";
+import { DataBaseError, InternalServerError, ServerError } from "../utils/ServerError";
 
 const errorHandler = (error: ServerError, request: Request, response: Response, next: NextFunction) => {
     const responseError = defineError(error);
 
-    console.error(responseError);
+    console.error(error);
     response.status(responseError.status || 500).json(responseError);
 }
 
@@ -14,7 +14,7 @@ const defineError = (error: ServerError) => {
             return new DataBaseError(error);
         }
 
-        return new ServerError("Ошибка сервера", "Внутрення ошибка сервера", 500);
+        return new InternalServerError();
     }
 
     return error;

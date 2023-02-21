@@ -1,17 +1,19 @@
-import { NextFunction, Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import {Request, Response } from "express";
 import { getDBCollections, findDocumentById, findDocuments } from "../database/database";
+import expressAsyncHandler from "express-async-handler";
+import { NotFoundError } from "../utils/ServerError";
 
-export const getSportsCategories = (request: Request, response: Response, next: NextFunction) => {
-    findDocuments(getDBCollections().sportsCategories)
-        ?.then(categories => response.json(categories))
-        .catch(error => next(error))
-}
+export const getSportsCategories = expressAsyncHandler(async(request: Request, response: Response) => {
+    const categories = await findDocuments(getDBCollections().sportsCategories);
 
-export const getSportCategoryById = (request: Request, response: Response, next: NextFunction) => {
+    response.json(categories);
+})
+
+export const getSportCategoryById = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
+    const category = await findDocumentById(getDBCollections().sportsCategories, id);
 
-    findDocumentById(getDBCollections().sportsCategories, id)
-        ?.then(category => response.send(category))
-        .catch(error => next(error));
-}
+    if(!category) throw new NotFoundError("По указанному id не найдена спортивная категория");
+
+    response.json(category);
+})

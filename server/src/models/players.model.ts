@@ -5,6 +5,7 @@ export interface IPlayer {
     firstName: string,                  //Имя
     middleName: string,                 //Отчество
     lastName: string,                   //Фамилия
+    birthday: string,
     region: string,                     //Место проживания
     sportsCategoryAbbr: string,         //Краткое название разряда
     sportsOrganization: string,         //Спортивная организация
@@ -13,13 +14,11 @@ export interface IPlayer {
 }
 
 export interface IPlayerData extends IPlayer {
-    birthday: string,                     //Дата рождения
     sportsCategory: string,             //ID спортивного разряда
     playerStats?: string[] | []         //Массив ID статистики игрока в турнирах
 }
 
 export interface IPlayerDocument extends IPlayer{
-    birthday: Date, 
     sportsCategory: ObjectId,
     playerStats?: ObjectId[] | []
 }
@@ -56,7 +55,7 @@ export const playersSchema = {
                     description: "Поле lastName (фамилия) является обязательным и должно быть строкой"
                 },
                 "birthday": {
-                    bsonType: "date",
+                    bsonType: "string",
                     description: "Поле birthday (дата рождения) является обязательным и должно быть строкой"
                 },
                 "region": {
