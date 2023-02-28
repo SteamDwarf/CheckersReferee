@@ -1,45 +1,44 @@
-import { ObjectId } from "mongodb"
-import { IPlayerDocument, IPlayerDocumentWithId } from "./players.model"
-import { ITournamentDocument, ITournamentDocumentWithId } from "./tournaments.model"
+import { IPlayerDocumentWithId } from "./players.model"
+import { ITournamentDocumentWithId } from "./tournaments.model"
 import { getPlayerName } from "../utils/player.utils"
+import { ObjectId } from "mongodb"
+import { CheckersColor } from "./games.model"
 
 //TODO проверить модель
-//TODO добавить конвертер из одного типа в другой
 export interface IPlayerStats {
-    playerName: string
-    tournamentTitle: string,
-    tournamentStartDate?: Date,
-    tournamentEndDate?: Date,
+    playerID: string,
+    tournamentId: string,
+    playerName: string,
     gorinRank: number
     adamovichRank: number,
+    adamovichTimeStamp: string,
     place: number,
-    score: number
+    score: number,
+    sportsCategory: string,
+    requiredScore: number,
+    lastCheckersColor: CheckersColor,
+    checkersColorUsed: number
 }
 
-export interface IPlayerStatsData extends IPlayerStats {
-    playerId: string,
-    tournamentId: string,
+export interface IPlayerStatsWithID extends IPlayerStats {
+    _id: ObjectId
 }
 
-export interface IPlayerStatsDocument extends IPlayerStats {
-    playerId: ObjectId,
-    tournamentId: ObjectId,
-}
-
-export const PlayerStat = (player: IPlayerDocumentWithId, tournament: ITournamentDocumentWithId): IPlayerStatsDocument => {
-    const playerStat: IPlayerStatsDocument = {
-        playerId: player._id,
+export const PlayerStat = (player: IPlayerDocumentWithId, tournamentID: string): IPlayerStats => {
+    const playerStat: IPlayerStats = {
+        playerID: player._id.toString(),
         playerName: getPlayerName(player),
-        tournamentId: tournament._id,
-        tournamentTitle: tournament.title,
+        tournamentId: tournamentID,
         gorinRank: 0,
         adamovichRank: player.currentAdamovichRank,
+        adamovichTimeStamp: Date.now().toLocaleString(),
         place: 0,
-        score: 0
+        score: 0,
+        sportsCategory: player.sportsCategoryID,
+        requiredScore: 0,
+        lastCheckersColor: CheckersColor.black,
+        checkersColorUsed: 0
     }
-
-    tournament.startDate ? playerStat.tournamentStartDate = tournament.startDate : null;
-    tournament.endDate ? playerStat.tournamentEndDate = tournament.endDate : null;
 
     return playerStat;
 }
@@ -49,39 +48,31 @@ export const playerStatsSchema = {
         $jsonSchema: {
             bsonType: "object",
             required: [
-                "playerId", 
+                "playerID", 
                 "tournamentId", 
                 "playerName", 
-                "tournamentTitle", 
                 "gorinRank", 
-                "adamovichRank", 
+                "adamovichRank",
+                "adamovichTimeStamp",
                 "place",
-                "score"
+                "score",
+                "sportsCategory",
+                "requiredScore",
+                "lastCheckersColor",
+                "checkersColorUsed"
             ],
             properties: {
-                "playerId": {
-                    bsonType: "objectId",
-                    description: "Поле playerId является обязательным и должно быть objectId"
+                "playerID": {
+                    bsonType: "string",
+                    description: "Поле playerID является обязательным и должно быть строкой"
                 },
                 "tournamentId": {
-                    bsonType: "objectId",
-                    description: "Поле tournamentId является обязательным и должно быть objectId"
+                    bsonType: "string",
+                    description: "Поле tournamentId является обязательным и должно быть строкой"
                 },
                 "playerName": {
                     bsonType: "string",
                     description: "Поле playerName является обязательным и должно быть строкой"
-                },
-                "tournamentTitle": {
-                    bsonType: "string",
-                    description: "Поле tournamentTitle является обязательным и должно быть строкой"
-                },
-                "tournamentStartDate": {
-                    bsonType: "date",
-                    description: "Поле tournamentStartDate должно быть датой"
-                },
-                "tournamentEndDate": {
-                    bsonType: "date",
-                    description: "Поле tournamentEndDate должно быть датой"
                 },
                 "gorinRank": {
                     bsonType: "number",
@@ -91,6 +82,10 @@ export const playerStatsSchema = {
                     bsonType: "number",
                     description: "Поле adamovichRank является обязательным и должно быть числом"
                 },
+                "adamovichTimeStamp": {
+                    bsonType: "string",
+                    description: "Поле adamovichTimeStamp является обязательным и должно быть строкой"
+                },
                 "place": {
                     bsonType: "number",
                     description: "Поле place является обязательным и должно быть числом"
@@ -98,7 +93,23 @@ export const playerStatsSchema = {
                 "score": {
                     bsonType: "number",
                     description: "Поле score является обязательным и должно быть числом"
-                }
+                },
+                "sportsCategory": {
+                    bsonType: "string",
+                    description: "Поле sportsCategory является обязательным и должно быть строкой"
+                },
+                "requiredScore": {
+                    bsonType: "number",
+                    description: "Поле requiredScore является обязательным и должно быть числом"
+                },
+                "lastCheckersColor": {
+                    bsonType: "string",
+                    description: "Поле lastCheckersColor является обязательным должно быть строкой"
+                },
+                "checkersColorUsed": {
+                    bsonType: "number",
+                    description: "Поле checkersColorUsed является обязательным должно быть числом"
+                },
             }
         }
     }

@@ -1,34 +1,44 @@
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId} from "mongodb";
+import { tournamentSchema } from "./tournaments.model";
 
-//TODO добавить конвертер из одного типа в другой
-interface IGame {
+export enum CheckersColor {
+    black = "Черные",
+    white = "Белые"
+}
+
+//TODO добавить цвет шашек
+export interface IGame {
+    tournamentID: string,
+    player1ID: string,
+    player2ID: string,
     player1Name: string,
     player2Name: string,
     player1Score: number,
-    player2Score: number
+    player2Score: number,
+    player1CheckersColor: CheckersColor,
+    player2CheckersColor: CheckersColor
 }
-
-export interface IGameData extends IGame {
-    player1Id: string,
-    player2Id: string,
-}
-
-export interface IGameDocument extends IGame {
-    player1Id: ObjectId,
-    player2Id: ObjectId,
-}
-export interface IGameDocumentWithId extends IGameDocument{
+export interface IGameDocumentWithId extends IGame{
     _id: ObjectId,
 }
 
-export const Game = (player1Id: ObjectId, player1Name: string, player2Id: ObjectId, player2Name: string):IGameDocument => {
+export const Game = (
+                tournamentID: string, 
+                player1ID: string, 
+                player1Name: string, 
+                player2ID: string, 
+                player2Name: string,
+            ):IGame => {
     return {
-        player1Id,
+        tournamentID,
+        player1ID,
         player1Name,
-        player2Id,
+        player2ID,
         player2Name,
         player1Score: 0,
-        player2Score: 0
+        player2Score: 0,
+        player1CheckersColor: CheckersColor.black,
+        player2CheckersColor: CheckersColor.black
     }
 }
 
@@ -36,15 +46,29 @@ export const gamesSchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["player1Id", "player2Id", "player1Name", "player2Name", "player1Score", "player2Score"],
+            required: [
+                "tournamentID",
+                "player1ID", 
+                "player2ID", 
+                "player1Name", 
+                "player2Name", 
+                "player1Score", 
+                "player2Score",
+                "player1CheckersColor",
+                "player2CheckersColor"
+            ],
             properties: {
-                "player1Id": {
-                    bsonType: "objectId",
-                    description: "Поле player1Id является обязательным и должно быть objectId"
+                "tournamentID": {
+                    bsonType: "string",
+                    description: "Поле tournamentID является обязательным и должно быть string"
                 },
-                "player2Id": {
-                    bsonType: "objectId",
-                    description: "Поле player2Id является обязательным и должно быть objectId"
+                "player1ID": {
+                    bsonType: "string",
+                    description: "Поле player1ID является обязательным и должно быть string"
+                },
+                "player2ID": {
+                    bsonType: "string",
+                    description: "Поле player2ID является обязательным и должно быть string"
                 },
                 "player1Name": {
                     bsonType: "string",
@@ -61,6 +85,14 @@ export const gamesSchema = {
                 "playe2Score": {
                     bsonType: "number",
                     description: "Поле playe2Score является обязательным и должно быть числом"
+                },
+                "player1CheckersColor": {
+                    bsonType: "string",
+                    description: "Поле player1CheckersColor является обязательным и должно быть строкой"
+                },
+                "player2CheckersColor": {
+                    bsonType: "string",
+                    description: "Поле player1CheckersColor является обязательным и должно быть строкой"
                 }
             }
         }

@@ -1,12 +1,15 @@
-import { ObjectId, WithId } from "mongodb";
-import { IGameData } from "./games.model";
+import { ObjectId} from "mongodb";
 
-//TODO проверить модель
-//TODO добавить конвертер из одного типа в другой
-interface ITournament {
+export enum TournamentSystems {
+    round = "Круговая",
+    swiss = "Швейцарская"
+}
+
+//TODO Добавить PlayerStats
+export interface ITournament {
     title: string,
-    startDate?: Date,
-    endDate?: Date,
+    startDate?: string,
+    endDate?: string,
     country: string,
     city: string,
     region?: string,
@@ -17,21 +20,13 @@ interface ITournament {
     referees: string[] | [],
     timeControl?: string,
     toursCount?: number,
-    tournamentSystem: string,
+    tournamentSystem: TournamentSystems,
     drawType?: string,
+    playersIDs: (string | undefined)[],
+    gamesIDs: (string | undefined)[],
 }
 
-export interface ITournamentData extends ITournament {
-    _id: string,
-    players: string[] | [],
-    games: (string | undefined)[],
-}
-export interface ITournamentDocument extends ITournament {
-    players: ObjectId[] | [],
-    games: (ObjectId | undefined)[]
-}
-
-export interface ITournamentDocumentWithId extends ITournamentDocument{
+export interface ITournamentDocumentWithId extends ITournament{
     _id: ObjectId,
 }
 
@@ -49,8 +44,8 @@ export const tournamentSchema = {
                 "mainReferee", 
                 "mainSecretary",
                 "referees",
-                "players", 
-                "games",
+                "playersIDs", 
+                "gamesIDs",
                 "tournamentSystem",
             ],
             properties: {
@@ -59,12 +54,12 @@ export const tournamentSchema = {
                     description: "Поле title является обязательным и должно быть строкой"
                 },
                 "startDate": {
-                    bsonType: "date",
-                    description: "Поле startDate должно быть датой"
+                    bsonType: "string",
+                    description: "Поле startDate должно быть строкой"
                 },
                 "endDate": {
-                    bsonType: "date",
-                    description: "Поле endDate должно быть датой"
+                    bsonType: "string",
+                    description: "Поле endDate должно быть строкой"
                 },
                 "country": {
                     bsonType: "string",
@@ -114,13 +109,13 @@ export const tournamentSchema = {
                     bsonType: "string",
                     description: "Поле drawType должно быть строкой"
                 },
-                "players": {
+                "playersIDs": {
                     bsonType: "array",
-                    description: "Поле players является обязательным и должно быть массивом"
+                    description: "Поле playersIDs является обязательным и должно быть массивом"
                 },
-                "games": {
+                "gamesIDs": {
                     bsonType: "array",
-                    description: "Поле games является обязательным и должно быть массивом"
+                    description: "Поле gamesIDs является обязательным и должно быть массивом"
                 }
             }
         }

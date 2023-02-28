@@ -1,28 +1,31 @@
-import { NextFunction, Request, Response } from "express";
-import { getDBCollections, findDocumentById, updateDocument } from "../database/database";
-import { request } from "http";
-import { IGameData, IGameDocument } from "../models/games.model";
-import { ObjectId } from "mongodb";
+import { Request, Response } from "express";
+import { getDBCollections, findDocumentById, updateDocument, findDocuments } from "../database/database";
+import { IGame} from "../models/games.model";
+import expressAsyncHandler from "express-async-handler";
+import { NotFoundError } from "../utils/ServerError";
 
-export const getGame = (request: Request, response: Response, next: NextFunction) => {
+
+export const getGames = expressAsyncHandler(async(request: Request, response: Response) => {
+    const games = await findDocuments(getDBCollections().games);
+
+    response.json(games);
+});
+
+export const getGame = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
+    const game = await findDocumentById(getDBCollections().games, id);
+    
+    response.json(game)
+});
 
-    findDocumentById(getDBCollections().games, id)
-    ?.then(game => response.json(game))
-    .catch(error => next(error));
-}
-
-export const updateGame = (request: Request, response: Response, next: NextFunction) => {
+export const updateGame = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
-    const gameData: IGameData = request.body;
+    const gameData: IGame = request.body;
+    const gameForUpdate = await findDocumentById(getDBCollections().games, id);
 
-    const gameDocument: IGameDocument = {
-        ...gameData,
-        player1Id: new ObjectId(gameData.player1Id),
-        player2Id: new ObjectId(gameData.player2Id)
-    }
+    if(!gameForUpdate) throw new NotFoundError("По указанному id игра не найдена");
 
-    updateDocument(getDBCollections().games, id, gameDocument)
-    ?.then(res => response.json(res))
-    .catch(error => next(error));
-}
+    const updatedGame = await updateDocument(getDBCollections().games, id, gameData);
+
+    response.json(updatedGame);
+})

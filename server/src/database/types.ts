@@ -1,16 +1,16 @@
 import { Collection, OptionalId } from "mongodb";
-import { IPlayerDocument } from "../models/players.model";
 import { ISportsCategoryDocument } from "../models/sportsCategory.model";
-import { ITournamentDocument } from "../models/tournaments.model";
-import { IGameDocument } from "../models/games.model";
-import { IPlayerStatsDocument } from "../models/playerStats.model";
+import { ITournament } from "../models/tournaments.model";
+import { IGame } from "../models/games.model";
+import { IPlayerStats } from "../models/playerStats.model";
 import { IUser } from "../models/users.model";
+import { IPlayer } from "../models/players.model";
 
-export type DocumentTypes = IPlayerDocument | 
+export type DocumentTypes = IPlayer | 
                             ISportsCategoryDocument | 
-                            ITournamentDocument | 
-                            IGameDocument |
-                            IPlayerStatsDocument;
+                            ITournament | 
+                            IGame |
+                            IPlayerStats;
 
 export type DBCollections = Collection | Collection<OptionalId<IUser>>;
 

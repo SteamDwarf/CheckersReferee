@@ -62,6 +62,11 @@ export const findDocuments = (collection: Collection | undefined) => {
     return collection?.find({}).toArray();
 }
 
+export const findDocumentsById = (collection: Collection | undefined, ids: string[]) => {
+    const objectIDs = ids.map(id => new ObjectId(id));
+    return collection?.find({_id: {$in: objectIDs}}).toArray();
+}
+
 export const findDocument = (collection: DBCollections | undefined, filter: object) => {
     return collection?.findOne(filter);
 }
@@ -75,11 +80,16 @@ export const createDocument = (collection: Collection | undefined, data: Documen
             .then(result => collection.findOne({_id: new ObjectId(result.insertedId)}));
 }
 
+export const createDocuments = (collection: Collection | undefined, arrayData: DocumentTypes[]) => {
+    return collection?.insertMany(arrayData)
+            .then(insertedData => collection?.find({_id: {$in: Object.values(insertedData.insertedIds)}}).toArray());
+}
+
 export const deleteDocument = (collection: Collection | undefined, id: string) => {
     return collection?.deleteOne({_id: new ObjectId(id)});
 }
 
-export const updateDocument = (collection: Collection | undefined, id: string, newDocument: any) => {
+export const updateDocument = (collection: Collection | undefined, id: string, newDocument: object) => {
     return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument})
             .then(() => collection.findOne({_id: new ObjectId(id)}))
 }

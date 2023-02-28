@@ -1,65 +1,106 @@
 import { NextFunction, Request, Response } from "express"
-import { getDBCollections, createDocument, deleteDocument, findDocument, findDocumentById, findDocuments, updateDocument} from "../database/database";
-import { ITournamentData, ITournamentDocument, ITournamentDocumentWithId } from "../models/tournaments.model";
+import { getDBCollections, createDocument, deleteDocument, findDocumentById, findDocuments, updateDocument, findDocumentsById, createDocuments} from "../database/database";
+import { ITournament, ITournamentDocumentWithId } from "../models/tournaments.model";
 import { ObjectId, WithId } from "mongodb";
 import { shuffle } from "../utils/math";
 import { makeRoundRobinDraw } from "../utils/tournaments.utils";
-import { Game, IGameData, IGameDocumentWithId } from "../models/games.model";
-import { IPlayerDocument, IPlayerDocumentWithId } from "../models/players.model";
+import { IGame, IGameDocumentWithId } from "../models/games.model";
+import { IPlayerDocumentWithId } from "../models/players.model";
 import { paginateData } from "../utils/controllers.utils";
-import { PlayerStat } from "../models/playerStats.model";
+import { IPlayerStats, PlayerStat } from "../models/playerStats.model";
+import expressAsyncHandler from "express-async-handler";
+import { InputError, NotFoundError } from "../utils/ServerError";
 
-export const getTournaments = (request: Request, response: Response, next: NextFunction) => {
+export const getTournaments = expressAsyncHandler(async(request: Request, response: Response) => {
     const page = request.query.page || "1";
     const limit = request.query.limit || "10";
+    const tournaments = await findDocuments(getDBCollections().tournaments);
 
-    findDocuments(getDBCollections().tournaments)
-    ?.then(data => response.json(paginateData(data, +limit, +page)))
-    .catch(error => next(error));
-}
-export const getTournament = (request: Request, response: Response, next: NextFunction) => {
+    response.json(paginateData(tournaments || [], +limit, +page))
+});
+
+export const getTournament = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
+    const tournament = await findDocumentById(getDBCollections().tournaments, id);
 
-    findDocumentById(getDBCollections().tournaments, id)
-    ?.then(data => response.json(data))
-    .catch(error => next(error));
-}
-export const postTournament = (request: Request, response: Response, next: NextFunction) => {
-    const tournamentData: ITournamentData = request.body;
-    const tournamentDocument: ITournamentDocumentWithId = {
-        ...tournamentData,
-        _id: new ObjectId(tournamentData._id),
-        players: tournamentData.players?.map(id => new ObjectId(id)) || [],
-        games: []
-    }
-    
-    createDocument(getDBCollections().tournaments, tournamentDocument)
-    ?.then(data => response.json(data))
-    .catch(error => next(error))
-}
-export const deleteTournament = (request: Request, response: Response, next: NextFunction) => {
+    response.json(tournament);
+});
+
+export const postTournament = expressAsyncHandler(async(request: Request, response: Response) => {
+    const tournamentData: ITournament = {
+        ...request.body,
+        playersIDs: request.body.playersIDs || [],
+        gamesIDs: request.body.gamesIDs || []
+    };
+
+    const createdTournament = await createDocument(getDBCollections().tournaments, tournamentData);
+
+    response.json(createdTournament);
+});
+export const deleteTournament = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
+    const tournamentForDeleting = await findDocumentById(getDBCollections().tournaments, id);
 
-    deleteDocument(getDBCollections().tournaments, id)
-    ?.then(data => response.json(data))
-    .catch(error => next(error));
-}
-export const updateTournament = (request: Request, response: Response, next: NextFunction) => {
+    if(!tournamentForDeleting) throw new NotFoundError("По указанному id турнир не найден");
+
+    const deletingResult = await deleteDocument(getDBCollections().tournaments, id);
+
+    response.json(deletingResult);
+});
+
+export const updateTournament = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
-    const {body} = request;
+    const tournamentData: ITournament = request.body;
+    const documentForUpdate = await findDocumentById(getDBCollections().tournaments, id);
 
-    updateDocument(getDBCollections().tournaments, id, body)
-    ?.then(data => response.json(data))
-    .catch(error => next(error));
-}
+    if(!documentForUpdate) throw new NotFoundError("По указанному id турнир не найден");
+
+    const updatedDocument = await updateDocument(getDBCollections().tournaments, id, tournamentData);
+
+    response.json(updatedDocument);
+})
 
 //TODO НАВЕСТИ ПОРЯДОК!!!!!
-export const startTournament = (request: Request, response: Response, next: NextFunction) => {
+export const startTournament = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
-    let tournamentDocument: ITournamentDocumentWithId;
-    let playersDocuments: IPlayerDocumentWithId[];
+    const tournamentForStart = await findDocumentById(getDBCollections().tournaments, id) as ITournamentDocumentWithId;
 
-    findDocumentById(getDBCollections().tournaments, id)
+    if(!tournamentForStart) throw new NotFoundError("По указанному id турнир не найден");
+    if(tournamentForStart.isStarted) throw new InputError("Данный турнир уже стартовал");
+    //TODO скорректировать с разными видами систем и жеребьевки
+    if(tournamentForStart.playersIDs.length < 3) throw new InputError("Для старта турнира нужно как минимум 3 участника");
+
+
+    const players = await findDocumentsById(getDBCollections().players, tournamentForStart.playersIDs as string[]) || [];
+
+    if(players.length < tournamentForStart.playersIDs.length) {
+        throw new NotFoundError(`В базе данных не было найдено ${tournamentForStart.playersIDs.length - players.length} игрока`)
+    }
+
+
+    //TODO для каждого игрока сформировать статистику
+    const playersStats = players.map(player => PlayerStat(player as IPlayerDocumentWithId, id));
+
+    //TODO скорректировать с типом жеребьевки
+    //TODO при жеребьевке лучше передавать не игроков а их статистику
+    const games = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
+    const savedGames = await createDocuments(getDBCollections().games, games) || [];
+    const savedPlayersStats = await createDocuments(getDBCollections().playerStats, playersStats) || [];
+
+    //TODO сохранить в турнир статистику игроков и сохранить каждому игроку
+    //console.log(savedPlayersStats);
+
+    tournamentForStart.isStarted = true;
+    tournamentForStart.gamesIDs = savedGames.map(game => game?._id.toString());
+    
+    const updatedTournament = await updateDocument(getDBCollections().tournaments, id, tournamentForStart);
+
+    response.json(updatedTournament);
+
+    //let tournamentDocument: ITournamentDocumentWithId;
+    //let playersDocuments: IPlayerDocumentWithId[];
+
+    /* findDocumentById(getDBCollections().tournaments, id)
     ?.then(result  => {
         tournamentDocument = result as ITournamentDocumentWithId;
         
@@ -93,10 +134,18 @@ export const startTournament = (request: Request, response: Response, next: Next
         return updateDocument(getDBCollections().tournaments, id, tournamentDocument);
     })
     .then(result => response.json(result))
-    .catch(error => next(error));
-}
+    .catch(error => next(error)); */
+});
 export const finishTournament = (request: Request, response: Response, next: NextFunction) => {
     response.json("Турнир завершился");
 }
 
 
+/*
+    После старта турнира клиент получает обновленные данные турнира и список уже сформированных игр.
+    На клиенте можно отобразить так: ФИО1 0:0 ФИО2.
+    Добавить кнопку при нажатии на которую можно выбрать победителя или указать ничью
+    После этих действий, данные отправляются на сервер для обновления данных game.
+    Также нужно обновить данные игрока - очки, место, рейтинг Адамовича.
+    Для этого нам нужен отдельный объект playerStats
+*/

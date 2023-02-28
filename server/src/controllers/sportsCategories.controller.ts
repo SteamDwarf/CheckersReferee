@@ -13,7 +13,7 @@ export const getSportCategoryById = expressAsyncHandler(async(request: Request, 
     const {id} = request.params;
     const category = await findDocumentById(getDBCollections().sportsCategories, id);
 
-    if(!category) throw new NotFoundError("По указанному id не найдена спортивная категория");
+    //if(!category) throw new NotFoundError("По указанному id не найдена спортивная категория");
 
     response.json(category);
 })

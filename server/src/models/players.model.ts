@@ -1,28 +1,26 @@
-import { ObjectId, WithId } from "mongodb"
+import { ObjectId } from "mongodb"
 
-//TODO добавить конвертер из одного типа в другой
+export enum Gender {
+    male = "Мужской",
+    female = "Женский"
+}
+
 export interface IPlayer {
     firstName: string,                  //Имя
     middleName: string,                 //Отчество
     lastName: string,                   //Фамилия
-    birthday: string,
+    gender: Gender                      //Пол
+    birthday: string,                   //Дата рождения
     region: string,                     //Место проживания
+    sportsCategoryID: string,           //ID спортивного разряда
+    playerStatsIDs?: string[] | [],     //Массив ID статистики игрока в турнирах
     sportsCategoryAbbr: string,         //Краткое название разряда
     sportsOrganization: string,         //Спортивная организация
     currentAdamovichRank: number,       //Текущий рейтинг Адамовича
     previousAdamovichRank?: number      //Предыдущий рейтинг Адамовича
 }
 
-export interface IPlayerData extends IPlayer {
-    sportsCategory: string,             //ID спортивного разряда
-    playerStats?: string[] | []         //Массив ID статистики игрока в турнирах
-}
-
-export interface IPlayerDocument extends IPlayer{
-    sportsCategory: ObjectId,
-    playerStats?: ObjectId[] | []
-}
-export interface IPlayerDocumentWithId extends IPlayerDocument{
+export interface IPlayerDocumentWithId extends IPlayer{
     _id: ObjectId,
 }
 
@@ -33,10 +31,11 @@ export const playersSchema = {
             required: [
                 "firstName", 
                 "middleName", 
-                "lastName", 
+                "lastName",
+                "gender",
                 "birthday", 
                 "region", 
-                "sportsCategory", 
+                "sportsCategoryID", 
                 "sportsCategoryAbbr",
                 "sportsOrganization",
                 "currentAdamovichRank"
@@ -54,6 +53,10 @@ export const playersSchema = {
                     bsonType: "string",
                     description: "Поле lastName (фамилия) является обязательным и должно быть строкой"
                 },
+                "gender": {
+                    bsonType: "string",
+                    description: "Поле gender (пол) является обязательным и должно быть строкой"
+                },
                 "birthday": {
                     bsonType: "string",
                     description: "Поле birthday (дата рождения) является обязательным и должно быть строкой"
@@ -70,9 +73,9 @@ export const playersSchema = {
                     bsonType: "number",
                     description: "Поле previousAdamovichRank должно быть числом"
                 },
-                "sportsCategory": {
-                    bsonType: "objectId",
-                    description: "Поле sportsCategory (спортивный разряд) является обязательным и должно быть objectId"
+                "sportsCategoryID": {
+                    bsonType: "string",
+                    description: "Поле sportsCategoryID (спортивный разряд) является обязательным и должно быть строкой"
                 },
                 "sportsCategoryAbbr": {
                     bsonType: "string",
@@ -82,7 +85,7 @@ export const playersSchema = {
                     bsonType: "string",
                     description: "Поле sportsOrganization (спортивная организация) является обязательным и должно быть строкой"
                 },
-                "playerStats": {
+                "playerStatsIDs": {
                     bsonType: "array",
                     description: "Поле playerStats (статистика игрока) должно быть массивом"
                 },

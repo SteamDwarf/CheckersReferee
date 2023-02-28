@@ -1,27 +1,21 @@
-import { NextFunction, Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import { Request, Response } from "express";
 import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById } from "../database/database";
-import { IPlayerData, IPlayerDocument } from "../models/players.model";
+import { IPlayer} from "../models/players.model";
 import { ISportsCategoryDocument } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
 import expressAsyncHandler from "express-async-handler";
-import { ErrorNames, NotFoundError, ServerError } from "../utils/ServerError";
+import {NotFoundError} from "../utils/ServerError";
+
 
 export const createPlayer = expressAsyncHandler(async(request: Request, response: Response) => {
-    const playerData: IPlayerData = request.body;
-    const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playerData.sportsCategory);
+    let playerData: IPlayer = request.body;
+    const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playerData.sportsCategoryID);
 
-    if(!sportCategory) throw new NotFoundError("Указанный спортивный разряд не найден");
-
-    let playerDocument:IPlayerDocument = {
-        ...playerData,
-        sportsCategory: new ObjectId(playerData.sportsCategory),
-        playerStats: playerData.playerStats?.map(id => new ObjectId(id)) || []
-    };
+    if(!sportCategory) throw new NotFoundError("По указанному id спортивный разряд не найден");
     
-    playerDocument = setSportCategory(sportCategory as ISportsCategoryDocument, playerDocument);
+    playerData = setSportCategory(sportCategory as ISportsCategoryDocument, playerData);
 
-    const createdPlayer = await createDocument(getDBCollections().players, playerDocument);
+    const createdPlayer = await createDocument(getDBCollections().players, playerData);
 
     response.json(createdPlayer);
 })
@@ -29,8 +23,6 @@ export const createPlayer = expressAsyncHandler(async(request: Request, response
 export const getPlayer = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
     const player = await findDocumentById(getDBCollections().players, id);
-
-    if(!player) throw new NotFoundError("По указанному id не был найден игрок");
 
     response.json(player);
 })
@@ -47,17 +39,12 @@ export const getPlayers = expressAsyncHandler(async(request: Request, response: 
 
 export const updatePlayer = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
-    const playerData: IPlayerData = request.body;
+    const playerData: IPlayer = request.body;
     const playerForUpdate = await findDocumentById(getDBCollections().players, id);
 
     if(!playerForUpdate) throw new NotFoundError("По указанному id игрок не найден");
 
-    const playerDocument: IPlayerDocument = {
-        ...playerData,
-        sportsCategory: new ObjectId(playerData.sportsCategory),
-        playerStats: playerData.playerStats?.map(id => new ObjectId(id)) || []
-    }
-    const updatedPlayer = await updateDocument(getDBCollections().players, id, playerDocument);
+    const updatedPlayer = await updateDocument(getDBCollections().players, id, playerData);
 
     response.json(updatedPlayer);
 });
@@ -74,10 +61,10 @@ export const deletePlayer = expressAsyncHandler(async(request: Request, response
 });
 
 
-const setSportCategory = (sportCategory: ISportsCategoryDocument, playerDocument: IPlayerDocument) => {
+const setSportCategory = (sportCategory: ISportsCategoryDocument, playerDocument: IPlayer) => {
     const playerCopy = {...playerDocument};
 
-    playerCopy.sportsCategory = sportCategory._id;
+    playerCopy.sportsCategoryID = sportCategory._id.toString();
     playerCopy.sportsCategoryAbbr = sportCategory.shortTitle;
     
     if(!playerCopy.currentAdamovichRank) {
