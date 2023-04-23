@@ -14,6 +14,7 @@ export const createPlayer = expressAsyncHandler(async(request: Request, response
     if(!sportCategory) throw new NotFoundError("По указанному id спортивный разряд не найден");
     
     playerData = setSportCategory(sportCategory as ISportsCategoryDocument, playerData);
+    playerData.playerStatsIDs = [];
 
     const createdPlayer = await createDocument(getDBCollections().players, playerData);
 

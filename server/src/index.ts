@@ -10,13 +10,15 @@ import playersRouter from './routes/players.router';
 import sportsCategoriesRouter from './routes/sportsCategories.router';
 import tournamentsRouter from './routes/tournaments.router';
 import gamesRouter from './routes/games.router';
-import { ServerError } from './utils/ServerError';
+import playerStatsRouter from './routes/playerStats.router';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
 const PORT = process.env.PORT || 5000;
 const URI = process.env.URI || 'http://localhost';
 const app = express();
+
+//TODO cors
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
@@ -34,6 +36,7 @@ app.use('/players', playersRouter);
 app.use('/sports-categories', sportsCategoriesRouter);
 app.use('/tournaments', tournamentsRouter);
 app.use('/games', gamesRouter);
+app.use('/player-stats', playerStatsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

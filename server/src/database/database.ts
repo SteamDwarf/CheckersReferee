@@ -27,8 +27,26 @@ const collections: IDBCollections = {
 
 export const getDBCollections = (): IDBCollections => Object.assign({}, collections);
 
+export const connectToDatabase = async(callback?: () => void) => {
+    try {
+        await client.connect()
+
+        console.log(`Успешно установлено подключение к базе данных ${URL}`);
+        database = client.db("checkers_referee");
+
+        setCollections();
+
+        await setCollectionsValidation();
+
+        if(callback) callback();
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 const setCollections = () => {
-    collections.users = database.collection<OptionalId<IUser>>(CollectionNames.USERS);
+    collections.users = database.collection(CollectionNames.USERS);
     collections.players = database.collection(CollectionNames.PLAYERS);
     collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
     collections.tournaments = database.collection(CollectionNames.TOURNAMENTS);
@@ -36,30 +54,20 @@ const setCollections = () => {
     collections.playerStats = database.collection(CollectionNames.PLAYER_STATS);
 }
 
-const validateCollections = () => {
-    return database.command({collMod: CollectionNames.PLAYERS, validator: playersSchema.validator})
-    .then(() => database.command({collMod: CollectionNames.SPORTS_CATEGORIES, validator: sportsCategorySchema.validator}))
-    .then(() => database.command({collMod: CollectionNames.USERS, validator: userSchema.validator}))
-    .then(() => database.command({collMod: CollectionNames.TOURNAMENTS, validator: tournamentSchema.validator}))
-    .then(() => database.command({collMod: CollectionNames.GAMES, validator: gamesSchema.validator}))
-    .then(() => database.command({collMod: CollectionNames.PLAYER_STATS, validator: playerStatsSchema.validator}))
-}
-
-export const connectToDatabase = (callback?: () => void) => {
-    client.connect()
-    .then(() => {
-        console.log(`Успешно установлено подключение к базе данных ${URL}`);
-        database = client.db("checkers_referee");
-
-        setCollections();
-        return validateCollections();
-    })
-    .then(() => callback ? callback(): undefined)
-    .catch(error => console.error(error));
+const setCollectionsValidation = async() => {
+    await database.command({collMod: CollectionNames.PLAYERS, validator: playersSchema.validator})
+    await database.command({collMod: CollectionNames.SPORTS_CATEGORIES, validator: sportsCategorySchema.validator})
+    await database.command({collMod: CollectionNames.USERS, validator: userSchema.validator})
+    await database.command({collMod: CollectionNames.TOURNAMENTS, validator: tournamentSchema.validator})
+    await database.command({collMod: CollectionNames.GAMES, validator: gamesSchema.validator})
+    await database.command({collMod: CollectionNames.PLAYER_STATS, validator: playerStatsSchema.validator})
 }
 
 export const findDocuments = (collection: Collection | undefined) => {
     return collection?.find({}).toArray();
+}
+export const findDocumentsWithFilter = (collection: Collection | undefined, filter: object) => {
+    return collection?.find(filter).toArray();
 }
 
 export const findDocumentsById = (collection: Collection | undefined, ids: string[]) => {

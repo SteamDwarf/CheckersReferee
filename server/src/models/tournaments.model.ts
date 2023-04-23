@@ -5,7 +5,6 @@ export enum TournamentSystems {
     swiss = "Швейцарская"
 }
 
-//TODO Добавить PlayerStats
 export interface ITournament {
     title: string,
     startDate?: string,
@@ -24,6 +23,7 @@ export interface ITournament {
     drawType?: string,
     playersIDs: (string | undefined)[],
     gamesIDs: (string | undefined)[],
+    playersStatsIDs: (string | undefined)[]
 }
 
 export interface ITournamentDocumentWithId extends ITournament{
@@ -46,6 +46,7 @@ export const tournamentSchema = {
                 "referees",
                 "playersIDs", 
                 "gamesIDs",
+                "playersStatsIDs",
                 "tournamentSystem",
             ],
             properties: {
@@ -116,6 +117,10 @@ export const tournamentSchema = {
                 "gamesIDs": {
                     bsonType: "array",
                     description: "Поле gamesIDs является обязательным и должно быть массивом"
+                },
+                "playersStatsIDs": {
+                    bsonType: "array",
+                    description: "Поле playersStatsIDs является обязательным и должно быть массивом"
                 }
             }
         }

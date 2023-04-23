@@ -1,15 +1,16 @@
 import { NextFunction, Request, Response } from "express"
-import { getDBCollections, createDocument, deleteDocument, findDocumentById, findDocuments, updateDocument, findDocumentsById, createDocuments} from "../database/database";
+import { getDBCollections, createDocument, deleteDocument, findDocumentById, findDocuments, updateDocument, findDocumentsById, createDocuments, findDocument, findDocumentsWithFilter} from "../database/database";
 import { ITournament, ITournamentDocumentWithId } from "../models/tournaments.model";
 import { ObjectId, WithId } from "mongodb";
 import { shuffle } from "../utils/math";
 import { makeRoundRobinDraw } from "../utils/tournaments.utils";
 import { IGame, IGameDocumentWithId } from "../models/games.model";
-import { IPlayerDocumentWithId } from "../models/players.model";
+import { IPlayer, IPlayerDocumentWithId } from "../models/players.model";
 import { paginateData } from "../utils/controllers.utils";
-import { IPlayerStats, PlayerStat } from "../models/playerStats.model";
+import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../models/playerStats.model";
 import expressAsyncHandler from "express-async-handler";
 import { InputError, NotFoundError } from "../utils/ServerError";
+import { getNewAdamovichRank } from "../utils/player.utils";
 
 export const getTournaments = expressAsyncHandler(async(request: Request, response: Response) => {
     const page = request.query.page || "1";
@@ -30,7 +31,8 @@ export const postTournament = expressAsyncHandler(async(request: Request, respon
     const tournamentData: ITournament = {
         ...request.body,
         playersIDs: request.body.playersIDs || [],
-        gamesIDs: request.body.gamesIDs || []
+        gamesIDs: request.body.gamesIDs || [],
+        playersStatsIDs: []
     };
 
     const createdTournament = await createDocument(getDBCollections().tournaments, tournamentData);
@@ -70,74 +72,50 @@ export const startTournament = expressAsyncHandler(async(request: Request, respo
     //TODO скорректировать с разными видами систем и жеребьевки
     if(tournamentForStart.playersIDs.length < 3) throw new InputError("Для старта турнира нужно как минимум 3 участника");
 
-
-    const players = await findDocumentsById(getDBCollections().players, tournamentForStart.playersIDs as string[]) || [];
-
-    if(players.length < tournamentForStart.playersIDs.length) {
-        throw new NotFoundError(`В базе данных не было найдено ${tournamentForStart.playersIDs.length - players.length} игрока`)
-    }
-
-
-    //TODO для каждого игрока сформировать статистику
+    const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerDocumentWithId[];
     const playersStats = players.map(player => PlayerStat(player as IPlayerDocumentWithId, id));
-
     //TODO скорректировать с типом жеребьевки
-    //TODO при жеребьевке лучше передавать не игроков а их статистику
     const games = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
     const savedGames = await createDocuments(getDBCollections().games, games) || [];
-    const savedPlayersStats = await createDocuments(getDBCollections().playerStats, playersStats) || [];
+    const savedPlayersStats = await createDocuments(getDBCollections().playerStats, playersStats) as IPlayerStatsWithID[];
 
-    //TODO сохранить в турнир статистику игроков и сохранить каждому игроку
-    //console.log(savedPlayersStats);
+    await saveStatsToPlayers(players, savedPlayersStats);
 
     tournamentForStart.isStarted = true;
     tournamentForStart.gamesIDs = savedGames.map(game => game?._id.toString());
+    tournamentForStart.playersStatsIDs = savedPlayersStats.map(stat => stat._id.toString());
     
     const updatedTournament = await updateDocument(getDBCollections().tournaments, id, tournamentForStart);
 
     response.json(updatedTournament);
 
-    //let tournamentDocument: ITournamentDocumentWithId;
-    //let playersDocuments: IPlayerDocumentWithId[];
-
-    /* findDocumentById(getDBCollections().tournaments, id)
-    ?.then(result  => {
-        tournamentDocument = result as ITournamentDocumentWithId;
-        
-        if(tournamentDocument.players.length < 3) {
-            response.status(400);
-            throw new Error("Для старта турнира нужно как минимум 3 участника");
-        }
-
-        return Promise.all(tournamentDocument.players.map(playerId => {
-            return findDocument(getDBCollections().players, {"_id": new ObjectId(playerId)});
-        }));
-    })
-    .then(players => {
-        playersDocuments = players as IPlayerDocumentWithId[];
-
-        return Promise.all(players.map(player => {
-            const playserStat = PlayerStat(player as IPlayerDocumentWithId, tournamentDocument);
-
-            return createDocument(getDBCollections().playerStats, playserStat);
-        }));
-    })
-    .then(() => {
-        const games = makeRoundRobinDraw(playersDocuments as IPlayerDocumentWithId[]);
-        return Promise.all(games.map(game => createDocument(getDBCollections().games, game)))
-    })
-    .then(gameDocuments => {
-        if(tournamentDocument) {
-            tournamentDocument.isStarted = true;
-            tournamentDocument.games = gameDocuments.map(game => game?._id);
-        }
-        return updateDocument(getDBCollections().tournaments, id, tournamentDocument);
-    })
-    .then(result => response.json(result))
-    .catch(error => next(error)); */
 });
-export const finishTournament = (request: Request, response: Response, next: NextFunction) => {
+
+
+export const finishTournament = (request: Request, response: Response) => {
+
     response.json("Турнир завершился");
+}
+
+const findPlayers = async(playersIDs: string[]) => {
+    const players = await findDocumentsById(getDBCollections().players, playersIDs) || [];
+
+    if(players.length < playersIDs.length) {
+        throw new NotFoundError(`В базе данных не было найдено ${playersIDs.length - players.length} игрока`)
+    }
+
+    return players;
+}
+
+const saveStatsToPlayers = async(players: IPlayerDocumentWithId[], playerStats: IPlayerStatsWithID[]) => {
+    const updatedPlayers = await Promise.all(players.map(async (player) => {
+        const playerStat = playerStats.find(stat => stat.playerID === player._id.toString());
+
+        player.playerStatsIDs.push(playerStat?._id.toString() as string);
+        return await updateDocument(getDBCollections().players, player._id.toString(), player);
+    }));
+
+    return updatedPlayers;
 }
 
 

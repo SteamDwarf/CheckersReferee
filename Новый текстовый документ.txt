@@ -1,0 +1,175 @@
+import { MongoClient, Db, ObjectId, Collection, OptionalId } from "mongodb";
+import * as dotenv from 'dotenv';
+import { CollectionNames } from "./enums";
+import { DBCollections, DocumentTypes, IDBCollections } from "./types";
+import { playersSchema } from "../models/players.model";
+import { sportsCategorySchema } from "../models/sportsCategory.model";
+import { IUser, userSchema } from "../models/users.model";
+import { tournamentSchema } from "../models/tournaments.model";
+import { gamesSchema } from "../models/games.model";
+import { playerStatsSchema } from "../models/playerStats.model";
+
+dotenv.config({path: `${__dirname}/../../.env`});
+
+const URL = process.env.MONGO_URI || "mongodb://localhost:27017";
+const client = new MongoClient(URL);
+
+let database: Db;
+
+interface ICollectionData {
+    collection: undefined | Collection<Document>;
+    collectionName: string;
+    validator: object;
+}
+
+interface ICollections {
+    players: ICollectionData;
+    sportsCategories: ICollectionData;
+    users: ICollectionData;
+    tournaments: ICollectionData;
+    games: ICollectionData;
+    playerStats: ICollectionData;
+}
+
+/*const collections: IDBCollections = {
+    players: undefined,
+    sportsCategories: undefined,
+    users: undefined,
+    tournaments: undefined,
+    games: undefined,
+    playerStats: undefined
+};*/
+
+const collections: ICollections = {
+    players: {
+        collection: undefined,
+        collectionName: CollectionNames.PLAYERS,
+        validator: playersSchema.validator
+    },
+    sportsCategories: {
+        collection: undefined,
+        collectionName: CollectionNames.SPORTS_CATEGORIES,
+        validator: sportsCategorySchema.validator
+    },
+    users: {
+        collection: undefined,
+        collectionName: CollectionNames.USERS,
+        validator: userSchema.validator
+    },
+    tournaments: {
+        collection: undefined,
+        collectionName: CollectionNames.TOURNAMENTS,
+        validator: tournamentSchema.validator
+    },
+    games: {
+        collection: undefined,
+        collectionName: CollectionNames.GAMES,
+        validator: gamesSchema.validator
+    },
+    playerStats: {
+        collection: undefined,
+        collectionName: CollectionNames.PLAYER_STATS,
+        validator: playerStatsSchema.validator
+    }
+}
+
+export const getDBCollections = () => Object.assign({}, collections);
+
+export const connectToDatabase = async(callback?: () => void) => {
+    try {
+        await client.connect()
+
+        console.log(`Успешно установлено подключение к базе данных ${URL}`);
+        database = client.db("checkers_referee");
+
+        setCollections();
+
+        await setCollectionsValidation();
+
+        if(callback) callback();
+
+    } catch (error) {
+        console.error(error);
+    }
+    
+
+    /* .then(() => {
+        console.log(`Успешно установлено подключение к базе данных ${URL}`);
+        database = client.db("checkers_referee");
+
+        setCollections();
+        return validateCollections();
+    })
+    .then(() => callback ? callback(): undefined)
+    .catch(error => console.error(error)); */
+}
+
+const setCollections = () => {
+    Object.values(collections).forEach(collectionData => {
+        collectionData.collection = database.collection(collectionData.collectionName);
+    })
+    /*collections.users = database.collection<OptionalId<IUser>>(CollectionNames.USERS);
+    collections.players = database.collection(CollectionNames.PLAYERS);
+    collections.sportsCategories = database.collection(CollectionNames.SPORTS_CATEGORIES);
+    collections.tournaments = database.collection(CollectionNames.TOURNAMENTS);
+    collections.games = database.collection(CollectionNames.GAMES);
+    collections.playerStats = database.collection(CollectionNames.PLAYER_STATS);*/
+}
+
+const setCollectionsValidation = () => {
+    Object.values(collections).forEach(async collectionData => {
+        await database.command({collMod: collectionData.collectionName, validator: collectionData.validator});
+    })
+    /* await database.command({collMod: CollectionNames.PLAYERS, validator: playersSchema.validator})
+    await database.command({collMod: CollectionNames.SPORTS_CATEGORIES, validator: sportsCategorySchema.validator})
+    await database.command({collMod: CollectionNames.USERS, validator: userSchema.validator})
+    await database.command({collMod: CollectionNames.TOURNAMENTS, validator: tournamentSchema.validator})
+    await database.command({collMod: CollectionNames.GAMES, validator: gamesSchema.validator})
+    await database.command({collMod: CollectionNames.PLAYER_STATS, validator: playerStatsSchema.validator}) */
+    /* return database.command({collMod: CollectionNames.PLAYERS, validator: playersSchema.validator})
+    .then(() => database.command({collMod: CollectionNames.SPORTS_CATEGORIES, validator: sportsCategorySchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.USERS, validator: userSchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.TOURNAMENTS, validator: tournamentSchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.GAMES, validator: gamesSchema.validator}))
+    .then(() => database.command({collMod: CollectionNames.PLAYER_STATS, validator: playerStatsSchema.validator})) */
+}
+
+export const findDocuments = (collectionData: ICollectionData) => {
+    return collectionData.collection?.find({}).toArray();
+}
+export const findDocumentsWithFilter = (collectionData: ICollectionData, filter: object) => {
+    return collectionData.collection?.find(filter).toArray();
+}
+
+export const findDocumentsById = (collectionData: ICollectionData, ids: string[]) => {
+    const objectIDs = ids.map(id => new ObjectId(id));
+    return collectionData.collection?.find({_id: {$in: objectIDs}}).toArray();
+}
+
+export const findDocument = (collectionData: ICollectionData, filter: object) => {
+    return collectionData.collection?.findOne(filter);
+}
+
+export const findDocumentById = (collectionData: ICollectionData, id: string) => {
+    return collectionData.collection?.findOne({_id: new ObjectId(id)});
+}
+
+export const createDocument = (collectionData: ICollectionData, data: DocumentTypes) => {
+    return collectionData.collection?.insertOne(data)
+            .then(result => collectionData.collection.findOne({_id: new ObjectId(result.insertedId)}));
+}
+
+export const createDocuments = (collectionData: ICollectionData, arrayData: DocumentTypes[]) => {
+    return collectionData.collection?.insertMany(arrayData)
+            .then(insertedData => collectionData.collection.find({_id: {$in: Object.values(insertedData.insertedIds)}}).toArray());
+}
+
+export const deleteDocument = (collectionData: ICollectionData, id: string) => {
+    return collectionData.collection?.deleteOne({_id: new ObjectId(id)});
+}
+
+export const updateDocument = (collectionData: ICollectionData, id: string, newDocument: object) => {
+    return collectionData.collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument})
+            .then(() => collectionData.collection.findOne({_id: new ObjectId(id)}))
+}
+

@@ -6,7 +6,6 @@ export enum CheckersColor {
     white = "Белые"
 }
 
-//TODO добавить цвет шашек
 export interface IGame {
     tournamentID: string,
     player1ID: string,

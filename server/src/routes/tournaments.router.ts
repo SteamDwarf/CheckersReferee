@@ -7,9 +7,11 @@ router.route('/')
     .get(getTournaments)
     .post(postTournament);
 
+//TODO переделать в put
 router.route('/start/:id')
     .post(startTournament)
 
+//TODO переделать в put
 router.route('/finish/:id')
     .post(finishTournament)
 

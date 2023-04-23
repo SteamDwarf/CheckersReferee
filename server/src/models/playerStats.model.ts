@@ -4,20 +4,19 @@ import { getPlayerName } from "../utils/player.utils"
 import { ObjectId } from "mongodb"
 import { CheckersColor } from "./games.model"
 
-//TODO проверить модель
 export interface IPlayerStats {
     playerID: string,
-    tournamentId: string,
+    tournamentID: string,
     playerName: string,
     gorinRank: number
-    adamovichRank: number,
-    adamovichTimeStamp: string,
+    startAdamovichRank: number,
+    lastAdamovichRank: number,
+    startAdamovichTimeStamp: number,
+    lastAdamovichTimeStamp: number,
     place: number,
     score: number,
     sportsCategory: string,
     requiredScore: number,
-    lastCheckersColor: CheckersColor,
-    checkersColorUsed: number
 }
 
 export interface IPlayerStatsWithID extends IPlayerStats {
@@ -28,16 +27,16 @@ export const PlayerStat = (player: IPlayerDocumentWithId, tournamentID: string):
     const playerStat: IPlayerStats = {
         playerID: player._id.toString(),
         playerName: getPlayerName(player),
-        tournamentId: tournamentID,
+        tournamentID: tournamentID,
         gorinRank: 0,
-        adamovichRank: player.currentAdamovichRank,
-        adamovichTimeStamp: Date.now().toLocaleString(),
+        startAdamovichRank: player.currentAdamovichRank,
+        lastAdamovichRank: player.currentAdamovichRank,
+        startAdamovichTimeStamp: Date.now(),
+        lastAdamovichTimeStamp: Date.now(),
         place: 0,
         score: 0,
         sportsCategory: player.sportsCategoryID,
-        requiredScore: 0,
-        lastCheckersColor: CheckersColor.black,
-        checkersColorUsed: 0
+        requiredScore: 0
     }
 
     return playerStat;
@@ -49,26 +48,26 @@ export const playerStatsSchema = {
             bsonType: "object",
             required: [
                 "playerID", 
-                "tournamentId", 
+                "tournamentID", 
                 "playerName", 
                 "gorinRank", 
-                "adamovichRank",
-                "adamovichTimeStamp",
+                "startAdamovichRank",
+                "lastAdamovichRank",
+                "startAdamovichTimeStamp",
+                "lastAdamovichTimeStamp",
                 "place",
                 "score",
                 "sportsCategory",
-                "requiredScore",
-                "lastCheckersColor",
-                "checkersColorUsed"
+                "requiredScore"
             ],
             properties: {
                 "playerID": {
                     bsonType: "string",
                     description: "Поле playerID является обязательным и должно быть строкой"
                 },
-                "tournamentId": {
+                "tournamentID": {
                     bsonType: "string",
-                    description: "Поле tournamentId является обязательным и должно быть строкой"
+                    description: "Поле tournamentID является обязательным и должно быть строкой"
                 },
                 "playerName": {
                     bsonType: "string",
@@ -78,13 +77,21 @@ export const playerStatsSchema = {
                     bsonType: "number",
                     description: "Поле gorinRank является обязательным и должно быть числом"
                 },
-                "adamovichRank": {
+                "startAdamovichRank": {
                     bsonType: "number",
-                    description: "Поле adamovichRank является обязательным и должно быть числом"
+                    description: "Поле startAdamovichRank является обязательным и должно быть числом"
                 },
-                "adamovichTimeStamp": {
-                    bsonType: "string",
-                    description: "Поле adamovichTimeStamp является обязательным и должно быть строкой"
+                "startAdamovichTimeStamp": {
+                    bsonType: "number",
+                    description: "Поле startAdamovichTimeStamp является обязательным и должно быть числом"
+                },
+                "lastAdamovichRank": {
+                    bsonType: "number",
+                    description: "Поле startAdamovichRank является обязательным и должно быть числом"
+                },
+                "lastAdamovichTimeStamp": {
+                    bsonType: "number",
+                    description: "Поле startAdamovichTimeStamp является обязательным и должно быть числом"
                 },
                 "place": {
                     bsonType: "number",
@@ -101,15 +108,7 @@ export const playerStatsSchema = {
                 "requiredScore": {
                     bsonType: "number",
                     description: "Поле requiredScore является обязательным и должно быть числом"
-                },
-                "lastCheckersColor": {
-                    bsonType: "string",
-                    description: "Поле lastCheckersColor является обязательным должно быть строкой"
-                },
-                "checkersColorUsed": {
-                    bsonType: "number",
-                    description: "Поле checkersColorUsed является обязательным должно быть числом"
-                },
+                }
             }
         }
     }

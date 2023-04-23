@@ -4,7 +4,7 @@ export enum Gender {
     male = "Мужской",
     female = "Женский"
 }
-
+//TODO разобраться текцщим и предыдущим рейтингом
 export interface IPlayer {
     firstName: string,                  //Имя
     middleName: string,                 //Отчество
@@ -13,7 +13,7 @@ export interface IPlayer {
     birthday: string,                   //Дата рождения
     region: string,                     //Место проживания
     sportsCategoryID: string,           //ID спортивного разряда
-    playerStatsIDs?: string[] | [],     //Массив ID статистики игрока в турнирах
+    playerStatsIDs: string[],      //Массив ID документов ститистики игрока в турнирах
     sportsCategoryAbbr: string,         //Краткое название разряда
     sportsOrganization: string,         //Спортивная организация
     currentAdamovichRank: number,       //Текущий рейтинг Адамовича
@@ -38,7 +38,8 @@ export const playersSchema = {
                 "sportsCategoryID", 
                 "sportsCategoryAbbr",
                 "sportsOrganization",
-                "currentAdamovichRank"
+                "currentAdamovichRank",
+                "playerStatsIDs"
             ],
             properties: {
                 "firstName": {
@@ -87,7 +88,7 @@ export const playersSchema = {
                 },
                 "playerStatsIDs": {
                     bsonType: "array",
-                    description: "Поле playerStats (статистика игрока) должно быть массивом"
+                    description: "Поле playerStats (статистика игрока) является обязательным и должно быть массивом"
                 },
             }
         }
