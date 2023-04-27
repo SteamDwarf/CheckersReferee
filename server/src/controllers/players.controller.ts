@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById } from "../database/database";
 import { IPlayer} from "../models/players.model";
-import { ISportsCategoryDocument } from "../models/sportsCategory.model";
+import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
 import expressAsyncHandler from "express-async-handler";
 import {NotFoundError} from "../utils/ServerError";
@@ -13,7 +13,7 @@ export const createPlayer = expressAsyncHandler(async(request: Request, response
 
     if(!sportCategory) throw new NotFoundError("По указанному id спортивный разряд не найден");
     
-    playerData = setSportCategory(sportCategory as ISportsCategoryDocument, playerData);
+    playerData = setSportCategory(sportCategory as ISportsCategoryWithID, playerData);
     playerData.playerStatsIDs = [];
 
     const createdPlayer = await createDocument(getDBCollections().players, playerData);
@@ -62,7 +62,7 @@ export const deletePlayer = expressAsyncHandler(async(request: Request, response
 });
 
 
-const setSportCategory = (sportCategory: ISportsCategoryDocument, playerDocument: IPlayer) => {
+const setSportCategory = (sportCategory: ISportsCategoryWithID, playerDocument: IPlayer) => {
     const playerCopy = {...playerDocument};
 
     playerCopy.sportsCategoryID = sportCategory._id.toString();

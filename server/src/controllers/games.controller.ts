@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getDBCollections, findDocumentById, updateDocument, findDocuments, findDocumentsWithFilter} from "../database/database";
-import { IGameDocumentWithId} from "../models/games.model";
+import { IGameWithId} from "../models/games.model";
 import expressAsyncHandler from "express-async-handler";
 import { NotFoundError } from "../utils/ServerError";
 import { IPlayerStatsWithID } from "../models/playerStats.model";
@@ -29,7 +29,7 @@ export const getGame = expressAsyncHandler(async(request: Request, response: Res
 
 export const updateGame = expressAsyncHandler(async(request: Request, response: Response) => {
     const gameID = request.params.id;
-    const newGameData: IGameDocumentWithId = request.body;
+    const newGameData: IGameWithId = request.body;
     const oldGameData = await findDocumentById(getDBCollections().games, gameID);
 
     if(!oldGameData) throw new NotFoundError("По указанному id игра не найдена");
@@ -45,7 +45,7 @@ export const updateGame = expressAsyncHandler(async(request: Request, response: 
     await updatePlayerStatsAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newGameData.player1Score);
     await updatePlayerStatsAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newGameData.player2Score);
     
-    const savedGame = await updateDocument(getDBCollections().games, gameID, newGameData) as IGameDocumentWithId;
+    const savedGame = await updateDocument(getDBCollections().games, gameID, newGameData) as IGameWithId;
 
     response.json(savedGame);
 });

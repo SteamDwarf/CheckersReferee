@@ -1,5 +1,4 @@
-import { IPlayerDocumentWithId } from "./players.model"
-import { ITournamentDocumentWithId } from "./tournaments.model"
+import { IPlayerWithId } from "./players.model"
 import { getPlayerName } from "../utils/player.utils"
 import { ObjectId } from "mongodb"
 import { CheckersColor } from "./games.model"
@@ -8,6 +7,7 @@ export interface IPlayerStats {
     playerID: string,
     tournamentID: string,
     playerName: string,
+    birthday: string,
     gorinRank: number
     startAdamovichRank: number,
     lastAdamovichRank: number,
@@ -15,7 +15,7 @@ export interface IPlayerStats {
     lastAdamovichTimeStamp: number,
     place: number,
     score: number,
-    sportsCategory: string,
+    sportsCategoryID: string,
     requiredScore: number,
 }
 
@@ -23,10 +23,11 @@ export interface IPlayerStatsWithID extends IPlayerStats {
     _id: ObjectId
 }
 
-export const PlayerStat = (player: IPlayerDocumentWithId, tournamentID: string): IPlayerStats => {
+export const PlayerStat = (player: IPlayerWithId, tournamentID: string): IPlayerStats => {
     const playerStat: IPlayerStats = {
         playerID: player._id.toString(),
         playerName: getPlayerName(player),
+        birthday: player.birthday,
         tournamentID: tournamentID,
         gorinRank: 0,
         startAdamovichRank: player.currentAdamovichRank,
@@ -35,7 +36,7 @@ export const PlayerStat = (player: IPlayerDocumentWithId, tournamentID: string):
         lastAdamovichTimeStamp: Date.now(),
         place: 0,
         score: 0,
-        sportsCategory: player.sportsCategoryID,
+        sportsCategoryID: player.sportsCategoryID,
         requiredScore: 0
     }
 
@@ -50,6 +51,7 @@ export const playerStatsSchema = {
                 "playerID", 
                 "tournamentID", 
                 "playerName", 
+                "birthday",
                 "gorinRank", 
                 "startAdamovichRank",
                 "lastAdamovichRank",
@@ -57,7 +59,7 @@ export const playerStatsSchema = {
                 "lastAdamovichTimeStamp",
                 "place",
                 "score",
-                "sportsCategory",
+                "sportsCategoryID",
                 "requiredScore"
             ],
             properties: {
@@ -72,6 +74,10 @@ export const playerStatsSchema = {
                 "playerName": {
                     bsonType: "string",
                     description: "Поле playerName является обязательным и должно быть строкой"
+                },
+                "birthday": {
+                    bsonType: "string",
+                    description: "Поле birthday является обязательным и должно быть строкой"
                 },
                 "gorinRank": {
                     bsonType: "number",
@@ -101,9 +107,9 @@ export const playerStatsSchema = {
                     bsonType: "number",
                     description: "Поле score является обязательным и должно быть числом"
                 },
-                "sportsCategory": {
+                "sportsCategoryID": {
                     bsonType: "string",
-                    description: "Поле sportsCategory является обязательным и должно быть строкой"
+                    description: "Поле sportCategoryID является обязательным и должно быть строкой"
                 },
                 "requiredScore": {
                     bsonType: "number",

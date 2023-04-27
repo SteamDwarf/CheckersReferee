@@ -17,7 +17,7 @@ export interface IGame {
     player1CheckersColor: CheckersColor,
     player2CheckersColor: CheckersColor
 }
-export interface IGameDocumentWithId extends IGame{
+export interface IGameWithId extends IGame{
     _id: ObjectId,
 }
 

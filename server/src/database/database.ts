@@ -1,7 +1,7 @@
-import { MongoClient, Db, ObjectId, Collection, OptionalId } from "mongodb";
+import { MongoClient, Db, ObjectId, Collection, OptionalId, WithId } from "mongodb";
 import * as dotenv from 'dotenv';
 import { CollectionNames } from "./enums";
-import { DBCollections, DocumentTypes, IDBCollections } from "./types";
+import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "./types";
 import { playersSchema } from "../models/players.model";
 import { sportsCategorySchema } from "../models/sportsCategory.model";
 import { IUser, userSchema } from "../models/users.model";
@@ -100,6 +100,12 @@ export const deleteDocument = (collection: Collection | undefined, id: string) =
 export const updateDocument = (collection: Collection | undefined, id: string, newDocument: object) => {
     return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument})
             .then(() => collection.findOne({_id: new ObjectId(id)}))
+}
+
+export const updateDocuments = (collection: Collection | undefined, newDocuments: DocumentWithID[]) => {
+    return newDocuments.map(document => {
+        return updateDocument(collection, document._id.toString(), document)
+    })
 }
 
 

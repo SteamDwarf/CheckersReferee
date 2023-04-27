@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb"
-interface ISportsCategory {
+export interface ISportsCategory {
     title: string,
     shortTitle: string,
     minAdamovichRank: number,
     maxAdamovichRank: number
 }
 
-export interface ISportsCategoryDocument extends ISportsCategory {
+export interface ISportsCategoryWithID extends ISportsCategory {
     _id: ObjectId
 }
 

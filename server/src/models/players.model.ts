@@ -20,7 +20,7 @@ export interface IPlayer {
     previousAdamovichRank?: number      //Предыдущий рейтинг Адамовича
 }
 
-export interface IPlayerDocumentWithId extends IPlayer{
+export interface IPlayerWithId extends IPlayer{
     _id: ObjectId,
 }
 

@@ -2,7 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import { findDocumentById, findDocuments, findDocumentsWithFilter, getDBCollections, updateDocument } from "../database/database";
 import { IPlayerStatsWithID } from "../models/playerStats.model";
-import { getNewAdamovichRank } from "../utils/player.utils";
+import { calculateAdamovichAfterGame } from "../utils/player.utils";
 
 export const getPlayersStats = expressAsyncHandler(async(request: Request, response: Response) => {
     const tournamentID = request.query.tournamentID;
@@ -38,8 +38,8 @@ export const updatePlayerStatsAfterGame = async(
 
         playerStats.score = playerStats.score - prevScore + curScore;
         
-        if(Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) <= 400) {
-            playerStats.lastAdamovichRank = getNewAdamovichRank(playerStats, competitorAdamovichRank);
+        if(Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
+            playerStats.lastAdamovichRank = calculateAdamovichAfterGame(playerStats, competitorAdamovichRank);
             playerStats.lastAdamovichTimeStamp = Date.now();
         }
         

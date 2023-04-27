@@ -1,14 +1,9 @@
-import { ObjectId } from "mongodb";
-import { getSportCategoryById } from "../controllers/sportsCategories.controller";
-import { getDBCollections, findDocument, findDocumentById } from "../database/database";
-import { IPlayer, IPlayerDocumentWithId } from "../models/players.model"
-import { ISportsCategoryDocument} from "../models/sportsCategory.model"
+import { ISportsCategory, ISportsCategoryWithID} from "../models/sportsCategory.model"
 import { clamp } from "./math";
-import { IPVersion } from "net";
-import { IPlayerStats, IPlayerStatsWithID } from "../models/playerStats.model";
+import { IPlayerStats } from "../models/playerStats.model";
 
 
-export const getNewAdamovichRank = (playerStats: IPlayerStats, competitorAdamovichRank: number) => {
+export const calculateAdamovichAfterGame = (playerStats: IPlayerStats, competitorAdamovichRank: number) => {
     /* const sumCompetitorsRank = playersStats.reduce((sum, curPlayerStats) => {
         if(playerStats.playerID !== curPlayerStats.playerID) {
             return sum += curPlayerStats.startAdamovichRank;
@@ -22,20 +17,56 @@ export const getNewAdamovichRank = (playerStats: IPlayerStats, competitorAdamovi
     return newRank;
 }
 
-/* export const getNewAdamovichRank = async(player: IPlayer, competitors: IPlayer[], score: number, games: number) => {
-    const sumCompetitorsRank = competitors.reduce((sum, curCompetitor) => {
-        return sum += curCompetitor.currentAdamovichRank;
-    }, 0);
-    const newRank = (20 * player.currentAdamovichRank + sumCompetitorsRank + 5000/15 * (2 * score - games)) / (20 + games);
-    
-    return findDocumentById(getDBCollections().sportsCategories, player.sportsCategoryID)
-            ?.then(category => clampAdamovichRank(category as ISportsCategoryDocument, newRank));
-} */
+export const calculateAdamovichAfterTournament = (playerStats: IPlayerStats, sportsCategory: ISportsCategory, playersStats: IPlayerStats[]) => {
+    let playedGames = 0;
 
-export const clampAdamovichRank = (sportCategory: ISportsCategoryDocument, newRank: number) => {
+    const constCoeff = getConstCoefficient(playerStats.birthday, sportsCategory);
+    const sumCompetitorsRank = playersStats.reduce((sum, curPlayerStats) => {
+        if(playerStats.playerID !== curPlayerStats.playerID && 
+            Math.abs(playerStats.startAdamovichRank - curPlayerStats.startAdamovichRank) < 400
+        ) {
+            playedGames += 1;
+            return sum += curPlayerStats.startAdamovichRank;
+        }
+
+        return sum;
+    }, 0);
+
+    const newRank = (20 * playerStats.startAdamovichRank + sumCompetitorsRank + constCoeff * (playerStats.score - playedGames)) / (20 + playedGames);
+
+    //return newRank;
+    return clampAdamovichRank(sportsCategory, newRank);
+}
+
+
+export const clampAdamovichRank = (sportCategory: ISportsCategory, newRank: number) => {
     return clamp(newRank, sportCategory.minAdamovichRank, sportCategory.maxAdamovichRank);
 }
 
 export const getPlayerName = (player: {firstName: string, middleName: string, lastName: string}) => {
     return [player.firstName, player.middleName, player.lastName].join(" ").trim();
+}
+
+const getConstCoefficient = (birthdayString: string, sportsCategory: ISportsCategory) => {
+    const age = countAge(birthdayString);
+
+    if(sportsCategory.shortTitle == "БР" && age < 17) {
+        return 5000/10;
+    }
+
+    return 5000/15;
+}
+
+const countAge = (birthdayString: string) => {
+    const today = new Date();
+    const birthdayDate = new Date(birthdayString);
+    const monthDiff = today.getMonth() - birthdayDate.getMonth();
+
+    let age = today.getFullYear() - birthdayDate.getFullYear();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdayDate.getDate())) {
+        age--;
+    }
+
+    return age;
 }

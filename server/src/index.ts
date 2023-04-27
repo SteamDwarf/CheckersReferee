@@ -4,7 +4,6 @@ import * as dotenv from 'dotenv';
 import errorHandler from './middlewares/errorHandler.middleware';
 import notFoundHandler from './middlewares/notFoundHandler.middleware';
 import { connectToDatabase } from './database/database';
-import { getNewAdamovichRank } from './utils/player.utils';
 import authRouter from './routes/auth.router';
 import playersRouter from './routes/players.router';
 import sportsCategoriesRouter from './routes/sportsCategories.router';

@@ -26,7 +26,7 @@ export interface ITournament {
     playersStatsIDs: (string | undefined)[]
 }
 
-export interface ITournamentDocumentWithId extends ITournament{
+export interface ITournamentWithId extends ITournament{
     _id: ObjectId,
 }
 

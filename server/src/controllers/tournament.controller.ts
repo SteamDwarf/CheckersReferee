@@ -1,16 +1,24 @@
-import { NextFunction, Request, Response } from "express"
-import { getDBCollections, createDocument, deleteDocument, findDocumentById, findDocuments, updateDocument, findDocumentsById, createDocuments, findDocument, findDocumentsWithFilter} from "../database/database";
-import { ITournament, ITournamentDocumentWithId } from "../models/tournaments.model";
-import { ObjectId, WithId } from "mongodb";
-import { shuffle } from "../utils/math";
+import { Request, Response } from "express"
+import { getDBCollections, 
+    createDocument, 
+    deleteDocument, 
+    findDocumentById, 
+    findDocuments, 
+    updateDocument, 
+    findDocumentsById, 
+    createDocuments, 
+    findDocumentsWithFilter, 
+    updateDocuments
+} from "../database/database";
+import { ITournament, ITournamentWithId } from "../models/tournaments.model";
 import { makeRoundRobinDraw } from "../utils/tournaments.utils";
-import { IGame, IGameDocumentWithId } from "../models/games.model";
-import { IPlayer, IPlayerDocumentWithId } from "../models/players.model";
+import { IPlayerWithId } from "../models/players.model";
 import { paginateData } from "../utils/controllers.utils";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../models/playerStats.model";
 import expressAsyncHandler from "express-async-handler";
 import { InputError, NotFoundError } from "../utils/ServerError";
-import { getNewAdamovichRank } from "../utils/player.utils";
+import { calculateAdamovichAfterTournament } from "../utils/player.utils";
+import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 
 export const getTournaments = expressAsyncHandler(async(request: Request, response: Response) => {
     const page = request.query.page || "1";
@@ -65,15 +73,15 @@ export const updateTournament = expressAsyncHandler(async(request: Request, resp
 //TODO НАВЕСТИ ПОРЯДОК!!!!!
 export const startTournament = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
-    const tournamentForStart = await findDocumentById(getDBCollections().tournaments, id) as ITournamentDocumentWithId;
+    const tournamentForStart = await findDocumentById(getDBCollections().tournaments, id) as ITournamentWithId;
 
     if(!tournamentForStart) throw new NotFoundError("По указанному id турнир не найден");
     if(tournamentForStart.isStarted) throw new InputError("Данный турнир уже стартовал");
     //TODO скорректировать с разными видами систем и жеребьевки
     if(tournamentForStart.playersIDs.length < 3) throw new InputError("Для старта турнира нужно как минимум 3 участника");
 
-    const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerDocumentWithId[];
-    const playersStats = players.map(player => PlayerStat(player as IPlayerDocumentWithId, id));
+    const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerWithId[];
+    const playersStats = players.map(player => PlayerStat(player as IPlayerWithId, id));
     //TODO скорректировать с типом жеребьевки
     const games = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
     const savedGames = await createDocuments(getDBCollections().games, games) || [];
@@ -92,10 +100,37 @@ export const startTournament = expressAsyncHandler(async(request: Request, respo
 });
 
 
-export const finishTournament = (request: Request, response: Response) => {
+export const finishTournament = expressAsyncHandler(async(request: Request, response: Response) => {
+    const {id} = request.params;
+    const tournamentForFinish = await findDocumentById(getDBCollections().tournaments, id) as ITournamentWithId;
+
+    if(!tournamentForFinish) throw new NotFoundError("По указанному id турнир не найден");
+
+    let playersStats = await findDocumentsWithFilter(getDBCollections().playerStats, {tournamentID: id}) as IPlayerStatsWithID[];
+    
+    playersStats = playersStats.sort((stat1, stat2) => (stat1.score - stat2.score) * -1);
+
+    for(let i = 0; i < playersStats.length; i++) {
+        const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playersStats[i].sportsCategoryID) as ISportsCategoryWithID;
+        
+        playersStats[i].place = i + 1;
+        playersStats[i].lastAdamovichRank = calculateAdamovichAfterTournament(playersStats[i], sportCategory, playersStats);
+    }
+
+    playersStats = playersStats.map(stat => {
+        stat.startAdamovichRank = stat.lastAdamovichRank;
+        return stat;
+    });
+
+    const savedPlayerStats = await updateDocuments(getDBCollections().playerStats, playersStats);
+
+    /* const savedPlayerStats = await playersStats.map(async playerStats => {
+        return await updateDocument(getDBCollections().playerStats, playerStats._id.toString(), playerStats);
+    })
+ */
 
     response.json("Турнир завершился");
-}
+});
 
 const findPlayers = async(playersIDs: string[]) => {
     const players = await findDocumentsById(getDBCollections().players, playersIDs) || [];
@@ -107,7 +142,7 @@ const findPlayers = async(playersIDs: string[]) => {
     return players;
 }
 
-const saveStatsToPlayers = async(players: IPlayerDocumentWithId[], playerStats: IPlayerStatsWithID[]) => {
+const saveStatsToPlayers = async(players: IPlayerWithId[], playerStats: IPlayerStatsWithID[]) => {
     const updatedPlayers = await Promise.all(players.map(async (player) => {
         const playerStat = playerStats.find(stat => stat.playerID === player._id.toString());
 
