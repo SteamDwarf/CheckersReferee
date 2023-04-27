@@ -17,8 +17,9 @@ import { paginateData } from "../utils/controllers.utils";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../models/playerStats.model";
 import expressAsyncHandler from "express-async-handler";
 import { InputError, NotFoundError } from "../utils/ServerError";
-import { calculateAdamovichAfterTournament } from "../utils/player.utils";
+import { calculateAdamovichAfterTournament, calculateGorinCoefficient } from "../utils/player.utils";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { IGameWithId } from "../models/games.model";
 
 export const getTournaments = expressAsyncHandler(async(request: Request, response: Response) => {
     const page = request.query.page || "1";
@@ -106,21 +107,27 @@ export const finishTournament = expressAsyncHandler(async(request: Request, resp
 
     if(!tournamentForFinish) throw new NotFoundError("По указанному id турнир не найден");
 
+    const games = await findDocumentsWithFilter(getDBCollections().games, {tournamentID: id}) as IGameWithId[];
     let playersStats = await findDocumentsWithFilter(getDBCollections().playerStats, {tournamentID: id}) as IPlayerStatsWithID[];
+    
     
     playersStats = playersStats.sort((stat1, stat2) => (stat1.score - stat2.score) * -1);
 
     for(let i = 0; i < playersStats.length; i++) {
         const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playersStats[i].sportsCategoryID) as ISportsCategoryWithID;
+        const playerGames = games.filter(game => game.player1ID === playersStats[i].playerID || game.player2ID === playersStats[i].playerID);
         
         playersStats[i].place = i + 1;
         playersStats[i].lastAdamovichRank = calculateAdamovichAfterTournament(playersStats[i], sportCategory, playersStats);
+        playersStats[i].gorinRank = calculateGorinCoefficient(playersStats[i].playerID, playerGames, playersStats);
     }
 
     playersStats = playersStats.map(stat => {
         stat.startAdamovichRank = stat.lastAdamovichRank;
         return stat;
     });
+    //TODO обновить рейтинг у модели игрока
+    //TODO обновить isFinished
 
     const savedPlayerStats = await updateDocuments(getDBCollections().playerStats, playersStats);
 

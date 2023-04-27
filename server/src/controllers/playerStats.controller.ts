@@ -34,11 +34,11 @@ export const updatePlayerStatsAfterGame = async(
         curScore: number
     ) => {
 
-    if(playerStats && competitorAdamovichRank) {
-
+    if(playerStats) {
         playerStats.score = playerStats.score - prevScore + curScore;
+
         
-        if(Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
+        if(competitorAdamovichRank && Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
             playerStats.lastAdamovichRank = calculateAdamovichAfterGame(playerStats, competitorAdamovichRank);
             playerStats.lastAdamovichTimeStamp = Date.now();
         }

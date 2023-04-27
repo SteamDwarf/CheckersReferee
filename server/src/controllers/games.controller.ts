@@ -34,10 +34,13 @@ export const updateGame = expressAsyncHandler(async(request: Request, response: 
 
     if(!oldGameData) throw new NotFoundError("По указанному id игра не найдена");
 
+    //TODO перенести в plyayerStats.controller
     const playersStats = await findDocumentsWithFilter(getDBCollections().playerStats, {tournamentID: oldGameData.tournamentID}) as IPlayerStatsWithID[];
+    //TODO искать через бд
     const player1Stats = playersStats.find(playerStats => {
         return playerStats.playerID === oldGameData.player1ID && playerStats.tournamentID === oldGameData.tournamentID;
     })
+    //TODO искать через бд
     const player2Stats = playersStats.find(playerStats => {
         return playerStats.playerID === oldGameData.player2ID && playerStats.tournamentID === oldGameData.tournamentID;
     })
