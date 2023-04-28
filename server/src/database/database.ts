@@ -102,10 +102,16 @@ export const updateDocument = (collection: Collection | undefined, id: string, n
             .then(() => collection.findOne({_id: new ObjectId(id)}))
 }
 
-export const updateDocuments = (collection: Collection | undefined, newDocuments: DocumentWithID[]) => {
-    return newDocuments.map(document => {
-        return updateDocument(collection, document._id.toString(), document)
-    })
+export const updateDocuments = async (collection: Collection | undefined, newDocuments: DocumentWithID[]) => {
+    const documents = [];
+
+    for(let i = 0; i < newDocuments.length; i++) {
+        const updatedDocument = await updateDocument(collection, newDocuments[i]._id.toString(), newDocuments[i]);
+
+        documents.push(updatedDocument);
+    }
+
+    return documents;
 }
 
 

@@ -1,8 +1,10 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express";
-import { findDocumentById, findDocuments, findDocumentsWithFilter, getDBCollections, updateDocument } from "../database/database";
-import { IPlayerStatsWithID } from "../models/playerStats.model";
-import { calculateAdamovichAfterGame } from "../utils/player.utils";
+import { findDocumentById, findDocuments, findDocumentsWithFilter, getDBCollections, updateDocument, updateDocuments } from "../database/database";
+import { IPlayerStats, IPlayerStatsWithID } from "../models/playerStats.model";
+import { calculateAdamovichAfterGame, calculateAdamovichAfterTournament, calculateGorinCoefficient } from "../utils/player.utils";
+import { IGame } from "../models/games.model";
+import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 
 export const getPlayersStats = expressAsyncHandler(async(request: Request, response: Response) => {
     const tournamentID = request.query.tournamentID;
@@ -47,3 +49,23 @@ export const updatePlayerStatsAfterGame = async(
         await updateDocument(getDBCollections().playerStats, playerStats._id.toString(), playerStats);
     }
 };
+
+export const updatePlayerStatsAfterTournament = async(oldPlayersStats: IPlayerStatsWithID[],  games: IGame[]) => {
+    let playersStats = oldPlayersStats.sort((stat1, stat2) => (stat1.score - stat2.score) * -1);
+
+    for(let i = 0; i < playersStats.length; i++) {
+        const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playersStats[i].sportsCategoryID) as ISportsCategoryWithID;
+        const playerGames = games.filter(game => game.player1ID === playersStats[i].playerID || game.player2ID === playersStats[i].playerID);
+        
+        playersStats[i].place = i + 1;
+        playersStats[i].lastAdamovichRank = calculateAdamovichAfterTournament(playersStats[i], sportCategory, playersStats);
+        playersStats[i].gorinRank = calculateGorinCoefficient(playersStats[i].playerID, playerGames, playersStats);
+    }
+
+    playersStats = playersStats.map(stat => {
+        stat.startAdamovichRank = stat.lastAdamovichRank;
+        return stat;
+    });
+
+    return updateDocuments(getDBCollections().playerStats, playersStats);
+}

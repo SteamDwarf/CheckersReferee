@@ -20,6 +20,8 @@ import { InputError, NotFoundError } from "../utils/ServerError";
 import { calculateAdamovichAfterTournament, calculateGorinCoefficient } from "../utils/player.utils";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { IGameWithId } from "../models/games.model";
+import { updatePlayerStatsAfterTournament } from "./playerStats.controller";
+import { updatePlayersAfterTournament } from "./players.controller";
 
 export const getTournaments = expressAsyncHandler(async(request: Request, response: Response) => {
     const page = request.query.page || "1";
@@ -106,12 +108,20 @@ export const finishTournament = expressAsyncHandler(async(request: Request, resp
     const tournamentForFinish = await findDocumentById(getDBCollections().tournaments, id) as ITournamentWithId;
 
     if(!tournamentForFinish) throw new NotFoundError("По указанному id турнир не найден");
+    if(tournamentForFinish.isFinished) throw new InputError("Данный турнир уже стартовал");
 
+    const playersStats = await findDocumentsWithFilter(getDBCollections().playerStats, {tournamentID: id}) as IPlayerStatsWithID[];
     const games = await findDocumentsWithFilter(getDBCollections().games, {tournamentID: id}) as IGameWithId[];
-    let playersStats = await findDocumentsWithFilter(getDBCollections().playerStats, {tournamentID: id}) as IPlayerStatsWithID[];
-    
-    
-    playersStats = playersStats.sort((stat1, stat2) => (stat1.score - stat2.score) * -1);
+
+    const savedPlayerStats = await updatePlayerStatsAfterTournament(playersStats,games) as IPlayerStatsWithID[];
+    await updatePlayersAfterTournament(savedPlayerStats);
+
+    tournamentForFinish.isFinished = true;
+
+    const updatedTournament = await updateDocument(getDBCollections().tournaments, tournamentForFinish._id.toString(), tournamentForFinish);
+
+
+    /* playersStats = playersStats.sort((stat1, stat2) => (stat1.score - stat2.score) * -1);
 
     for(let i = 0; i < playersStats.length; i++) {
         const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playersStats[i].sportsCategoryID) as ISportsCategoryWithID;
@@ -125,18 +135,18 @@ export const finishTournament = expressAsyncHandler(async(request: Request, resp
     playersStats = playersStats.map(stat => {
         stat.startAdamovichRank = stat.lastAdamovichRank;
         return stat;
-    });
+    }); */
     //TODO обновить рейтинг у модели игрока
     //TODO обновить isFinished
 
-    const savedPlayerStats = await updateDocuments(getDBCollections().playerStats, playersStats);
+    //const savedPlayerStats = await updateDocuments(getDBCollections().playerStats, playersStats);
 
     /* const savedPlayerStats = await playersStats.map(async playerStats => {
         return await updateDocument(getDBCollections().playerStats, playerStats._id.toString(), playerStats);
     })
  */
 
-    response.json("Турнир завершился");
+    response.json(updatedTournament);
 });
 
 const findPlayers = async(playersIDs: string[]) => {

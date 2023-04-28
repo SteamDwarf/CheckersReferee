@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById } from "../database/database";
-import { IPlayer} from "../models/players.model";
+import { IPlayer, IPlayerWithId} from "../models/players.model";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
 import expressAsyncHandler from "express-async-handler";
 import {NotFoundError} from "../utils/ServerError";
+import { IPlayerStatsWithID } from "../models/playerStats.model";
 
 
 export const createPlayer = expressAsyncHandler(async(request: Request, response: Response) => {
@@ -60,6 +61,24 @@ export const deletePlayer = expressAsyncHandler(async(request: Request, response
 
     response.json(deletingResult);
 });
+
+export const updatePlayersAfterTournament = async(playersStats: IPlayerStatsWithID[]) => {
+    const updatedPlayers = [];
+
+    for(let i = 0; i < playersStats.length; i++) {
+        const stat = playersStats[i];
+        const player = await findDocumentById(getDBCollections().players, stat.playerID) as IPlayerWithId;
+
+        player.previousAdamovichRank = player.currentAdamovichRank;
+        player.currentAdamovichRank = stat.lastAdamovichRank;
+
+        const updatedPlayer = await updateDocument(getDBCollections().players, player._id.toString(), player);
+
+        updatedPlayers.push(updatedPlayer);
+    }
+
+    return updatedPlayers;
+}
 
 
 const setSportCategory = (sportCategory: ISportsCategoryWithID, playerDocument: IPlayer) => {
