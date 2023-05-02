@@ -20,6 +20,7 @@ export const clamp = (value: number, min: number, max: number) => {
     return value;
 }
 
+
 export const shuffle = (array: any[]) => {
     const shuffledArray = [...array];
 

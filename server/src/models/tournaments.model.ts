@@ -22,7 +22,7 @@ export interface ITournament {
     tournamentSystem: TournamentSystems,
     drawType?: string,
     playersIDs: (string | undefined)[],
-    gamesIDs: (string | undefined)[],
+    gamesIDs: (string | undefined)[][],
     playersStatsIDs: (string | undefined)[]
 }
 

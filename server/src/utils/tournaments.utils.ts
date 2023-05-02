@@ -9,6 +9,7 @@ interface ICheckersData {
     lastColor: CheckersColor
 }
 
+
 const dummyStats = {
     playerID: "0",
     playerName: "",
@@ -66,7 +67,7 @@ export const makeRoundRobinDraw = (tournamentID: string, playersStats: IPlayerSt
         checkersData.pop();
     }
 
-    return games;
+    return {games, toursCount};
 }
 
 const getCheckersColor = (player1Checkers: ICheckersData, player2Checkers: ICheckersData) => {

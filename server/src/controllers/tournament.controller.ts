@@ -22,6 +22,7 @@ import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { IGameWithId } from "../models/games.model";
 import { updatePlayerStatsAfterTournament } from "./playerStats.controller";
 import { updatePlayersAfterTournament } from "./players.controller";
+import { splitGames } from "../utils/games.utils";
 
 export const getTournaments = expressAsyncHandler(async(request: Request, response: Response) => {
     const page = request.query.page || "1";
@@ -86,14 +87,15 @@ export const startTournament = expressAsyncHandler(async(request: Request, respo
     const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerWithId[];
     const playersStats = players.map(player => PlayerStat(player as IPlayerWithId, id));
     //TODO скорректировать с типом жеребьевки
-    const games = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
-    const savedGames = await createDocuments(getDBCollections().games, games) || [];
+    //const games = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
+    const {games, toursCount} = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
+    const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
     const savedPlayersStats = await createDocuments(getDBCollections().playerStats, playersStats) as IPlayerStatsWithID[];
-
+    const {toursGamesIDs} = splitGames(savedGames, toursCount);
     await saveStatsToPlayers(players, savedPlayersStats);
 
     tournamentForStart.isStarted = true;
-    tournamentForStart.gamesIDs = savedGames.map(game => game?._id.toString());
+    tournamentForStart.gamesIDs = toursGamesIDs;
     tournamentForStart.playersStatsIDs = savedPlayersStats.map(stat => stat._id.toString());
     
     const updatedTournament = await updateDocument(getDBCollections().tournaments, id, tournamentForStart);
@@ -120,32 +122,6 @@ export const finishTournament = expressAsyncHandler(async(request: Request, resp
 
     const updatedTournament = await updateDocument(getDBCollections().tournaments, tournamentForFinish._id.toString(), tournamentForFinish);
 
-
-    /* playersStats = playersStats.sort((stat1, stat2) => (stat1.score - stat2.score) * -1);
-
-    for(let i = 0; i < playersStats.length; i++) {
-        const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playersStats[i].sportsCategoryID) as ISportsCategoryWithID;
-        const playerGames = games.filter(game => game.player1ID === playersStats[i].playerID || game.player2ID === playersStats[i].playerID);
-        
-        playersStats[i].place = i + 1;
-        playersStats[i].lastAdamovichRank = calculateAdamovichAfterTournament(playersStats[i], sportCategory, playersStats);
-        playersStats[i].gorinRank = calculateGorinCoefficient(playersStats[i].playerID, playerGames, playersStats);
-    }
-
-    playersStats = playersStats.map(stat => {
-        stat.startAdamovichRank = stat.lastAdamovichRank;
-        return stat;
-    }); */
-    //TODO обновить рейтинг у модели игрока
-    //TODO обновить isFinished
-
-    //const savedPlayerStats = await updateDocuments(getDBCollections().playerStats, playersStats);
-
-    /* const savedPlayerStats = await playersStats.map(async playerStats => {
-        return await updateDocument(getDBCollections().playerStats, playerStats._id.toString(), playerStats);
-    })
- */
-
     response.json(updatedTournament);
 });
 
@@ -159,6 +135,7 @@ const findPlayers = async(playersIDs: string[]) => {
     return players;
 }
 
+//TODO перенести в playerController
 const saveStatsToPlayers = async(players: IPlayerWithId[], playerStats: IPlayerStatsWithID[]) => {
     const updatedPlayers = await Promise.all(players.map(async (player) => {
         const playerStat = playerStats.find(stat => stat.playerID === player._id.toString());
