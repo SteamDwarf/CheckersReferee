@@ -10,6 +10,7 @@ import sportsCategoriesRouter from './routes/sportsCategories.router';
 import tournamentsRouter from './routes/tournaments.router';
 import gamesRouter from './routes/games.router';
 import playerStatsRouter from './routes/playerStats.router';
+import { splitArrayByItemsCount, splitArrayBySubArraysCount } from './utils/math';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -45,7 +46,6 @@ app.listen(PORT, () => {
     console.log(`Сервер запущен по адресу ${URI}:${PORT}`);
     
     connectToDatabase();
-
 });
 
 /* bcrypt.hash("admin123", 10)

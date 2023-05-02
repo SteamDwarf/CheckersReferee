@@ -10,8 +10,8 @@ import { getDBCollections,
     findDocumentsWithFilter, 
     updateDocuments
 } from "../database/database";
-import { ITournament, ITournamentWithId } from "../models/tournaments.model";
-import { makeRoundRobinDraw } from "../utils/tournaments.utils";
+import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tournaments.model";
+import { makeRoundRobinDraw, makeSwissDraw } from "../utils/tournaments.utils";
 import { IPlayerWithId } from "../models/players.model";
 import { paginateData } from "../utils/controllers.utils";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../models/playerStats.model";
@@ -87,7 +87,9 @@ export const startTournament = expressAsyncHandler(async(request: Request, respo
     const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerWithId[];
     const playersStats = players.map(player => PlayerStat(player as IPlayerWithId, id));
     //TODO скорректировать с типом жеребьевки
-    //const games = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
+
+    makeDraw(tournamentForStart, playersStats);
+
     const {games, toursCount} = makeRoundRobinDraw(id, playersStats as IPlayerStats[]);
     const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
     const savedPlayersStats = await createDocuments(getDBCollections().playerStats, playersStats) as IPlayerStatsWithID[];
@@ -124,6 +126,15 @@ export const finishTournament = expressAsyncHandler(async(request: Request, resp
 
     response.json(updatedTournament);
 });
+
+const makeDraw = (tournament: ITournamentWithId, playerStats: IPlayerStats[]) => {
+    if(tournament.tournamentSystem === TournamentSystems.round) {
+        return makeRoundRobinDraw(tournament._id.toString(), playerStats);
+    } 
+    if(tournament.tournamentSystem === TournamentSystems.swiss) {
+        return makeSwissDraw(tournament._id.toString(), playerStats);
+    }
+}
 
 const findPlayers = async(playersIDs: string[]) => {
     const players = await findDocumentsById(getDBCollections().players, playersIDs) || [];

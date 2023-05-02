@@ -1,5 +1,7 @@
 import { CheckersColor, Game, IGame} from "../models/games.model";
 import { IPlayerStats } from "../models/playerStats.model";
+import { splitArrayByItemsCount, splitArrayBySubArraysCount } from "./math";
+import { compareByAdamovichRank } from "./playerStats.utils";
 //TODO должны быть чистые функции
 
 interface ICheckersData {
@@ -69,6 +71,16 @@ export const makeRoundRobinDraw = (tournamentID: string, playersStats: IPlayerSt
 
     return {games, toursCount};
 }
+
+export const makeSwissDraw = (tournamentID: string, playersStats: IPlayerStats[]) => {
+    const sortedPlayers = playersStats.sort(compareByAdamovichRank);
+    //const splitedPlayers = splitArrayBySubArraysCount(splitArrayByItemsCount(sortedPlayers, 6), 2);
+    const splitedPlayers = splitArrayByItemsCount(sortedPlayers, 6);
+    const splitedPlayers2 = splitedPlayers.map(array => splitArrayBySubArraysCount(array, 2));
+    
+    console.log(splitedPlayers2);
+}
+
 
 const getCheckersColor = (player1Checkers: ICheckersData, player2Checkers: ICheckersData) => {
     if(!player1Checkers.colorUsed && !player2Checkers.colorUsed) {
