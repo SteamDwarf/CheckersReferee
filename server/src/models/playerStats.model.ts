@@ -17,6 +17,9 @@ export interface IPlayerStats {
     score: number,
     sportsCategoryID: string,
     requiredScore: number,
+    colorUsed: number,
+    lastColor: CheckersColor,
+    competitorsID: (string | undefined)[]
 }
 
 export interface IPlayerStatsWithID extends IPlayerStats {
@@ -36,8 +39,11 @@ export const PlayerStat = (player: IPlayerWithId, tournamentID: string): IPlayer
         lastAdamovichTimeStamp: Date.now(),
         place: 0,
         score: 0,
+        requiredScore: 0,
+        colorUsed: 0,
+        lastColor: CheckersColor.black,
         sportsCategoryID: player.sportsCategoryID,
-        requiredScore: 0
+        competitorsID: []
     }
 
     return playerStat;
@@ -60,7 +66,9 @@ export const playerStatsSchema = {
                 "place",
                 "score",
                 "sportsCategoryID",
-                "requiredScore"
+                "requiredScore",
+                "colorUsed",
+                "lastColor"
             ],
             properties: {
                 "playerID": {
@@ -107,13 +115,25 @@ export const playerStatsSchema = {
                     bsonType: "number",
                     description: "Поле score является обязательным и должно быть числом"
                 },
-                "sportsCategoryID": {
+                "colorUsed": {
+                    bsonType: "number",
+                    description: "Поле colorUsed является обязательным и должно быть числом"
+                },
+                "lastColor": {
                     bsonType: "string",
-                    description: "Поле sportCategoryID является обязательным и должно быть строкой"
+                    description: "Поле lastColor является обязательным и должно быть строкой 'Черные' или 'Белые'"
                 },
                 "requiredScore": {
                     bsonType: "number",
                     description: "Поле requiredScore является обязательным и должно быть числом"
+                },
+                "sportsCategoryID": {
+                    bsonType: "string",
+                    description: "Поле sportCategoryID является обязательным и должно быть строкой"
+                },
+                "competitorsID": {
+                    bsonType: "array",
+                    description: "Поле competitorsID является обязательным и должно быть массивом"
                 }
             }
         }

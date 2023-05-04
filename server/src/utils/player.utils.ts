@@ -39,7 +39,7 @@ export const calculateAdamovichAfterTournament = (playerStats: IPlayerStats, spo
     return clampAdamovichRank(sportsCategory, newRank);
 }
 
-export const calculateGorinCoefficient = (playerID: string, games: IGame[], playersStats: IPlayerStats[]) => {
+export const calculateGorinRank = (playerID: string, games: IGame[], playersStats: IPlayerStats[]) => {
     let winedScore = 0;
     let drawScore = 0;
     let looseScore = 0;
