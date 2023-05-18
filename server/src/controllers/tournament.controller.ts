@@ -39,9 +39,10 @@ export const getTournament = expressAsyncHandler(async(request: Request, respons
 });
 
 export const postTournament = expressAsyncHandler(async(request: Request, response: Response) => {
-    //TODO устанавливать isFinished, isStarted
     const tournamentData: ITournament = {
         ...request.body,
+        isStarted: false,
+        isFinished: false,
         playersIDs: request.body.playersIDs || [],
         gamesIDs: request.body.gamesIDs || [],
         playersStatsIDs: []
@@ -158,7 +159,8 @@ export const finishTour = expressAsyncHandler(async(request: Request, response: 
         const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
         const savedGamesIDs = savedGames.map(game => game._id.toString());
 
-        //TODO создать поле в tournament указывающий номер текущего турнира
+        //TODO сохранить playerStats
+        //TODO создать поле в tournament указывающий номер текущего тура
         tournament.gamesIDs.push(savedGamesIDs);
 
         tournament = await updateDocument(getDBCollections().tournaments, tournament._id.toString(), tournament) as ITournamentWithId;

@@ -19,7 +19,6 @@ const PORT = process.env.PORT || 5000;
 const URI = process.env.URI || 'http://localhost';
 const app = express();
 
-//TODO cors
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
