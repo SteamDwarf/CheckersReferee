@@ -38,6 +38,9 @@ export const updatePlayerStatsAfterGame = async(
     ) => {
 
     if(playerStats) {
+        console.log(prevScore);
+        console.log(curScore);
+        console.log(playerStats.score);
         playerStats.score = playerStats.score - prevScore + curScore;
 
         
@@ -47,7 +50,8 @@ export const updatePlayerStatsAfterGame = async(
         }
         
 
-        await updateDocument(getDBCollections().playerStats, playerStats._id.toString(), playerStats);
+       await updateDocument(getDBCollections().playerStats, playerStats._id.toString(), playerStats);
+
     }
 };
 

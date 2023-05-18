@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteTournament, finishTournament, getTournament, getTournaments, postTournament, startTournament, updateTournament } from "../controllers/tournament.controller";
+import { deleteTournament, finishTour, finishTournament, getTournament, getTournaments, postTournament, startTournament, updateTournament } from "../controllers/tournament.controller";
 
 const router = express.Router();
 
@@ -9,11 +9,14 @@ router.route('/')
 
 //TODO переделать в put
 router.route('/start/:id')
-    .post(startTournament)
+    .put(startTournament);
 
 //TODO переделать в put
 router.route('/finish/:id')
-    .post(finishTournament)
+    .put(finishTournament);
+
+router.route('/finish-tour/:id')
+    .put(finishTour);
 
 router.route('/:id')
     .get(getTournament)

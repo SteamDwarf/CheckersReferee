@@ -11,6 +11,7 @@ import tournamentsRouter from './routes/tournaments.router';
 import gamesRouter from './routes/games.router';
 import playerStatsRouter from './routes/playerStats.router';
 import { splitArrayByItemsCount, splitArrayBySubArraysCount } from './utils/math';
+import cors from 'cors';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -23,6 +24,7 @@ const app = express();
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(express.static(path.resolve('../client')))
+app.use(cors());
 
 app.get('/', (request, response) => {
     response.sendFile(path.resolve('../client/index.html'));
@@ -31,12 +33,12 @@ app.get('/', (request, response) => {
 
 
 
-app.use('/auth', authRouter);
-app.use('/players', playersRouter);
-app.use('/sports-categories', sportsCategoriesRouter);
-app.use('/tournaments', tournamentsRouter);
-app.use('/games', gamesRouter);
-app.use('/player-stats', playerStatsRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/players', playersRouter);
+app.use('/api/sports-categories', sportsCategoriesRouter);
+app.use('/api/tournaments', tournamentsRouter);
+app.use('/api/games', gamesRouter);
+app.use('/api/player-stats', playerStatsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

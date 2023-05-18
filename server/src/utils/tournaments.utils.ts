@@ -1,7 +1,8 @@
+import { group } from "console";
 import { CheckersColor, Game, IGame} from "../models/games.model";
-import { IPlayerStats, playerStatsSchema } from "../models/playerStats.model";
+import { IPlayerStats, IPlayerStatsWithID, playerStatsSchema } from "../models/playerStats.model";
 import { splitArrayByItemsCount, splitArrayBySubArraysCount } from "./math";
-import { compareByAdamovichRank } from "./playerStats.utils";
+import { compareByAdamovichRank, compareByScore } from "./playerStats.utils";
 //TODO должны быть чистые функции
 interface IPlayerData {
     playerID: string,
@@ -77,6 +78,117 @@ export const makeFirstSwissDraw = (tournamentID: string, playersStats: IPlayerSt
     }
 
     return {games, toursCount};
+}
+
+export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlayerStatsWithID[]) => {
+    const scoreGroups: IPlayerStatsWithID[][] = [];
+    const games: IGame[] = [];
+
+    //TODO работать с копией и возвращать изменнную копию playersStats
+    //TODO если нечетное кол-во добавить в конец dummy
+    playersStats.sort(compareByScore);
+
+    while(playersStats.length > 0) {
+        const player = playersStats.shift();
+
+        if(player) {
+            const score = player.score;
+            const scoreGroup: IPlayerStatsWithID[] = [player];
+
+            while(playersStats[0] && playersStats[0].score === score) {
+                const otherPlayer = playersStats.shift();
+                
+                if(otherPlayer) scoreGroup.push(otherPlayer);
+            }
+            scoreGroups.push(scoreGroup);
+        }
+        
+    }
+
+    scoreGroups.forEach((scoreGroup, i) => {
+        scoreGroup.sort(compareByAdamovichRank);
+        //console.log(scoreGroup.length);
+
+
+        if(scoreGroup.length % 2 !== 0 && i + 1 < scoreGroups.length) {
+            const lastPlayer = scoreGroup.pop();
+            if(lastPlayer) scoreGroups[i + 1].push(lastPlayer);
+        }
+    });
+
+    const splitedScoreGroups = scoreGroups.map(scoreGroup => splitArrayBySubArraysCount(scoreGroup, 2));
+    //console.log(splitedScoreGroups.map(group => group.map(subGroup => subGroup.map(player => player._id))));
+    const unmatchedPlayers = [];
+    //TODO тут зе гуд
+
+    for(let i = 0; i < splitedScoreGroups.length; i++) {
+        let group = splitedScoreGroups[i];
+        let subGroup1 = group[0];
+
+        //TODO я же удаляю поэтому лучше цикл while
+        while(subGroup1.length > 0) {
+            const player1 = subGroup1[0];
+            const player2 = findNewCompetitor(group, player1);
+            console.log(i);
+            console.log(player1._id);
+            console.log(player2?._id);
+            /* console.log("subgroup length", group[0].length);
+            console.log("j", j);
+            console.log(player1._id, player2?._id); */
+
+            if(player1 && player2) {
+                
+                splitedScoreGroups[i] = group.map(subGroup => {
+                    return subGroup.filter(player => player._id !== player1._id && player._id !== player2._id)
+                });
+                group = splitedScoreGroups[i];
+                subGroup1 = group[0];
+                //TODO массив то не перезаписывается
+/*                 console.log(splitedScoreGroups[i].map(subGroup => subGroup.map(player => player._id)));
+                console.log("===================================");
+                console.log(group.map(subGroup => subGroup.map(player => player._id))); */
+
+                const game = Game(tournamentID, player1.playerID, player1.playerName, player2.playerID, player2.playerName);
+
+                updateCheckersColor(player1, player2, game);
+
+                games.push(game);
+
+                //TODO обновлять статистику
+                player1.competitorsID.push(player2.playerID);
+                player2.competitorsID.push(player1.playerID);
+                //console.log(player1._id);
+                //console.log(player2._id);
+            }
+            else {
+                unmatchedPlayers.push(subGroup1.shift());
+            }
+        }
+    }
+
+    //console.log(unmatchedPlayers.length);
+    //console.log(unmatchedPlayers.map(player => player?._id));
+
+    return games;
+
+}
+
+const findNewCompetitor = (group: IPlayerStatsWithID[][], player: IPlayerStatsWithID) => {
+    for(let i = 0; i < group[1].length; i++) {
+        const player2 = group[1][i];
+
+        if(!player.competitorsID.includes(player2._id.toString())) {
+            return player2;
+        }
+    }
+
+    for(let i = group[0].length - 1; i >= 0; i--) {
+        const player2 = group[0][i];
+
+        if(player !== player2 && !player.competitorsID.includes(player2._id.toString())) {
+            return player2;
+        }
+    }
 }
 
 const getSwissToursCount = (playersCount: number) => {

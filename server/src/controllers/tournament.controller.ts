@@ -11,7 +11,7 @@ import { getDBCollections,
     updateDocuments
 } from "../database/database";
 import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tournaments.model";
-import { makeRoundRobinDraw, makeFirstSwissDraw } from "../utils/tournaments.utils";
+import { makeRoundRobinDraw, makeFirstSwissDraw, makeSwissDrawAfterTour } from "../utils/tournaments.utils";
 import { IPlayerWithId } from "../models/players.model";
 import { paginateData } from "../utils/controllers.utils";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../models/playerStats.model";
@@ -39,6 +39,7 @@ export const getTournament = expressAsyncHandler(async(request: Request, respons
 });
 
 export const postTournament = expressAsyncHandler(async(request: Request, response: Response) => {
+    //TODO устанавливать isFinished, isStarted
     const tournamentData: ITournament = {
         ...request.body,
         playersIDs: request.body.playersIDs || [],
@@ -140,6 +141,43 @@ export const finishTournament = expressAsyncHandler(async(request: Request, resp
 
     response.json(updatedTournament);
 });
+
+export const finishTour = expressAsyncHandler(async(request: Request, response: Response) => {
+    const {id} = request.params;
+    const playersStats = await findDocumentsWithFilter(getDBCollections().playerStats, {
+        tournamentID: id
+    }) as IPlayerStatsWithID[];
+    let tournament = await findDocumentById(getDBCollections().tournaments, id) as ITournamentWithId;
+
+    if(!tournament) throw new NotFoundError("По указанному id турнир не найден");
+    if(!tournament.isStarted) throw new NotFoundError("Данный турнир еще не стартовал");
+    if(tournament.isFinished) throw new NotFoundError("Данный турнир уже завершился");
+
+    if(tournament.tournamentSystem === TournamentSystems.swiss) {
+        const games = makeSwissDrawAfterTour(tournament._id.toString(), playersStats);
+        const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
+        const savedGamesIDs = savedGames.map(game => game._id.toString());
+
+        //TODO создать поле в tournament указывающий номер текущего турнира
+        tournament.gamesIDs.push(savedGamesIDs);
+
+        tournament = await updateDocument(getDBCollections().tournaments, tournament._id.toString(), tournament) as ITournamentWithId;
+    } 
+
+    response.json(tournament);
+});
+
+/* export const makeNextSwissDraw = async(tournament: ITournamentWithId, playersStats: IPlayerStatsWithID[]) => {
+    //TODO проверить,  что количество туров не больше чем нужно
+    const games = makeSwissDrawAfterTour(tournament._id.toString(), playersStats);
+    const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
+    const savedGamesIDs = savedGames.map(game => game._id.toString());
+
+    //TODO создать поле в tournament указывающий номер текущего турнира
+    tournament.gamesIDs.push(savedGamesIDs);
+
+    await updateDocument(getDBCollections().tournaments, tournament._id.toString(), tournament);
+} */
 
 const makeDraw = (tournament: ITournamentWithId, playerStats: IPlayerStats[]) => {
     if(tournament.tournamentSystem === TournamentSystems.swiss) {
