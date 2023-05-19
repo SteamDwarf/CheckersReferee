@@ -56,7 +56,12 @@ export const gamesSchema = {
                 "player1CheckersColor",
                 "player2CheckersColor"
             ],
+            additionalProperties: false,
             properties: {
+                "_id": {
+                    bsonType: "objectId",
+                    description: "Поле _id быть ObjectId"
+                },
                 "tournamentID": {
                     bsonType: "string",
                     description: "Поле tournamentID является обязательным и должно быть string"
@@ -77,11 +82,11 @@ export const gamesSchema = {
                     bsonType: "string",
                     description: "Поле player2Name является обязательным и должно быть строкой"
                 },
-                "playe1Score": {
+                "player1Score": {
                     bsonType: "number",
                     description: "Поле playe1Score является обязательным и должно быть числом"
                 },
-                "playe2Score": {
+                "player2Score": {
                     bsonType: "number",
                     description: "Поле playe2Score является обязательным и должно быть числом"
                 },

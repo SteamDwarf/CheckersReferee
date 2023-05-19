@@ -20,7 +20,6 @@ export interface ITournament {
     timeControl?: string,
     toursCount?: number,
     tournamentSystem: TournamentSystems,
-    drawType?: string,
     playersIDs: (string | undefined)[],
     gamesIDs: (string | undefined)[][],
     playersStatsIDs: (string | undefined)[]
@@ -49,7 +48,12 @@ export const tournamentSchema = {
                 "playersStatsIDs",
                 "tournamentSystem",
             ],
+            additionalProperties: false,
             properties: {
+                "_id": {
+                    bsonType: "objectId",
+                    description: "Поле _id быть ObjectId"
+                },
                 "title": {
                     bsonType: "string",
                     description: "Поле title является обязательным и должно быть строкой"
@@ -105,10 +109,6 @@ export const tournamentSchema = {
                 "tournamentSystem": {
                     bsonType: "string",
                     description: "Поле tournamentSystem является обязательным должно быть строкой"
-                },
-                "drawType": {
-                    bsonType: "string",
-                    description: "Поле drawType должно быть строкой"
                 },
                 "playersIDs": {
                     bsonType: "array",

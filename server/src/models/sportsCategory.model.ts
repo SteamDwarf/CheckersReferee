@@ -18,7 +18,10 @@ export const sportsCategorySchema = {
             required: ["title", "shortTitle", "minAdamovichRank", "maxAdamovichRank"],
             additionalProperties: false,
             properties: {
-                "_id": {},
+                "_id": {
+                    bsonType: "objectId",
+                    description: "Поле _id быть ObjectId"
+                },
                 "title": {
                     bsonType: "string",
                     description: "Поле title является обязательным и должно быть строкой"
@@ -35,7 +38,7 @@ export const sportsCategorySchema = {
                     bsonType: "number",
                     description: "Поле maxAdamovichRank является обязательным и должно быть числом"
                 }
-            }
+            },
         }
     }
 }

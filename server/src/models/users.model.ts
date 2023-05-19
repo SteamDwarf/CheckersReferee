@@ -16,7 +16,12 @@ export const userSchema = {
         $jsonSchema: {
             bsonType: "object",
             required: ["login", "password"],
+            additionalProperties: false,
             properties: {
+                "_id": {
+                    bsonType: "objectId",
+                    description: "Поле _id быть ObjectId"
+                },
                 "login": {
                     bsonType: "string",
                     description: "Поле login является обязательным и должно быть строкой"

@@ -43,6 +43,7 @@ export const postTournament = expressAsyncHandler(async(request: Request, respon
         ...request.body,
         isStarted: false,
         isFinished: false,
+        referees: [],
         playersIDs: request.body.playersIDs || [],
         gamesIDs: request.body.gamesIDs || [],
         playersStatsIDs: []
@@ -86,6 +87,7 @@ export const startTournament = expressAsyncHandler(async(request: Request, respo
 
     if(!tournamentForStart) throw new NotFoundError("По указанному id турнир не найден");
     if(tournamentForStart.isStarted) throw new InputError("Данный турнир уже стартовал");
+    if(tournamentForStart.isFinished) throw new InputError("Данный турнир уже завершен");
     if(tournamentForStart.tournamentSystem !== TournamentSystems.round && tournamentForStart.tournamentSystem !== TournamentSystems.swiss) {
         throw new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'");
     }
@@ -93,7 +95,7 @@ export const startTournament = expressAsyncHandler(async(request: Request, respo
         throw new InputError("Для старта турнира по круговой системе нужно как минимум 3 участника");
     }
     if(tournamentForStart.tournamentSystem === TournamentSystems.swiss && tournamentForStart.playersIDs.length < 11) {
-        throw new InputError("Для старта турнира по круговой системе нужно как минимум 11 участников");
+        throw new InputError("Для старта турнира по швейцарской системе нужно как минимум 11 участников");
     }
 
     const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerWithId[];
@@ -194,7 +196,13 @@ const findPlayers = async(playersIDs: string[]) => {
     const players = await findDocumentsById(getDBCollections().players, playersIDs) || [];
 
     if(players.length < playersIDs.length) {
-        throw new NotFoundError(`В базе данных не было найдено ${playersIDs.length - players.length} игрока`)
+        const notFoundedPlayers = playersIDs.filter(id => {
+            const playerData = players.find(player => player._id.toString() === id);
+
+            return !playerData;
+        });
+
+        throw new NotFoundError(`В базе данных не было найдено ${playersIDs.length - players.length} игрока`, {notFoundedPlayers})
     }
 
     return players;

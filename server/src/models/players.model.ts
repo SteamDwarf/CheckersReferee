@@ -4,6 +4,7 @@ export enum Gender {
     male = "Мужской",
     female = "Женский"
 }
+//TODO сделать невозможность добавлять новые поля
 //TODO разобраться текцщим и предыдущим рейтингом
 export interface IPlayer {
     firstName: string,                  //Имя
@@ -15,7 +16,7 @@ export interface IPlayer {
     sportsCategoryID: string,           //ID спортивного разряда
     playerStatsIDs: string[],      //Массив ID документов ститистики игрока в турнирах
     sportsCategoryAbbr: string,         //Краткое название разряда
-    sportsOrganization: string,         //Спортивная организация
+    sportsOrganization?: string,         //Спортивная организация
     currentAdamovichRank: number,       //Текущий рейтинг Адамовича
     previousAdamovichRank?: number      //Предыдущий рейтинг Адамовича
 }
@@ -37,11 +38,15 @@ export const playersSchema = {
                 "region", 
                 "sportsCategoryID", 
                 "sportsCategoryAbbr",
-                "sportsOrganization",
                 "currentAdamovichRank",
                 "playerStatsIDs"
             ],
+            additionalProperties: false,
             properties: {
+                "_id": {
+                    bsonType: "objectId",
+                    description: "Поле _id быть ObjectId"
+                },
                 "firstName": {
                     bsonType: "string",
                     description: "Поле firstName (имя) является обязательным и должно быть строкой"
@@ -84,13 +89,14 @@ export const playersSchema = {
                 },
                 "sportsOrganization": {
                     bsonType: "string",
-                    description: "Поле sportsOrganization (спортивная организация) является обязательным и должно быть строкой"
+                    description: "Поле sportsOrganization (спортивная организация) должно быть строкой"
                 },
                 "playerStatsIDs": {
                     bsonType: "array",
                     description: "Поле playerStats (статистика игрока) является обязательным и должно быть массивом"
                 },
-            }
+            },
+            
         }
-    }
+    },
 }

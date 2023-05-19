@@ -70,7 +70,12 @@ export const playerStatsSchema = {
                 "colorUsed",
                 "lastColor"
             ],
+            additionalProperties: false,
             properties: {
+                "_id": {
+                    bsonType: "objectId",
+                    description: "Поле _id быть ObjectId"
+                },
                 "playerID": {
                     bsonType: "string",
                     description: "Поле playerID является обязательным и должно быть строкой"

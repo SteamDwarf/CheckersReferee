@@ -12,6 +12,7 @@ export const createPlayer = expressAsyncHandler(async(request: Request, response
     let playerData: IPlayer = request.body;
     const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playerData.sportsCategoryID);
 
+    //TODO проверка на корректность введенного поля
     if(!sportCategory) throw new NotFoundError("По указанному id спортивный разряд не найден");
     
     playerData = setSportCategory(sportCategory as ISportsCategoryWithID, playerData);
