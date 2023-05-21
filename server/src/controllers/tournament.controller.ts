@@ -163,6 +163,7 @@ export const finishTour = expressAsyncHandler(async(request: Request, response: 
 
         //TODO сохранить playerStats
         //TODO создать поле в tournament указывающий номер текущего тура
+        await updateDocuments(getDBCollections().playerStats, playersStats);
         tournament.gamesIDs.push(savedGamesIDs);
 
         tournament = await updateDocument(getDBCollections().tournaments, tournament._id.toString(), tournament) as ITournamentWithId;

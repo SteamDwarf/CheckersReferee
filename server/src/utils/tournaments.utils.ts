@@ -95,22 +95,18 @@ export const makeFirstSwissDraw = (tournamentID: string, playersStats: IPlayerSt
 }
 
 export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlayerStats[]) => {
-    const scoreGroups: IPlayerStats[][] = [];
+    let scoreGroups: IPlayerStats[][] = [];
     let games: IGame[] = [];
     let sortedPlayers = [...playersStats].sort(compareByScore) as IPlayerStats[];
 
     sortedPlayers = sortedPlayers.length % 2 === 0 ? sortedPlayers : [...sortedPlayers, dummyStats];
 
-
     //TODO работать с копией и возвращать изменнную копию playersStats
-
-
-    
 
     while(sortedPlayers.length > 0) {
         const player = sortedPlayers.shift();
 
-        if(player) {
+        if(player && player.playerID !== "0") {
             const score = player.score;
             const scoreGroup: IPlayerStats[] = [player];
 
@@ -120,25 +116,33 @@ export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlay
                 if(otherPlayer) scoreGroup.push(otherPlayer);
             }
             scoreGroups.push(scoreGroup);
+        } else if(player && player.playerID === "0") {
+            scoreGroups[scoreGroups.length - 1].push(player);
         }
         
     }
 
-    scoreGroups.forEach((scoreGroup, i) => {
-        //scoreGroup.sort(compareByAdamovichRank);
-        //console.log(scoreGroup.length);
-
-
-        if(scoreGroup.length % 2 !== 0 && i + 1 < scoreGroups.length) {
-            const lastPlayer = scoreGroup.pop();
+    /* scoreGroups = scoreGroups.reduce((groups, group, i, array) => {
+        if(group.length % 2 !== 0 && i + 1 < scoreGroups.length) {
+            const lastPlayer = group.pop();
             if(lastPlayer) scoreGroups[i + 1].unshift(lastPlayer);
         }
-    });
 
+        if(group.length !== 0) {
+            return groups.push(group);
+        }
+
+        return groups;
+    }, [] as IPlayerStats[][]) */
+
+    scoreGroups = disturbeGroups(scoreGroups);
+
+    //console.log("score groups", scoreGroups);
+    //console.log("disturbed groups", scoreGroups);
     const splitedScoreGroups = scoreGroups.map(scoreGroup => splitArrayBySubArraysCount(scoreGroup, 2));
     const pairs = makeDraw(splitedScoreGroups);
-    console.log("ПАРЫ=========================");
-    console.log(pairs);
+    /* console.log("ПАРЫ=========================");
+    console.log(pairs); */
     games = pairs.map(pair => Game(tournamentID, pair[0].playerID, pair[0].playerName, pair[1].playerID, pair[1].playerName));
     //console.log(unmatchedPlayers.length);
     //console.log(unmatchedPlayers.map(player => player?._id));
@@ -147,12 +151,47 @@ export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlay
 
 }
 
+const disturbeGroups = (scoreGroups: IPlayerStats[][]) => {
+    const disturbedScoreGroups: IPlayerStats[][] = [];
+    //scoreGroup.sort(compareByAdamovichRank);
+        //console.log(scoreGroup.length);
+
+        /* if(scoreGroup.length % 2 !== 0 && i + 1 < scoreGroups.length) {
+            const lastPlayer = scoreGroup.pop();
+            if(lastPlayer) scoreGroups[i + 1].unshift(lastPlayer);
+
+            if(scoreGroup.length === 0) {
+                scoreGroups.splice(scoreGroups.indexOf(scoreGroup), 1);
+            }
+        } */
+    
+    scoreGroups.forEach((scoreGroup, i) => {
+        if(scoreGroup.length % 2 !== 0 && i + 1 < scoreGroups.length) {
+            const lastPlayer = scoreGroup.pop();
+            if(lastPlayer) scoreGroups[i + 1].unshift(lastPlayer);
+        }
+
+        if(scoreGroup.length !== 0) {
+            disturbedScoreGroups.push(scoreGroup);
+        }
+
+        /* console.log("disturbed groups", scoreGroups);
+        console.log("scoreGroup ", scoreGroup); */
+
+    });
+
+    return disturbedScoreGroups;
+}
+
 const makeDraw = (groups:IPlayerStats[][][]) => {
     const pairs = [];
     let unPairedPlayers = [];
-
+    /* console.log(groups);
+    console.log("MAKE DRAW"); */
     for(let i = 0; i < groups.length; i++) {
+        console.log("group", i);
         const pairingResult = makePairs(groups[i]);
+        //console.log("pairing result", pairingResult);
 
         pairs.push(...pairingResult.pairs);
         unPairedPlayers.push(...pairingResult.unPairedPlayers);
@@ -174,16 +213,21 @@ const makeDraw = (groups:IPlayerStats[][][]) => {
 }
 
 function makePairs(group: IPlayerStats[][]) {
+    //console.log("MAKE PAIRS");
     const pairs: IPlayerStats[][] = [];
     const unPairedPlayers = [];
     const subGroup1 = group[0];
     const subGroup2 = group[1];
     let unpairedPlayer: undefined | IPlayerStats = undefined;
-    
+    //console.log(group);
+
+    console.log("sb1",subGroup1);
+    console.log("sb2",subGroup2);
     while(subGroup1.length > 0) {
         const player1: IPlayerStats | undefined = unpairedPlayer ? unpairedPlayer : subGroup1.shift();
 
         if(player1) {
+            //console.log("PLAYER", player1);
             const player2 = findCompetitor(player1, group);
 
             if(!player2) {
@@ -191,6 +235,7 @@ function makePairs(group: IPlayerStats[][]) {
                 
                 if(!lastPair) {
                     unPairedPlayers.push(player1);
+                    unpairedPlayer = undefined;
                     continue;
                 }
                 
