@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getDBCollections, findDocumentById, updateDocument, findDocuments, findDocumentsWithFilter, findDocument} from "../database/database";
+import { getDBCollections, findDocumentById, updateDocument, findDocuments, findDocumentsWithFilter, findDocument, deleteDocuments} from "../database/database";
 import { IGame, IGameWithId} from "../models/games.model";
 import expressAsyncHandler from "express-async-handler";
 import { NotFoundError } from "../utils/ServerError";
@@ -57,4 +57,10 @@ export const updateGame = expressAsyncHandler(async(request: Request, response: 
     } */
 
     response.json(savedGame);
+});
+
+export const deleteGames = expressAsyncHandler(async(request: Request, response: Response) => {
+    const result = await deleteDocuments(getDBCollections().games);
+
+    response.json(result);
 });

@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express";
-import { findDocumentById, findDocuments, findDocumentsWithFilter, getDBCollections, updateDocument, updateDocuments } from "../database/database";
+import { deleteDocuments, findDocumentById, findDocuments, findDocumentsWithFilter, getDBCollections, updateDocument, updateDocuments } from "../database/database";
 import { IPlayerStats, IPlayerStatsWithID } from "../models/playerStats.model";
 import { calculateAdamovichAfterGame, calculateAdamovichAfterTournament, calculateGorinRank } from "../utils/player.utils";
 import { IGame } from "../models/games.model";
@@ -38,9 +38,9 @@ export const updatePlayerStatsAfterGame = async(
     ) => {
 
     if(playerStats) {
-        console.log(prevScore);
+        /* console.log(prevScore);
         console.log(curScore);
-        console.log(playerStats.score);
+        console.log(playerStats.score); */
         playerStats.score = playerStats.score - prevScore + curScore;
 
         
@@ -73,3 +73,9 @@ export const updatePlayerStatsAfterTournament = async(playersStats: IPlayerStats
 
     return updateDocuments(getDBCollections().playerStats, playersStats);
 }
+
+export const deletePlayersStats = expressAsyncHandler(async(request: Request, response: Response) => {
+    const result = await deleteDocuments(getDBCollections().playerStats);
+
+    response.json(result);
+});

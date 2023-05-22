@@ -2,6 +2,7 @@ const form = document.querySelector('#form');
 const playerForm = document.querySelector('#player');
 const gameResultsGenerator = document.querySelector("#gameResultsGenerator");
 const tournamentIDInput = document.querySelector("#tournamentIDInput");
+const cyclesCountInput = document.querySelector("#cyclesCountInput");
 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -56,47 +57,93 @@ gameResultsGenerator.addEventListener("submit", generateGamesResults);
 async function generateGamesResults(e) {
     e.preventDefault();
 
+    const cyclesCount = cyclesCountInput.value;
+
+    for(let i = 0; i < cyclesCount; i++) {
+        console.log(`${i + 1} цикл`)
+        await tournamentLifeCycle();
+        console.log("=========================================")
+    }
+}
+
+async function tournamentLifeCycle() {
     try {
+        await fetch(`http://localhost:5000/api/games`, {
+            method: "DELETE"
+        });
+        await fetch(`http://localhost:5000/api/player-stats`, {
+            method: "DELETE"
+        });
+
         const tournamentID = tournamentIDInput.value;
-        const tournament = await(await fetch(`http://localhost:5000/api/tournaments/${tournamentID}`)).json();
-        const lastGamesIDs = tournament.gamesIDs[tournament.gamesIDs.length - 1];
-        const updatedGames = [];
+        let tournament = await(await fetch(`http://localhost:5000/api/tournaments/${tournamentID}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({   
+                "isStarted": false,
+                "isFinished": false,
+                "gamesIDs": [
+            
+                ],
+                "playersStatsIDs": [
+                ]
+            })
+        })).json();
 
-        if(lastGamesIDs.length > 0){
-            const games = await Promise.all(lastGamesIDs.map(id => fetch(`http://localhost:5000/api/games/${id}`)));
+        tournament = await(await fetch(`http://localhost:5000/api/tournaments/start/${tournamentID}`, {
+            method: "PUT"
+        })).json();
 
-            for(let i = 0; i < games?.length; i++) {
-                let game = await games[i].json();
-                
-                if(game.player1ID === "0") {
-                    game.player2Score = 2;
-                } else if(game.player2ID === "0") {
-                    game.player1Score = 2;
-                } else {
-                    const player1Score = Math.floor(Math.random() * 3);
-                    const player2Score = 2 - player1Score;
+        for(let i = 0; i < tournament.toursCount; i++) {
+            const lastGamesIDs = tournament.gamesIDs[tournament.gamesIDs.length - 1];
+            const updatedGames = [];
 
-                    game.player1Score = player1Score;
-                    game.player2Score = player2Score;
+            if(lastGamesIDs.length > 0){
+                const games = await Promise.all(lastGamesIDs.map(id => fetch(`http://localhost:5000/api/games/${id}`)));
+
+                for(let i = 0; i < games?.length; i++) {
+                    let game = await games[i].json();
+                    
+                    if(game.player1ID === "0") {
+                        game.player2Score = 2;
+                    } else if(game.player2ID === "0") {
+                        game.player1Score = 2;
+                    } else {
+                        const player1Score = Math.floor(Math.random() * 3);
+                        const player2Score = 2 - player1Score;
+
+                        game.player1Score = player1Score;
+                        game.player2Score = player2Score;
+                    }
+
+                    game = await(await fetch(`http://localhost:5000/api/games/${game._id}`, {
+                        method: "PUT",
+                        headers: {
+                            'Content-Type': 'application/json;charset=utf-8'
+                        },
+                        body: JSON.stringify({player1Score: game.player1Score, player2Score: game.player2Score})
+                    })).json();
+
+                    updatedGames.push(game);
                 }
 
-                game = await(await fetch(`http://localhost:5000/api/games/${game._id}`, {
-                    method: "PUT",
-                    headers: {
-                        'Content-Type': 'application/json;charset=utf-8'
-                    },
-                    body: JSON.stringify({player1Score: game.player1Score, player2Score: game.player2Score})
-                })).json();
+                console.log(updatedGames);
 
-                updatedGames.push(game);
+                if(i < tournament.toursCount - 1) {
+                    tournament = await(await fetch(`http://localhost:5000/api/tournaments/finish-tour/${tournamentID}`, {
+                        method: "PUT"
+                    })).json();
+                }
+                
             }
+        
         }
-
-        console.log(updatedGames);
+        
     }catch(error) {
         console.error(error);
     }
-    
 }
 
 

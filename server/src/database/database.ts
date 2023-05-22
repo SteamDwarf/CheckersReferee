@@ -97,6 +97,10 @@ export const deleteDocument = (collection: Collection | undefined, id: string) =
     return collection?.deleteOne({_id: new ObjectId(id)});
 }
 
+export const deleteDocuments = (collection: Collection | undefined) => {
+    return collection?.deleteMany({});
+}
+
 export const updateDocument = (collection: Collection | undefined, id: string, newDocument: object) => {
     return collection?.updateOne({_id: new ObjectId(id)}, {$set: newDocument})
             .then(() => collection.findOne({_id: new ObjectId(id)}))

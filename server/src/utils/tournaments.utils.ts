@@ -1,7 +1,7 @@
 import { group } from "console";
 import { CheckersColor, Game, IGame} from "../models/games.model";
 import { IPlayerStats, IPlayerStatsWithID, playerStatsSchema } from "../models/playerStats.model";
-import { splitArrayByItemsCount, splitArrayBySubArraysCount } from "./math";
+import { shuffle, shuffleMutator, splitArrayByItemsCount, splitArrayBySubArraysCount } from "./math";
 import { compareByAdamovichRank, compareByScore } from "./playerStats.utils";
 //TODO должны быть чистые функции
 
@@ -96,9 +96,11 @@ export const makeFirstSwissDraw = (tournamentID: string, playersStats: IPlayerSt
 
 export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlayerStats[]) => {
     let games: IGame[] = [];
-
     let sortedPlayers = [...playersStats].sort(compareByScore) as IPlayerStats[];
+
     sortedPlayers = sortedPlayers.length % 2 === 0 ? sortedPlayers : [...sortedPlayers, dummyStats];
+    dummyStats.competitorsID = [""];
+
 
     let scoreGroups: IPlayerStats[][] = makeScoreGroups(sortedPlayers);
     scoreGroups = disturbeGroups(scoreGroups);
@@ -162,81 +164,104 @@ const disturbeGroups = (scoreGroups: IPlayerStats[][]) => {
 }
 
 const makeDraw = (groups:IPlayerStats[][][]) => {
-    const pairs = [];
+    let pairs = [];
     let unPairedPlayers = [];
-    /* console.log(groups);
-    console.log("MAKE DRAW"); */
+    //console.log(groups);
+    //console.log("MAKE DRAW");
     for(let i = 0; i < groups.length; i++) {
-        console.log("group", i);
+        //console.log("group", i);
+        //TODO не передавать pairs
         const pairingResult = makePairs(groups[i]);
         //console.log("pairing result", pairingResult);
 
         pairs.push(...pairingResult.pairs);
-        unPairedPlayers.push(...pairingResult.unPairedPlayers);
+
+        if(pairingResult.unPairedPlayers.length > 0 && i < groups.length - 1) {
+            groups[i + 1][1].unshift(...pairingResult.unPairedPlayers);
+        }
+        else {
+            unPairedPlayers.push(...pairingResult.unPairedPlayers);
+        }
+
     }
-
-    if(unPairedPlayers) {
+    let count = 0;
+    while(unPairedPlayers.length > 0) {
+        //console.log("unpaired");
         unPairedPlayers.sort(compareByScore);
-
+        pairs = shuffle(pairs);
+        
         const subGroup1 = unPairedPlayers.slice(0, Math.floor(unPairedPlayers.length / 2));
         const subGroup2 = unPairedPlayers.slice(Math.floor(unPairedPlayers.length / 2), unPairedPlayers.length);
-        const pairingResult = makePairs([subGroup1, subGroup2]);
+        const pairingResult = makePairs([subGroup1, subGroup2], pairs);
 
         unPairedPlayers = [];
         pairs.push(...pairingResult.pairs);
         unPairedPlayers.push(...pairingResult.unPairedPlayers);
+        count++;
+        console.log("try", count);
     }
+
+    console.log("up:",unPairedPlayers);
 
     return pairs;
 }
 
-function makePairs(group: IPlayerStats[][]) {
+function makePairs(group: IPlayerStats[][], makedPairs?: IPlayerStats[][]) {
     //console.log("MAKE PAIRS");
-    const pairs: IPlayerStats[][] = [];
+    let pairs: IPlayerStats[][] = [];
+    const untouchablePairs: IPlayerStats[][] = []
     const unPairedPlayers = [];
     const subGroup1 = group[0];
     const subGroup2 = group[1];
     let unpairedPlayer: undefined | IPlayerStats = undefined;
     //console.log(group);
 
-    console.log("sb1",subGroup1);
-    console.log("sb2",subGroup2);
     while(subGroup1.length > 0) {
+        /* console.log("up", unpairedPlayer);
+        console.log("sb1",subGroup1);
+        console.log("sb2",subGroup2); */
         const player1: IPlayerStats | undefined = unpairedPlayer ? unpairedPlayer : subGroup1.shift();
+        if(!player1) continue;
 
-        if(player1) {
-            //console.log("PLAYER", player1);
-            const player2 = findCompetitor(player1, group);
-
-            if(!player2) {
-                const lastPair = pairs.pop();
-                
-                if(!lastPair) {
-                    unPairedPlayers.push(player1);
-                    unpairedPlayer = undefined;
-                    continue;
-                }
-                
-                lastPair[0].competitorsID.pop();
-                lastPair[1].competitorsID.pop();
-    
-                unpairedPlayer = player1;
-                subGroup1.unshift(lastPair[1]);
-                subGroup2.unshift(lastPair[0]);
-    
-            } else {
-                player1.competitorsID.push(player2.playerID);
-                player2.competitorsID.push(player1.playerID);
-                
-                pairs.push([player1, player2]);
-    
-                if(unpairedPlayer) unpairedPlayer = undefined;
+        const player2 = findCompetitor(player1, group);
+        if(!player2) {
+            const lastPair = pairs.length > 0 ? pairs.pop() : makedPairs?.pop();
+            //console.log("lp",lastPair);
+            if(!lastPair) {
+                //console.log("hasn`t lp");
+                unPairedPlayers.push(player1);
+                unpairedPlayer = undefined;
+                continue;
             }
+            
+            lastPair[0].competitorsID.pop();
+            lastPair[1].competitorsID.pop();
+
+            unpairedPlayer = player1;
+            subGroup1.unshift(lastPair[1]);
+            subGroup2.unshift(lastPair[0]);
+
+        } else {
+            player1.competitorsID.push(player2.playerID);
+            player2.competitorsID.push(player1.playerID);
+            
+            if(unPairedPlayers) {
+                untouchablePairs.push([player1, player2]);
+                unpairedPlayer = undefined;
+            }
+            else {
+                pairs.push([player1, player2]);
+            }
+
+            //if(unpairedPlayer) unpairedPlayer = undefined;
         }
-        
-        
     }
 
+    /* if(makedPairs) {
+        pairs.unshift(...makedPairs);
+    }
+ */
+    pairs = [...pairs, ...untouchablePairs];
     unPairedPlayers.push(...subGroup2);
 
     return {pairs, unPairedPlayers};
@@ -259,7 +284,7 @@ function searchInSubgroup(player1: IPlayerStats, subgroup: IPlayerStats[]) {
     for(let i = 0; i < subgroup.length; i++) {
         const player2 = subgroup[i];
 
-        if(!player2.competitorsID.includes(player1.playerID)) {
+        if(!player1.competitorsID.includes(player2.playerID) || !player2.competitorsID.includes(player1.playerID)) {
             subgroup.splice(subgroup.indexOf(player2), 1);
             return player2;
         }

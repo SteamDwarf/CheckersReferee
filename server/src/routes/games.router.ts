@@ -1,10 +1,12 @@
 import express from "express";
-import { getGame, getGames, updateGame } from "../controllers/games.controller";
+import { deleteGames, getGame, getGames, updateGame } from "../controllers/games.controller";
 
 const router = express.Router();
 
+//TODO удалить delete
 router.route("/")
-    .get(getGames);
+    .get(getGames)
+    .delete(deleteGames);
 
 router.route('/:id')
     .get(getGame)

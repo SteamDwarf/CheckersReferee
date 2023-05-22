@@ -54,7 +54,7 @@ export const splitArrayBySubArraysCount = <T>(array: T[], subArraysCount: number
 }
 
 
-export const shuffle = (array: any[]) => {
+export const shuffle = <T>(array: T[]) => {
     const shuffledArray = [...array];
 
     for(let i = shuffledArray.length - 1; i > 0; i--) {
@@ -64,6 +64,15 @@ export const shuffle = (array: any[]) => {
     }
 
     return shuffledArray;
+}
+
+export const shuffleMutator = <T>(array: T[]) => {
+
+    for(let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 export const getRandomItem = <T>(array: T[], currentIndex?: number) => {
