@@ -1,34 +1,7 @@
 const form = document.querySelector('#form');
 const playerForm = document.querySelector('#player');
-
-/* async function start () {
-
-    try {
-        const response = await fetch("http://localhost:5000/test123");
-        console.log(response);
-        const data = await response.json();
-        console.log(data);
-    }catch(error) {
-        console.log(error);
-    }
-    
-}
-
-start();
- */
-
-/* fetch("https://jsonplaceholder.typicode.com/postss")
-.then(response => response.ok ? response.json() : Promise.reject(response))
-.then(data => console.log(data))
-.catch(error => console.error(error)); */
-
-/* fetch('http://localhost:5000/test')
-  .then(response => response.ok ? response.json() : Promise.reject(response))
-  .then(data => console.log(data))
-  .catch(error => {
-    error.json().then(errorData => console.error(errorData));
-  }) */
-
+const gameResultsGenerator = document.querySelector("#gameResultsGenerator");
+const tournamentIDInput = document.querySelector("#tournamentIDInput");
 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -76,6 +49,55 @@ playerForm.addEventListener('submit', (event) => {
     .then(data => console.log(data))
     .catch(error => error.json().then(errorData => console.error(errorData)))
 });
+
+
+gameResultsGenerator.addEventListener("submit", generateGamesResults);
+
+async function generateGamesResults(e) {
+    e.preventDefault();
+
+    try {
+        const tournamentID = tournamentIDInput.value;
+        const tournament = await(await fetch(`http://localhost:5000/api/tournaments/${tournamentID}`)).json();
+        const lastGamesIDs = tournament.gamesIDs[tournament.gamesIDs.length - 1];
+        const updatedGames = [];
+
+        if(lastGamesIDs.length > 0){
+            const games = await Promise.all(lastGamesIDs.map(id => fetch(`http://localhost:5000/api/games/${id}`)));
+
+            for(let i = 0; i < games?.length; i++) {
+                let game = await games[i].json();
+                
+                if(game.player1ID === "0") {
+                    game.player2Score = 2;
+                } else if(game.player2ID === "0") {
+                    game.player1Score = 2;
+                } else {
+                    const player1Score = Math.floor(Math.random() * 3);
+                    const player2Score = 2 - player1Score;
+
+                    game.player1Score = player1Score;
+                    game.player2Score = player2Score;
+                }
+
+                game = await(await fetch(`http://localhost:5000/api/games/${game._id}`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify({player1Score: game.player1Score, player2Score: game.player2Score})
+                })).json();
+
+                updatedGames.push(game);
+            }
+        }
+
+        console.log(updatedGames);
+    }catch(error) {
+        console.error(error);
+    }
+    
+}
 
 
 //Функция для разбиения игр по турам

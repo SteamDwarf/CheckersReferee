@@ -95,46 +95,12 @@ export const makeFirstSwissDraw = (tournamentID: string, playersStats: IPlayerSt
 }
 
 export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlayerStats[]) => {
-    let scoreGroups: IPlayerStats[][] = [];
     let games: IGame[] = [];
-    let sortedPlayers = [...playersStats].sort(compareByScore) as IPlayerStats[];
 
+    let sortedPlayers = [...playersStats].sort(compareByScore) as IPlayerStats[];
     sortedPlayers = sortedPlayers.length % 2 === 0 ? sortedPlayers : [...sortedPlayers, dummyStats];
 
-    //TODO работать с копией и возвращать изменнную копию playersStats
-
-    while(sortedPlayers.length > 0) {
-        const player = sortedPlayers.shift();
-
-        if(player && player.playerID !== "0") {
-            const score = player.score;
-            const scoreGroup: IPlayerStats[] = [player];
-
-            while(sortedPlayers[0] && sortedPlayers[0].score === score) {
-                const otherPlayer = sortedPlayers.shift();
-                
-                if(otherPlayer) scoreGroup.push(otherPlayer);
-            }
-            scoreGroups.push(scoreGroup);
-        } else if(player && player.playerID === "0") {
-            scoreGroups[scoreGroups.length - 1].push(player);
-        }
-        
-    }
-
-    /* scoreGroups = scoreGroups.reduce((groups, group, i, array) => {
-        if(group.length % 2 !== 0 && i + 1 < scoreGroups.length) {
-            const lastPlayer = group.pop();
-            if(lastPlayer) scoreGroups[i + 1].unshift(lastPlayer);
-        }
-
-        if(group.length !== 0) {
-            return groups.push(group);
-        }
-
-        return groups;
-    }, [] as IPlayerStats[][]) */
-
+    let scoreGroups: IPlayerStats[][] = makeScoreGroups(sortedPlayers);
     scoreGroups = disturbeGroups(scoreGroups);
 
     //console.log("score groups", scoreGroups);
@@ -151,20 +117,36 @@ export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlay
 
 }
 
+const makeScoreGroups = (sortedPlayers: IPlayerStats[]) => {
+    const players = [...sortedPlayers];
+    const scoreGroups = [];
+
+    while(players.length > 0) {
+        const player = players.shift();
+
+        if(player && player.playerID !== "0") {
+            const score = player.score;
+            const scoreGroup: IPlayerStats[] = [player];
+
+            while(players[0] && players[0].score === score) {
+                const otherPlayer = players.shift();
+                
+                if(otherPlayer) scoreGroup.push(otherPlayer);
+            }
+
+            scoreGroups.push(scoreGroup);
+        } else if(player && player.playerID === "0") {
+            scoreGroups[scoreGroups.length - 1].push(player);
+        }
+        
+    }
+
+    return scoreGroups;
+}
+
 const disturbeGroups = (scoreGroups: IPlayerStats[][]) => {
     const disturbedScoreGroups: IPlayerStats[][] = [];
-    //scoreGroup.sort(compareByAdamovichRank);
-        //console.log(scoreGroup.length);
 
-        /* if(scoreGroup.length % 2 !== 0 && i + 1 < scoreGroups.length) {
-            const lastPlayer = scoreGroup.pop();
-            if(lastPlayer) scoreGroups[i + 1].unshift(lastPlayer);
-
-            if(scoreGroup.length === 0) {
-                scoreGroups.splice(scoreGroups.indexOf(scoreGroup), 1);
-            }
-        } */
-    
     scoreGroups.forEach((scoreGroup, i) => {
         if(scoreGroup.length % 2 !== 0 && i + 1 < scoreGroups.length) {
             const lastPlayer = scoreGroup.pop();
@@ -174,10 +156,6 @@ const disturbeGroups = (scoreGroups: IPlayerStats[][]) => {
         if(scoreGroup.length !== 0) {
             disturbedScoreGroups.push(scoreGroup);
         }
-
-        /* console.log("disturbed groups", scoreGroups);
-        console.log("scoreGroup ", scoreGroup); */
-
     });
 
     return disturbedScoreGroups;
