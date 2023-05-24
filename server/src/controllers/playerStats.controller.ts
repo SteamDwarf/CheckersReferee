@@ -58,10 +58,10 @@ export const updatePlayerStatsAfterGame = async(
 export const updatePlayerStatsAfterTournament = async(playersStats: IPlayerStatsWithID[],  games: IGame[]) => {
     for(let i = 0; i < playersStats.length; i++) {
         const sportCategory = await findDocumentById(getDBCollections().sportsCategories, playersStats[i].sportsCategoryID) as ISportsCategoryWithID;
-        const playerGames = games.filter(game => game.player1ID === playersStats[i].playerID || game.player2ID === playersStats[i].playerID);
+        const playerGames = games.filter(game => game.player1StatsID === playersStats[i]._id.toString() || game.player2StatsID === playersStats[i]._id.toString());
         
         playersStats[i].lastAdamovichRank = calculateAdamovichAfterTournament(playersStats[i], sportCategory, playersStats);
-        playersStats[i].gorinRank = calculateGorinRank(playersStats[i].playerID, playerGames, playersStats);
+        playersStats[i].gorinRank = calculateGorinRank(playersStats[i]._id.toString(), playerGames, playersStats);
     }
 
     playersStats.sort(compareByScore);

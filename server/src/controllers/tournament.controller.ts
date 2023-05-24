@@ -101,9 +101,9 @@ export const startTournament = expressAsyncHandler(async(request: Request, respo
     const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerWithId[];
     const playersStats = players.map(player => PlayerStat(player as IPlayerWithId, id));
     //TODO неявно меняется статистика - плохо
-    const {games, toursCount} = makeDraw(tournamentForStart, playersStats as IPlayerStats[]);
-    const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
     const savedPlayersStats = await createDocuments(getDBCollections().playerStats, playersStats) as IPlayerStatsWithID[];
+    const {games, toursCount} = makeDraw(tournamentForStart, savedPlayersStats);
+    const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
 
     await saveStatsToPlayers(players, savedPlayersStats);
 
@@ -184,7 +184,7 @@ export const finishTour = expressAsyncHandler(async(request: Request, response: 
     await updateDocument(getDBCollections().tournaments, tournament._id.toString(), tournament);
 } */
 
-const makeDraw = (tournament: ITournamentWithId, playerStats: IPlayerStats[]) => {
+const makeDraw = (tournament: ITournamentWithId, playerStats: IPlayerStatsWithID[]) => {
     if(tournament.tournamentSystem === TournamentSystems.swiss) {
         return makeFirstSwissDraw(tournament._id.toString(), playerStats);
     } else  {

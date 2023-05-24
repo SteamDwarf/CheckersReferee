@@ -1,6 +1,6 @@
 import { ISportsCategory, ISportsCategoryWithID} from "../models/sportsCategory.model"
 import { clamp } from "./math";
-import { IPlayerStats } from "../models/playerStats.model";
+import { IPlayerStats, IPlayerStatsWithID } from "../models/playerStats.model";
 import { IGame, IGameWithId } from "../models/games.model";
 
 
@@ -39,16 +39,16 @@ export const calculateAdamovichAfterTournament = (playerStats: IPlayerStats, spo
     return clampAdamovichRank(sportsCategory, newRank);
 }
 
-export const calculateGorinRank = (playerID: string, games: IGame[], playersStats: IPlayerStats[]) => {
+export const calculateGorinRank = (playerID: string, games: IGame[], playersStats: IPlayerStatsWithID[]) => {
     let winedScore = 0;
     let drawScore = 0;
     let looseScore = 0;
     let gorinCoefficient = 0;
 
     games.map(game => {
-        const competitorID = game.player1ID === playerID ? game.player2ID : game.player1ID;
-        const competitorStats = playersStats.find(stat => stat.playerID === competitorID);
-        const playerScore = game.player1ID === playerID ? game.player1Score : game.player2Score;
+        const competitorID = game.player1StatsID === playerID ? game.player2StatsID : game.player1StatsID;
+        const competitorStats = playersStats.find(stat => stat._id.toString() === competitorID);
+        const playerScore = game.player1StatsID === playerID ? game.player1Score : game.player2Score;
 
         if(competitorStats) {
             if(playerScore === 2) {
@@ -60,7 +60,6 @@ export const calculateGorinRank = (playerID: string, games: IGame[], playersStat
             }
         }
     });
-
     gorinCoefficient = winedScore * 4 + drawScore * 2 + looseScore;
 
     return gorinCoefficient;

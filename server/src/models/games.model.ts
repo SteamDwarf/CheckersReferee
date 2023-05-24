@@ -8,8 +8,8 @@ export enum CheckersColor {
 
 export interface IGame {
     tournamentID: string,
-    player1ID: string,
-    player2ID: string,
+    player1StatsID: string,
+    player2StatsID: string,
     player1Name: string,
     player2Name: string,
     player1Score: number,
@@ -23,16 +23,16 @@ export interface IGameWithId extends IGame{
 
 export const Game = (
                 tournamentID: string, 
-                player1ID: string, 
+                player1StatsID: string, 
                 player1Name: string, 
-                player2ID: string, 
+                player2StatsID: string, 
                 player2Name: string,
             ):IGame => {
     return {
         tournamentID,
-        player1ID,
+        player1StatsID,
         player1Name,
-        player2ID,
+        player2StatsID,
         player2Name,
         player1Score: 0,
         player2Score: 0,
@@ -47,8 +47,8 @@ export const gamesSchema = {
             bsonType: "object",
             required: [
                 "tournamentID",
-                "player1ID", 
-                "player2ID", 
+                "player1StatsID", 
+                "player2StatsID", 
                 "player1Name", 
                 "player2Name", 
                 "player1Score", 
@@ -66,11 +66,11 @@ export const gamesSchema = {
                     bsonType: "string",
                     description: "Поле tournamentID является обязательным и должно быть string"
                 },
-                "player1ID": {
+                "player1StatsID": {
                     bsonType: "string",
                     description: "Поле player1ID является обязательным и должно быть string"
                 },
-                "player2ID": {
+                "player2StatsID": {
                     bsonType: "string",
                     description: "Поле player2ID является обязательным и должно быть string"
                 },

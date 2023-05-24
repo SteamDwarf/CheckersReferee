@@ -30,7 +30,7 @@ export const getGame = expressAsyncHandler(async(request: Request, response: Res
 export const updateGame = expressAsyncHandler(async(request: Request, response: Response) => {
     const gameID = request.params.id;
     const newGameData: IGame = request.body;
-    const oldGameData = await findDocumentById(getDBCollections().games, gameID);
+    const oldGameData = await findDocumentById(getDBCollections().games, gameID) as IGameWithId;
     //const tournament = await findDocumentById(getDBCollections().tournaments, newGameData.tournamentID) as ITournamentWithId;
     /* const playerStats = await findDocumentsWithFilter(getDBCollections().playerStats, {
         tournamentID: newGameData.tournamentID
@@ -38,14 +38,8 @@ export const updateGame = expressAsyncHandler(async(request: Request, response: 
 
     if(!oldGameData) throw new NotFoundError("По указанному id игра не найдена");
 
-    const player1Stats = await findDocument(getDBCollections().playerStats, {
-        tournamentID: oldGameData.tournamentID,
-        playerID: oldGameData.player1ID
-    }) as IPlayerStatsWithID;
-    const player2Stats = await findDocument(getDBCollections().playerStats, {
-        tournamentID: oldGameData.tournamentID,
-        playerID: oldGameData.player2ID
-    }) as IPlayerStatsWithID;
+    const player1Stats = await findDocumentById(getDBCollections().playerStats, oldGameData.player1StatsID) as IPlayerStatsWithID;
+    const player2Stats = await findDocumentById(getDBCollections().playerStats, oldGameData.player2StatsID) as IPlayerStatsWithID;
 
     await updatePlayerStatsAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newGameData.player1Score);
     await updatePlayerStatsAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newGameData.player2Score);
