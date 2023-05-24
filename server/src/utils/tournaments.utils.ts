@@ -101,19 +101,21 @@ export const makeSwissDrawAfterTour = (tournamentID: string, playersStats: IPlay
     sortedPlayers = sortedPlayers.length % 2 === 0 ? sortedPlayers : [...sortedPlayers, dummyStats];
     dummyStats.competitorsID = [""];
 
-
-    let scoreGroups: IPlayerStats[][] = makeScoreGroups(sortedPlayers);
-    scoreGroups = disturbeGroups(scoreGroups);
-
-    //console.log("score groups", scoreGroups);
-    //console.log("disturbed groups", scoreGroups);
+    const scoreGroups: IPlayerStats[][] = makeScoreGroups(sortedPlayers);
     const splitedScoreGroups = scoreGroups.map(scoreGroup => splitArrayBySubArraysCount(scoreGroup, 2));
     const pairs = makeDraw(splitedScoreGroups);
-    /* console.log("ПАРЫ=========================");
-    console.log(pairs); */
-    games = pairs.map(pair => Game(tournamentID, pair[0].playerID, pair[0].playerName, pair[1].playerID, pair[1].playerName));
-    //console.log(unmatchedPlayers.length);
-    //console.log(unmatchedPlayers.map(player => player?._id));
+
+    games = pairs.map(pair => {
+        const  game = Game(tournamentID, pair[0].playerID, pair[0].playerName, pair[1].playerID, pair[1].playerName);
+        updateCheckersColor(pair[0], pair[1], game);
+        /* console.log(pair[0].playerName, "color:", pair[0].lastColor, "used:", pair[0].colorUsed);
+        console.log(pair[1].playerName, "color:", pair[1].lastColor, "used:", pair[1].colorUsed);
+        console.log("=========================================="); */
+        console.log(pair[0].playerName, "score:", pair[0].score);
+        console.log(pair[1].playerName, "score", pair[1].score);
+        console.log("==========================================");
+        return game;
+    });
 
     return games;
 
@@ -143,7 +145,7 @@ const makeScoreGroups = (sortedPlayers: IPlayerStats[]) => {
         
     }
 
-    return scoreGroups;
+    return disturbeGroups(scoreGroups);
 }
 
 const disturbeGroups = (scoreGroups: IPlayerStats[][]) => {
@@ -166,14 +168,10 @@ const disturbeGroups = (scoreGroups: IPlayerStats[][]) => {
 const makeDraw = (groups:IPlayerStats[][][]) => {
     let pairs = [];
     let unPairedPlayers = [];
-    //console.log(groups);
-    //console.log("MAKE DRAW");
-    for(let i = 0; i < groups.length; i++) {
-        //console.log("group", i);
-        //TODO не передавать pairs
-        const pairingResult = makePairs(groups[i]);
-        //console.log("pairing result", pairingResult);
 
+    for(let i = 0; i < groups.length; i++) {
+        const pairingResult = makePairs(groups[i]);
+        
         pairs.push(...pairingResult.pairs);
 
         if(pairingResult.unPairedPlayers.length > 0 && i < groups.length - 1) {
@@ -184,9 +182,8 @@ const makeDraw = (groups:IPlayerStats[][][]) => {
         }
 
     }
-    let count = 0;
+    
     while(unPairedPlayers.length > 0) {
-        //console.log("unpaired");
         unPairedPlayers.sort(compareByScore);
         pairs = shuffle(pairs);
         
@@ -197,38 +194,29 @@ const makeDraw = (groups:IPlayerStats[][][]) => {
         unPairedPlayers = [];
         pairs.push(...pairingResult.pairs);
         unPairedPlayers.push(...pairingResult.unPairedPlayers);
-        count++;
-        console.log("try", count);
     }
-
-    console.log("up:",unPairedPlayers);
 
     return pairs;
 }
 
 function makePairs(group: IPlayerStats[][], makedPairs?: IPlayerStats[][]) {
-    //console.log("MAKE PAIRS");
     let pairs: IPlayerStats[][] = [];
     const untouchablePairs: IPlayerStats[][] = []
     const unPairedPlayers = [];
     const subGroup1 = group[0];
     const subGroup2 = group[1];
     let unpairedPlayer: undefined | IPlayerStats = undefined;
-    //console.log(group);
+
 
     while(subGroup1.length > 0) {
-        /* console.log("up", unpairedPlayer);
-        console.log("sb1",subGroup1);
-        console.log("sb2",subGroup2); */
         const player1: IPlayerStats | undefined = unpairedPlayer ? unpairedPlayer : subGroup1.shift();
         if(!player1) continue;
 
         const player2 = findCompetitor(player1, group);
         if(!player2) {
             const lastPair = pairs.length > 0 ? pairs.pop() : makedPairs?.pop();
-            //console.log("lp",lastPair);
+
             if(!lastPair) {
-                //console.log("hasn`t lp");
                 unPairedPlayers.push(player1);
                 unpairedPlayer = undefined;
                 continue;
@@ -253,14 +241,9 @@ function makePairs(group: IPlayerStats[][], makedPairs?: IPlayerStats[][]) {
                 pairs.push([player1, player2]);
             }
 
-            //if(unpairedPlayer) unpairedPlayer = undefined;
         }
     }
 
-    /* if(makedPairs) {
-        pairs.unshift(...makedPairs);
-    }
- */
     pairs = [...pairs, ...untouchablePairs];
     unPairedPlayers.push(...subGroup2);
 
