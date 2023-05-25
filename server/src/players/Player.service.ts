@@ -13,7 +13,7 @@ class PlayerService extends BaseService {
         super(db);
         this._sportsCategoryService = sportsCategoryService;
     }
-
+    
     public async createPlayer(playerData: IPlayer) {
         const sportCategory = await this._sportsCategoryService.findSportsCategoryByID(playerData.sportsCategoryID);
 

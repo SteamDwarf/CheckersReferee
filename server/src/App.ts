@@ -10,6 +10,7 @@ import PlayerController from './players/Player.controller';
 import ErrorHandler from './errors/ErrorHandler.middleware';
 import PlayerStatsController from './playerStats/PlayerStats.controller';
 import DataBase from './DB/DataBase';
+import TournamentController from './tournaments/Tournament.controller';
 
 class App {
     private readonly _port;
@@ -20,6 +21,7 @@ class App {
     private readonly _sportsCategoryController;
     private readonly _playerController;
     private readonly _playerStatsController;
+    private readonly _tournamentController;
     private readonly _errorHandler;
 
     constructor(
@@ -30,6 +32,7 @@ class App {
         sportCategoryController: SportsCategoryController,
         playerController: PlayerController,
         playerStatsController: PlayerStatsController,
+        tournamentController: TournamentController,
         errorHandler: ErrorHandler
     ){
         this._port = port;
@@ -40,6 +43,7 @@ class App {
         this._sportsCategoryController = sportCategoryController;
         this._playerController = playerController;
         this._playerStatsController = playerStatsController;
+        this._tournamentController = tournamentController;
         this._errorHandler = errorHandler;
     }
 
@@ -68,7 +72,7 @@ class App {
         this._app.use('/api/auth', this._authController.router);
         this._app.use('/api/players', this._playerController.router);
         this._app.use('/api/sports-categories', this._sportsCategoryController.router);
-        this._app.use('/api/tournaments', tournamentsRouter);
+        this._app.use('/api/tournaments', this._tournamentController.router);
         this._app.use('/api/games', gamesRouter);
         this._app.use('/api/player-stats', this._playerStatsController.router);
         
