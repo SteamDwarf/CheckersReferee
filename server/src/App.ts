@@ -1,21 +1,21 @@
 import express from 'express';
 import path from "path";
-import { connectToDatabase } from './database/database';
 //import authRouter from './routes/auth.router';
 import tournamentsRouter from './routes/tournaments.router';
 import gamesRouter from './routes/games.router';
-import playerStatsRouter from './routes/playerStats.router';
 import cors from 'cors';
 import AuthController from './auth/Auth.controller';
 import SportsCategoryController from './sportsCategory/SportsCategory.controller';
 import PlayerController from './players/Player.controller';
 import ErrorHandler from './errors/ErrorHandler.middleware';
 import PlayerStatsController from './playerStats/PlayerStats.controller';
+import DataBase from './DB/DataBase';
 
 class App {
-    private readonly port;
-    private readonly uri;
-    private readonly app;
+    private readonly _port;
+    private readonly _uri;
+    private readonly _app;
+    private readonly _db;
     private readonly _authController;
     private readonly _sportsCategoryController;
     private readonly _playerController;
@@ -25,15 +25,17 @@ class App {
     constructor(
         port: string, 
         uri: string, 
+        database: DataBase,
         authController: AuthController, 
         sportCategoryController: SportsCategoryController,
         playerController: PlayerController,
         playerStatsController: PlayerStatsController,
         errorHandler: ErrorHandler
     ){
-        this.port = port;
-        this.uri = uri;
-        this.app = express();
+        this._port = port;
+        this._uri = uri;
+        this._app = express();
+        this._db = database;
         this._authController = authController;
         this._sportsCategoryController = sportCategoryController;
         this._playerController = playerController;
@@ -44,35 +46,34 @@ class App {
     public start(successCallback?: () => void) {
         this.useRoutes();
 
-        this.app.listen(this.port, () => {
-            console.log(`Сервер запущен по адресу ${this.uri}:${this.port}`);
+        this._app.listen(this._port, () => {
+            console.log(`Сервер запущен по адресу ${this._uri}:${this._port}`);
             
             if(successCallback) successCallback();
 
-            connectToDatabase();
+            this._db.connectToDatabase();
         });
     }
 
     private useRoutes() {
-        this.app.use(express.urlencoded({extended: false}));
-        this.app.use(express.json());
-        this.app.use(express.static(path.resolve('../client')))
-        this.app.use(cors());
+        this._app.use(express.urlencoded({extended: false}));
+        this._app.use(express.json());
+        this._app.use(express.static(path.resolve('../client')))
+        this._app.use(cors());
 
-        this.app.get('/', (request, response) => {
+        this._app.get('/', (request, response) => {
             response.sendFile(path.resolve('../client/index.html'));
         })
         
-        //this.app.use('/api/auth', authRouter);
-        this.app.use('/api/auth', this._authController.router);
-        this.app.use('/api/players', this._playerController.router);
-        this.app.use('/api/sports-categories', this._sportsCategoryController.router);
-        this.app.use('/api/tournaments', tournamentsRouter);
-        this.app.use('/api/games', gamesRouter);
-        this.app.use('/api/player-stats', this._playerStatsController.router);
+        this._app.use('/api/auth', this._authController.router);
+        this._app.use('/api/players', this._playerController.router);
+        this._app.use('/api/sports-categories', this._sportsCategoryController.router);
+        this._app.use('/api/tournaments', tournamentsRouter);
+        this._app.use('/api/games', gamesRouter);
+        this._app.use('/api/player-stats', this._playerStatsController.router);
         
-        this.app.use(this._errorHandler.handleNotFoundError.bind(this._errorHandler));
-        this.app.use(this._errorHandler.handleError.bind(this._errorHandler));
+        this._app.use(this._errorHandler.handleNotFoundError.bind(this._errorHandler));
+        this._app.use(this._errorHandler.handleError.bind(this._errorHandler));
     }
     
 

@@ -11,23 +11,27 @@ import PlayerController from './players/Player.controller';
 import ErrorHandler from './errors/ErrorHandler.middleware';
 import PlayerStatsService from './playerStats/PlayerStats.service';
 import PlayerStatsController from './playerStats/PlayerStats.controller';
+import DataBase from './DB/DataBase';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
 const PORT = process.env.PORT || '5000';
 const URI = process.env.URI || 'http://localhost';
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017";
+
+const database = new DataBase(MONGO_URI);
 
 const authMiddleware = new AuthMiddleware();
-const authService = new AuthService();
+const authService = new AuthService(database);
 const authController = new AuthController(authMiddleware, authService);
 
-const sportsCategoryService = new SportsCategoryService();
+const sportsCategoryService = new SportsCategoryService(database);
 const sportsCategoryController = new SportsCategoryController(sportsCategoryService);
 
-const playerService = new PlayerService(sportsCategoryService);
+const playerService = new PlayerService(database, sportsCategoryService);
 const playerController = new PlayerController(playerService);
 
-const playerStatsService = new PlayerStatsService();
+const playerStatsService = new PlayerStatsService(database);
 const playerStatsController = new PlayerStatsController(playerStatsService);
 
 const errorHandler = new ErrorHandler();
@@ -35,6 +39,7 @@ const errorHandler = new ErrorHandler();
 const app = new App(
     PORT, 
     URI, 
+    database,
     authController, 
     sportsCategoryController,
     playerController,

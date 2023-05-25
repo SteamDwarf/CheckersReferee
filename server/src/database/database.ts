@@ -9,10 +9,10 @@ import { tournamentSchema } from "../models/tournaments.model";
 import { gamesSchema } from "../models/games.model";
 import { playerStatsSchema } from "../playerStats/playerStats.model";
 
-dotenv.config({path: `${__dirname}/../../.env`});
+//dotenv.config({path: `${__dirname}/../../.env`});
 
-const URL = process.env.MONGO_URI || "mongodb://localhost:27017";
-const client = new MongoClient(URL);
+//const URL = process.env.MONGO_URI || "mongodb://localhost:27017";
+//const client = new MongoClient(URL);
 
 let database: Db;
 
@@ -28,7 +28,7 @@ const collections: IDBCollections = {
 export const getDBCollections = (): IDBCollections => Object.assign({}, collections);
 
 export const connectToDatabase = async(callback?: () => void) => {
-    try {
+    /* try {
         await client.connect()
 
         console.log(`Успешно установлено подключение к базе данных ${URL}`);
@@ -42,7 +42,7 @@ export const connectToDatabase = async(callback?: () => void) => {
 
     } catch (error) {
         console.error(error);
-    }
+    } */
 }
 
 const setCollections = () => {

@@ -1,14 +1,16 @@
-import { createDocument, deleteDocument, findDocumentById, findDocuments, getDBCollections, updateDocument } from "../database/database";
 import { IPlayer, IPlayerWithId } from "./players.model";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import { paginateData } from "../utils/controllers.utils";
 import { NotFoundError } from "../errors/NotFound.error";
+import BaseService from "../common/Base.service";
+import DataBase from "../DB/DataBase";
 
-class PlayerService {
+class PlayerService extends BaseService {
     private readonly _sportsCategoryService;
 
-    constructor(sportsCategoryService: SportsCategoryService) {
+    constructor(db: DataBase, sportsCategoryService: SportsCategoryService) {
+        super(db);
         this._sportsCategoryService = sportsCategoryService;
     }
 
@@ -20,16 +22,16 @@ class PlayerService {
         playerData = this.setSportCategory(sportCategory, playerData);
         playerData.playerStatsIDs = [];
 
-        return await createDocument(getDBCollections().players, playerData) as IPlayerWithId;
+        return await this.db.createDocument(this.db.collections.players, playerData) as IPlayerWithId;
     }
 
     public async getPlayer(id: string) {
-        return await findDocumentById(getDBCollections().players, id) as IPlayerWithId;
+        return await this.db.findDocumentById(this.db.collections.players, id) as IPlayerWithId;
     }
 
     //TODO вынести paginateData в класс UtilsService
     public async getPlayers(page: number, limit: number) {
-        const players = await findDocuments(getDBCollections().players) as IPlayerWithId[];
+        const players = await this.db.findDocuments(this.db.collections.players) as IPlayerWithId[];
 
         return paginateData(players, limit, page);
     }
@@ -39,7 +41,7 @@ class PlayerService {
     
         if(!playerForUpdate) throw new NotFoundError("По указанному id игрок не найден");
     
-        const updatedPlayer = await updateDocument(getDBCollections().players, id, playerData) as IPlayerWithId;
+        const updatedPlayer = await this.db.updateDocument(this.db.collections.players, id, playerData) as IPlayerWithId;
     
         return updatedPlayer;
     }
@@ -49,7 +51,7 @@ class PlayerService {
     
         if(!playerForDelete) throw new NotFoundError("По указанному id игрок не найден");
     
-        const deletingResult = await deleteDocument(getDBCollections().players, id);
+        const deletingResult = await this.db.deleteDocument(this.db.collections.players, id);
     
         return deletingResult;
     }

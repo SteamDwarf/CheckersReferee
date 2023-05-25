@@ -1,13 +1,18 @@
-import { findDocuments, getDBCollections, findDocumentById } from "../database/database";
+import DataBase from "../DB/DataBase";
+import BaseService from "../common/Base.service";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 
-class SportsCategoryService {
+class SportsCategoryService extends BaseService {
+    constructor(db: DataBase) {
+        super(db);
+    }
+
     public async findSportCategories() {
-        return await findDocuments(getDBCollections().sportsCategories) as ISportsCategoryWithID[];
+        return await this.db.findDocuments(this.db.collections.sportsCategories) as ISportsCategoryWithID[];
     }
 
     public async findSportsCategoryByID(id: string) {
-        return await findDocumentById(getDBCollections().sportsCategories, id) as ISportsCategoryWithID;
+        return await this.db.findDocumentById(this.db.collections.sportsCategories, id) as ISportsCategoryWithID;
     }
 }
 

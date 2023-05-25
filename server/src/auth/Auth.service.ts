@@ -1,11 +1,16 @@
 import bcrypt from "bcrypt";
-import { findDocument, getDBCollections } from "../database/database";
 import { IUser } from "./users.model";
 import { AuthError } from "../errors/Auth.error";
 import { NotFoundError } from "../errors/NotFound.error";
+import BaseService from "../common/Base.service";
+import DataBase from "../DB/DataBase";
 
 //TODO в конструктор передавать бд
-class AuthService {
+class AuthService extends BaseService{
+    constructor(db: DataBase) {
+        super(db);
+    }
+
     public async comparePassword(login: string, password: string) {
         const user = await this.findUser(login);
         const isPasswordCompare = await bcrypt.compare(password, user.password);
@@ -18,7 +23,7 @@ class AuthService {
     }
 
     private async findUser (login: string) {
-        const user = await findDocument(getDBCollections().users, {login});
+        const user = await this.db.findDocument(this.db.collections.users, {login});
     
         if(!user) throw new NotFoundError("Пользователь с данным логином не найден");
     
