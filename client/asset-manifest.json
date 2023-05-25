@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1593be34.css",
+    "main.js": "/static/js/main.1262e4f2.js",
+    "static/media/checkersLogo.png": "/static/media/checkersLogo.1ed0441f6b6213ad3d5a.png",
+    "static/media/photo.jpg": "/static/media/photo.e13a729ba292dae905f7.jpg",
+    "index.html": "/index.html",
+    "main.1593be34.css.map": "/static/css/main.1593be34.css.map",
+    "main.1262e4f2.js.map": "/static/js/main.1262e4f2.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1593be34.css",
+    "static/js/main.1262e4f2.js"
+  ]
+}

@@ -3,7 +3,7 @@ import { ISportsCategory } from "../models/sportsCategory.model";
 import { ITournament } from "../models/tournaments.model";
 import { IGame } from "../models/games.model";
 import { IPlayerStats } from "../models/playerStats.model";
-import { IUser } from "../models/users.model";
+import { IUser } from "../auth/users.model";
 import { IPlayer } from "../models/players.model";
 
 export type DocumentTypes = IPlayer | 

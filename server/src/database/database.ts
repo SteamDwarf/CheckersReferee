@@ -4,7 +4,7 @@ import { CollectionNames } from "./enums";
 import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "./types";
 import { playersSchema } from "../models/players.model";
 import { sportsCategorySchema } from "../models/sportsCategory.model";
-import { IUser, userSchema } from "../models/users.model";
+import { IUser, userSchema } from "../auth/users.model";
 import { tournamentSchema } from "../models/tournaments.model";
 import { gamesSchema } from "../models/games.model";
 import { playerStatsSchema } from "../models/playerStats.model";

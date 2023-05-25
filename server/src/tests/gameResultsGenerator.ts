@@ -1,4 +1,4 @@
-import expressAsyncHandler from "express-async-handler";
+/* import expressAsyncHandler from "express-async-handler";
 import { findDocumentById, findDocumentsById, getDBCollections, updateDocument } from "../database/database"
 import { IGameWithId } from "../models/games.model";
 import { ITournament, ITournamentWithId } from "../models/tournaments.model";
@@ -35,3 +35,4 @@ export const generateGameResults = expressAsyncHandler(async(request: Request, r
 
     response.json({games: updatedGames});
 })
+ */

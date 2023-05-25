@@ -1,12 +1,32 @@
 import { Request, Response } from "express";
-import { getDBCollections, findDocument } from "../database/database";
-import expressAsyncHandler from "express-async-handler";
-import validator from "validator";
-import bcrypt from "bcrypt";
-import { IUser } from "../models/users.model";
-import { AuthError, InputError, NotFoundError} from "../utils/ServerError";
+import BaseController from "../common/Base.controller";
+import ControllerRoute from "../common/ControllerRouter";
+import AuthMiddleware from "./Auth.middleware";
+import AuthService from "./Auth.service";
 
-export const handleAuth = expressAsyncHandler(async(request: Request, response: Response) => {
+
+class AuthController extends BaseController{
+    private readonly _authService;
+
+    constructor(authMiddleware: AuthMiddleware, authService: AuthService) {
+        super();
+        this._authService = authService;
+        this.initRoutes(
+            [new ControllerRoute('/', 'post', [authMiddleware.checkEmptyData], this.asyncHandler(this.auth))]
+        )
+    }
+
+    private async auth (request: Request, response: Response){
+        const {login, password} = request.body;
+        const compareResult = await this._authService.comparePassword(login, password);
+
+        response.json(compareResult);
+    }
+}
+
+export default AuthController;
+
+/* export const handleAuth = expressAsyncHandler(async(request: Request, response: Response) => {
     const {login, password} = request.body;
 
     checkEmptyData(login, password);
@@ -45,6 +65,6 @@ function sendUserData(user: IUser, response: Response) {
 
     response.json(userData);
 }
-
+ */
 
 
