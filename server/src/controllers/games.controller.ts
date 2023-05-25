@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getDBCollections, findDocumentById, updateDocument, findDocuments, findDocumentsWithFilter, findDocument, deleteDocuments} from "../database/database";
 import { IGame, IGameWithId} from "../models/games.model";
 import expressAsyncHandler from "express-async-handler";
-import { IPlayerStatsWithID } from "../models/playerStats.model";
+import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { updatePlayerStatsAfterGame } from "./playerStats.controller";
 import { NotFoundError } from "../errors/NotFound.error";
 

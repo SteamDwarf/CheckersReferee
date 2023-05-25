@@ -14,7 +14,7 @@ import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tou
 import { makeRoundRobinDraw, makeFirstSwissDraw, makeSwissDrawAfterTour } from "../utils/tournaments.utils";
 import { IPlayerWithId } from "../players/players.model";
 import { paginateData } from "../utils/controllers.utils";
-import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../models/playerStats.model";
+import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../playerStats/playerStats.model";
 import expressAsyncHandler from "express-async-handler";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { IGameWithId } from "../models/games.model";

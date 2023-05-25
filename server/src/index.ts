@@ -9,6 +9,8 @@ import SportsCategoryController from './sportsCategory/SportsCategory.controller
 import PlayerService from './players/Player.service';
 import PlayerController from './players/Player.controller';
 import ErrorHandler from './errors/ErrorHandler.middleware';
+import PlayerStatsService from './playerStats/PlayerStats.service';
+import PlayerStatsController from './playerStats/PlayerStats.controller';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -25,6 +27,9 @@ const sportsCategoryController = new SportsCategoryController(sportsCategoryServ
 const playerService = new PlayerService(sportsCategoryService);
 const playerController = new PlayerController(playerService);
 
+const playerStatsService = new PlayerStatsService();
+const playerStatsController = new PlayerStatsController(playerStatsService);
+
 const errorHandler = new ErrorHandler();
 
 const app = new App(
@@ -33,6 +38,7 @@ const app = new App(
     authController, 
     sportsCategoryController,
     playerController,
+    playerStatsController,
     errorHandler
 );
 

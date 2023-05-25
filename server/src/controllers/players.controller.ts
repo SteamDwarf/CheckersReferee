@@ -4,7 +4,7 @@ import { IPlayer, IPlayerWithId} from "../players/players.model";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
 import expressAsyncHandler from "express-async-handler";
-import { IPlayerStatsWithID } from "../models/playerStats.model";
+import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { NotFoundError } from "../errors/NotFound.error";
 
 

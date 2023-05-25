@@ -7,7 +7,7 @@ import { sportsCategorySchema } from "../models/sportsCategory.model";
 import { IUser, userSchema } from "../auth/users.model";
 import { tournamentSchema } from "../models/tournaments.model";
 import { gamesSchema } from "../models/games.model";
-import { playerStatsSchema } from "../models/playerStats.model";
+import { playerStatsSchema } from "../playerStats/playerStats.model";
 
 dotenv.config({path: `${__dirname}/../../.env`});
 

@@ -1,4 +1,4 @@
-import { IPlayerStats } from "../models/playerStats.model";
+import { IPlayerStats } from "../playerStats/playerStats.model";
 
 export const compareByScore = (player1: IPlayerStats, player2: IPlayerStats) => {
     if(player1.score > player2.score) return -1;

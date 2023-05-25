@@ -2,7 +2,7 @@ import { Collection, ObjectId, OptionalId } from "mongodb";
 import { ISportsCategory } from "../models/sportsCategory.model";
 import { ITournament } from "../models/tournaments.model";
 import { IGame } from "../models/games.model";
-import { IPlayerStats } from "../models/playerStats.model";
+import { IPlayerStats } from "../playerStats/playerStats.model";
 import { IUser } from "../auth/users.model";
 import { IPlayer } from "../players/players.model";
 

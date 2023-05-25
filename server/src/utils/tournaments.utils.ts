@@ -1,6 +1,6 @@
 import { group } from "console";
 import { CheckersColor, Game, IGame} from "../models/games.model";
-import { IPlayerStats, IPlayerStatsWithID, playerStatsSchema } from "../models/playerStats.model";
+import { IPlayerStats, IPlayerStatsWithID, playerStatsSchema } from "../playerStats/playerStats.model";
 import { shuffle, shuffleMutator, splitArrayByItemsCount, splitArrayBySubArraysCount } from "./math";
 import { compareByAdamovichRank, compareByScore } from "./playerStats.utils";
 import { ObjectId } from "mongodb";

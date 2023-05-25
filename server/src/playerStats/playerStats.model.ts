@@ -1,7 +1,7 @@
 import { IPlayerWithId } from "../players/players.model"
 import { getPlayerName } from "../utils/player.utils"
 import { ObjectId } from "mongodb"
-import { CheckersColor } from "./games.model"
+import { CheckersColor } from "../models/games.model"
 
 export interface IPlayerStats {
     playerID: string,
