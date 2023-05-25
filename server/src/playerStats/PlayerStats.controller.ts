@@ -11,26 +11,26 @@ class PlayerStatsController extends BaseController{
         this._playerStatsService = playerStatsService;
 
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], this.asyncHandler(this.getPlayersStats)),
-            new ControllerRoute('/', 'delete', [], this.asyncHandler(this.deletePlayerStats)),
-            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getPlayerStatsByID))
+            new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
+            new ControllerRoute('/', 'delete', [], this.asyncHandler(this.delete)),
+            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getByID))
         ]);
     }
 
-    private async getPlayersStats(request: Request, response: Response) {
+    private async get(request: Request, response: Response) {
         const playersStats = await this._playerStatsService.getPlayersStats();
 
         response.json(playersStats);
     }
 
-    private async getPlayerStatsByID(request: Request, response: Response) {
+    private async getByID(request: Request, response: Response) {
         const {id} = request.params;
         const playerStats = await this._playerStatsService.getPlayerStatsByID(id);
 
         response.json(playerStats);
     }
 
-    private async deletePlayerStats(request: Request, response: Response) {
+    private async delete(request: Request, response: Response) {
         const deleteResult = await this._playerStatsService.deletePlayersStats();
 
         response.json(deleteResult);

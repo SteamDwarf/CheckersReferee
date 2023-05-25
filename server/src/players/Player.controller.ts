@@ -13,22 +13,22 @@ class PlayerController extends BaseController{
 
         this._playerService = playerService;
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], this.asyncHandler(this.getPlayers)),
-            new ControllerRoute('/', 'post', [], this.asyncHandler(this.createPlayer)),
-            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getPlayer)),
-            new ControllerRoute('/:id', 'put', [], this.asyncHandler(this.updatePlayer)),
-            new ControllerRoute('/:id', 'delete', [], this.asyncHandler(this.deletePlayer)),
+            new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
+            new ControllerRoute('/', 'post', [], this.asyncHandler(this.create)),
+            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getById)),
+            new ControllerRoute('/:id', 'put', [], this.asyncHandler(this.update)),
+            new ControllerRoute('/:id', 'delete', [], this.asyncHandler(this.delete)),
         ])
     }
 
-    private async createPlayer(request: Request, response: Response) {
+    private async create(request: Request, response: Response) {
         console.log("work");
         const playerData: IPlayer = request.body;
         const createdPlayer = await this._playerService.createPlayer(playerData);
 
         response.status(201).json(createdPlayer);
     }
-    private async getPlayers (request: Request, response: Response) {
+    private async get(request: Request, response: Response) {
         console.log("work");
 
         const page = request.query.page || "1";
@@ -37,7 +37,7 @@ class PlayerController extends BaseController{
 
         response.json(players);
     }
-    private async getPlayer (request: Request, response: Response) {
+    private async getById(request: Request, response: Response) {
         console.log("work");
 
         const {id} = request.params;
@@ -45,7 +45,7 @@ class PlayerController extends BaseController{
 
         response.json(player);
     }
-    private async updatePlayer (request: Request, response: Response) {
+    private async update(request: Request, response: Response) {
         console.log("work");
 
         const {id} = request.params;
@@ -54,7 +54,7 @@ class PlayerController extends BaseController{
 
         response.json(updatedPlayer);
     }
-    private async deletePlayer (request: Request, response: Response) {
+    private async delete(request: Request, response: Response) {
         console.log("work");
 
         const {id} = request.params;

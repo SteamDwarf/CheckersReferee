@@ -10,18 +10,18 @@ class SportsCategoryController extends BaseController {
         super();
         this._sportsCategoryService = sportCategoryService;
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], this.asyncHandler(this.getSportsCategories)),
-            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getSportsCategoryById))
+            new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
+            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getById))
         ])
     }
 
-    public async getSportsCategories (request: Request, response: Response){
+    public async get (request: Request, response: Response){
         const categories = await this._sportsCategoryService.findSportCategories();
     
         response.json(categories);
     }
     
-    public async getSportsCategoryById (request: Request, response: Response) {
+    public async getById (request: Request, response: Response) {
         const {id} = request.params;
         const category = await this._sportsCategoryService.findSportsCategoryByID(id);
     

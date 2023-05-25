@@ -11,6 +11,7 @@ import ErrorHandler from './errors/ErrorHandler.middleware';
 import PlayerStatsController from './playerStats/PlayerStats.controller';
 import DataBase from './DB/DataBase';
 import TournamentController from './tournaments/Tournament.controller';
+import GameController from './games/Game.controller';
 
 class App {
     private readonly _port;
@@ -22,6 +23,7 @@ class App {
     private readonly _playerController;
     private readonly _playerStatsController;
     private readonly _tournamentController;
+    private readonly _gameController;
     private readonly _errorHandler;
 
     constructor(
@@ -33,6 +35,7 @@ class App {
         playerController: PlayerController,
         playerStatsController: PlayerStatsController,
         tournamentController: TournamentController,
+        gameController: GameController,
         errorHandler: ErrorHandler
     ){
         this._port = port;
@@ -44,6 +47,7 @@ class App {
         this._playerController = playerController;
         this._playerStatsController = playerStatsController;
         this._tournamentController = tournamentController;
+        this._gameController = gameController;
         this._errorHandler = errorHandler;
     }
 
@@ -73,7 +77,7 @@ class App {
         this._app.use('/api/players', this._playerController.router);
         this._app.use('/api/sports-categories', this._sportsCategoryController.router);
         this._app.use('/api/tournaments', this._tournamentController.router);
-        this._app.use('/api/games', gamesRouter);
+        this._app.use('/api/games', this._gameController.router);
         this._app.use('/api/player-stats', this._playerStatsController.router);
         
         this._app.use(this._errorHandler.handleNotFoundError.bind(this._errorHandler));

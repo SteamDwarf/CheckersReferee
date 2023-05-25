@@ -1,7 +1,6 @@
 import { IPlayer, IPlayerWithId } from "./players.model";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
-import { paginateData } from "../utils/controllers.utils";
 import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
 import DataBase from "../DB/DataBase";
@@ -33,7 +32,7 @@ class PlayerService extends BaseService {
     public async getPlayers(page: number, limit: number) {
         const players = await this.db.findDocuments(this.db.collections.players) as IPlayerWithId[];
 
-        return paginateData(players, limit, page);
+        return this.paginateData(players, limit, page);
     }
 
     public async updatePlayer (id: string, playerData: IPlayer){

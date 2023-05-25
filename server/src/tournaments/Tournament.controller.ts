@@ -18,7 +18,7 @@ class TournamentController extends BaseController {
             new ControllerRoute('/','get', [], this.asyncHandler(this.get)),
             new ControllerRoute('/','post', 
                 [ this._tournamentMidleware.validateTournamentSystem], 
-                this.asyncHandler(this.post)
+                this.asyncHandler(this.create)
             ),
             new ControllerRoute('/:id','get', [], this.asyncHandler(this.getByID)),
             new ControllerRoute('/:id','put', [], this.asyncHandler(this.update)),
@@ -45,7 +45,7 @@ class TournamentController extends BaseController {
     
         response.json(tournament);
     }
-    private async post(request: Request, response: Response) {
+    private async create(request: Request, response: Response) {
         console.log("work");
 
         const createdTournament = await this._tournamentService.postTournament(request.body);

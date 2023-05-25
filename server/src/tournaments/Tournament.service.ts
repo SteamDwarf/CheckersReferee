@@ -2,7 +2,6 @@ import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { NotFoundError } from "../errors/NotFound.error";
 import { ITournament, ITournamentWithId } from "../models/tournaments.model";
-import { paginateData } from "../utils/controllers.utils";
 
 class TournamentService extends BaseService {
     constructor(db: DataBase) {
@@ -12,7 +11,7 @@ class TournamentService extends BaseService {
     public async getTournaments (page: number, limit: number){
         const tournaments = await this.db.findDocuments(this.db.collections.tournaments) as ITournamentWithId[];
     
-        return paginateData(tournaments || [], limit, page);
+        return this.paginateData(tournaments || [], limit, page);
     }
 
     public async getTournamentByID(id:  string) {

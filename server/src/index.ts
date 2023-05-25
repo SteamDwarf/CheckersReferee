@@ -15,6 +15,8 @@ import DataBase from './DB/DataBase';
 import TournamentMiddleware from './tournaments/Tournament.middleware';
 import TournamentService from './tournaments/Tournament.service';
 import TournamentController from './tournaments/Tournament.controller';
+import GameService from './games/Game.service';
+import GameController from './games/Game.controller';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -41,6 +43,9 @@ const tournamentMiddleware = new TournamentMiddleware();
 const tournamentService = new TournamentService(database);
 const tournamentController = new TournamentController(tournamentMiddleware, tournamentService);
 
+const gameService = new GameService(database);
+const gameController = new GameController(gameService);
+
 const errorHandler = new ErrorHandler();
 
 const app = new App(
@@ -52,6 +57,7 @@ const app = new App(
     playerController,
     playerStatsController,
     tournamentController,
+    gameController,
     errorHandler
 );
 
