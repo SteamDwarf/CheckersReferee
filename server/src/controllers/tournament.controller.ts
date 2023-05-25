@@ -12,16 +12,17 @@ import { getDBCollections,
 } from "../database/database";
 import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tournaments.model";
 import { makeRoundRobinDraw, makeFirstSwissDraw, makeSwissDrawAfterTour } from "../utils/tournaments.utils";
-import { IPlayerWithId } from "../models/players.model";
+import { IPlayerWithId } from "../players/players.model";
 import { paginateData } from "../utils/controllers.utils";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../models/playerStats.model";
 import expressAsyncHandler from "express-async-handler";
-import { InputError, NotFoundError } from "../utils/ServerError";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { IGameWithId } from "../models/games.model";
 import { updatePlayerStatsAfterTournament } from "./playerStats.controller";
 import { updatePlayersAfterTournament } from "./players.controller";
 import { splitGames } from "../utils/games.utils";
+import { InputError } from "../errors/Input.error";
+import { NotFoundError } from "../errors/NotFound.error";
 
 export const getTournaments = expressAsyncHandler(async(request: Request, response: Response) => {
     const page = request.query.page || "1";

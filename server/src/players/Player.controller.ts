@@ -1,11 +1,5 @@
 import { Request, Response } from "express";
-import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById } from "../database/database";
-import { IPlayer, IPlayerWithId} from "../models/players.model";
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
-import { paginateData } from "../utils/controllers.utils";
-import expressAsyncHandler from "express-async-handler";
-import {NotFoundError} from "../utils/ServerError";
-import { IPlayerStatsWithID } from "../models/playerStats.model";
+import { IPlayer} from "./players.model";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import PlayerService from "./Player.service";

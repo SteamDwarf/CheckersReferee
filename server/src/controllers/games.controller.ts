@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { getDBCollections, findDocumentById, updateDocument, findDocuments, findDocumentsWithFilter, findDocument, deleteDocuments} from "../database/database";
 import { IGame, IGameWithId} from "../models/games.model";
 import expressAsyncHandler from "express-async-handler";
-import { NotFoundError } from "../utils/ServerError";
 import { IPlayerStatsWithID } from "../models/playerStats.model";
 import { updatePlayerStatsAfterGame } from "./playerStats.controller";
+import { NotFoundError } from "../errors/NotFound.error";
 
 
 export const getGames = expressAsyncHandler(async(request: Request, response: Response) => {

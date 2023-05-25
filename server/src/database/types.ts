@@ -4,7 +4,7 @@ import { ITournament } from "../models/tournaments.model";
 import { IGame } from "../models/games.model";
 import { IPlayerStats } from "../models/playerStats.model";
 import { IUser } from "../auth/users.model";
-import { IPlayer } from "../models/players.model";
+import { IPlayer } from "../players/players.model";
 
 export type DocumentTypes = IPlayer | 
                             ISportsCategory | 

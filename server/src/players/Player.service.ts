@@ -1,9 +1,9 @@
 import { createDocument, deleteDocument, findDocumentById, findDocuments, getDBCollections, updateDocument } from "../database/database";
-import { IPlayer, IPlayerWithId } from "../models/players.model";
+import { IPlayer, IPlayerWithId } from "./players.model";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
-import { NotFoundError } from "../utils/ServerError";
 import { paginateData } from "../utils/controllers.utils";
+import { NotFoundError } from "../errors/NotFound.error";
 
 class PlayerService {
     private readonly _sportsCategoryService;

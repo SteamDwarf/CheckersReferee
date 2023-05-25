@@ -1,6 +1,6 @@
 import validator from "validator";
-import { InputError } from "../utils/ServerError";
 import { NextFunction, Request, Response } from "express";
+import { InputError } from "../errors/Input.error";
 
 class AuthMiddleware {
     public checkEmptyData(request: Request, response: Response, next: NextFunction) {

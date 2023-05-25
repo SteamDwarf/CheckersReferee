@@ -1,7 +1,6 @@
 import {Request, Response } from "express";
 import { getDBCollections, findDocumentById, findDocuments } from "../database/database";
 import expressAsyncHandler from "express-async-handler";
-import { NotFoundError } from "../utils/ServerError";
 
 export const getSportsCategories = expressAsyncHandler(async(request: Request, response: Response) => {
     const categories = await findDocuments(getDBCollections().sportsCategories);

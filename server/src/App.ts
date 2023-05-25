@@ -1,11 +1,7 @@
 import express from 'express';
 import path from "path";
-import errorHandler from './middlewares/errorHandler.middleware';
-import notFoundHandler from './middlewares/notFoundHandler.middleware';
 import { connectToDatabase } from './database/database';
 //import authRouter from './routes/auth.router';
-import playersRouter from './routes/players.router';
-import sportsCategoriesRouter from './routes/sportsCategories.router';
 import tournamentsRouter from './routes/tournaments.router';
 import gamesRouter from './routes/games.router';
 import playerStatsRouter from './routes/playerStats.router';
@@ -13,6 +9,7 @@ import cors from 'cors';
 import AuthController from './auth/Auth.controller';
 import SportsCategoryController from './sportsCategory/SportsCategory.controller';
 import PlayerController from './players/Player.controller';
+import ErrorHandler from './errors/ErrorHandler.middleware';
 
 class App {
     private readonly port;
@@ -21,13 +18,15 @@ class App {
     private readonly _authController;
     private readonly _sportsCategoryController;
     private readonly _playerController;
+    private readonly _errorHandler;
 
     constructor(
         port: string, 
         uri: string, 
         authController: AuthController, 
         sportCategoryController: SportsCategoryController,
-        playerController: PlayerController
+        playerController: PlayerController,
+        errorHandler: ErrorHandler
     ){
         this.port = port;
         this.uri = uri;
@@ -35,6 +34,7 @@ class App {
         this._authController = authController;
         this._sportsCategoryController = sportCategoryController;
         this._playerController = playerController;
+        this._errorHandler = errorHandler;
     }
 
     public start(successCallback?: () => void) {
@@ -67,8 +67,8 @@ class App {
         this.app.use('/api/games', gamesRouter);
         this.app.use('/api/player-stats', playerStatsRouter);
         
-        this.app.use(notFoundHandler);
-        this.app.use(errorHandler);
+        this.app.use(this._errorHandler.handleNotFoundError.bind(this._errorHandler));
+        this.app.use(this._errorHandler.handleError.bind(this._errorHandler));
     }
     
 

@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import { findDocument, getDBCollections } from "../database/database";
-import { AuthError, NotFoundError } from "../utils/ServerError";
 import { IUser } from "./users.model";
+import { AuthError } from "../errors/Auth.error";
+import { NotFoundError } from "../errors/NotFound.error";
 
 //TODO в конструктор передавать бд
 class AuthService {
