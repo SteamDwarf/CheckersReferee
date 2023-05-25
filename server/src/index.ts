@@ -4,6 +4,10 @@ import App from './App';
 import AuthController from './auth/Auth.controller';
 import AuthMiddleware from './auth/Auth.middleware';
 import AuthService from './auth/Auth.service';
+import SportsCategoryService from './sportsCategory/SportsCategory.service';
+import SportsCategoryController from './sportsCategory/SportsCategory.controller';
+import PlayerService from './players/Player.service';
+import PlayerController from './players/Player.controller';
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -14,7 +18,19 @@ const authMiddleware = new AuthMiddleware();
 const authService = new AuthService();
 const authController = new AuthController(authMiddleware, authService);
 
-const app = new App(PORT, URI, authController);
+const sportsCategoryService = new SportsCategoryService();
+const sportsCategoryController = new SportsCategoryController(sportsCategoryService);
+
+const playerService = new PlayerService(sportsCategoryService);
+const playerController = new PlayerController(playerService);
+
+const app = new App(
+    PORT, 
+    URI, 
+    authController, 
+    sportsCategoryController,
+    playerController
+);
 
 app.start();
 

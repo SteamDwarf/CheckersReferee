@@ -11,18 +11,30 @@ import gamesRouter from './routes/games.router';
 import playerStatsRouter from './routes/playerStats.router';
 import cors from 'cors';
 import AuthController from './auth/Auth.controller';
+import SportsCategoryController from './sportsCategory/SportsCategory.controller';
+import PlayerController from './players/Player.controller';
 
 class App {
     private readonly port;
     private readonly uri;
     private readonly app;
     private readonly _authController;
+    private readonly _sportsCategoryController;
+    private readonly _playerController;
 
-    constructor(port: string, uri: string, authController: AuthController){
+    constructor(
+        port: string, 
+        uri: string, 
+        authController: AuthController, 
+        sportCategoryController: SportsCategoryController,
+        playerController: PlayerController
+    ){
         this.port = port;
         this.uri = uri;
         this.app = express();
         this._authController = authController;
+        this._sportsCategoryController = sportCategoryController;
+        this._playerController = playerController;
     }
 
     public start(successCallback?: () => void) {
@@ -49,8 +61,8 @@ class App {
         
         //this.app.use('/api/auth', authRouter);
         this.app.use('/api/auth', this._authController.router);
-        this.app.use('/api/players', playersRouter);
-        this.app.use('/api/sports-categories', sportsCategoriesRouter);
+        this.app.use('/api/players', this._playerController.router);
+        this.app.use('/api/sports-categories', this._sportsCategoryController.router);
         this.app.use('/api/tournaments', tournamentsRouter);
         this.app.use('/api/games', gamesRouter);
         this.app.use('/api/player-stats', playerStatsRouter);
