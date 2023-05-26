@@ -35,7 +35,7 @@ class Utils {
 */
     static splitArrayBySubArraysCount<T>(array: T[], subArraysCount: number){
         const itemsInSubArray = Math.ceil(array.length / subArraysCount);
-        const mainArray: T[][] = this.splitArrayByItemsCount(array, itemsInSubArray);
+        const mainArray: T[][] = Utils.splitArrayByItemsCount(array, itemsInSubArray);
 
         return mainArray;
     }

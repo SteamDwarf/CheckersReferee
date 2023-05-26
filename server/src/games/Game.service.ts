@@ -1,11 +1,17 @@
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
-import { CheckersColor, Game, IGameWithId } from "../models/games.model";
+import { NotFoundError } from "../errors/NotFound.error";
+import { CheckersColor, Game, IGame, IGameWithId } from "../models/games.model";
+import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 
 class GameService extends BaseService {
-    constructor(db: DataBase) {
+    private readonly _playerStatsService;
+
+    constructor(db: DataBase, playerStatsService: PlayerStatsService) {
         super(db);
+
+        this._playerStatsService = playerStatsService;
     }
 
     public async createGame(
@@ -44,8 +50,26 @@ class GameService extends BaseService {
         return await this.db.findDocumentById(this.db.collections.games, id) as IGameWithId;
     }
 
+    public async getGamesOfTournament(tournamentID: string) {
+        return await this.db.findDocumentsWithFilter(this.db.collections.games, {tournamentID}) as IGameWithId[];
+    }
+
     public async deleteGames() {
         return await this.db.deleteDocuments(this.db.collections.games);
+    }
+
+    public async updateGame (id: string, newData: IGame) {
+        const oldGameData = await this.getGameByID(id);
+    
+        if(!oldGameData) throw new NotFoundError("По указанному id игра не найдена");
+    
+        const player1Stats = await this._playerStatsService.getPlayerStatsByID(oldGameData.player1StatsID);
+        const player2Stats = await this._playerStatsService.getPlayerStatsByID(oldGameData.player2StatsID);
+        
+        await this._playerStatsService.updateAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newData.player1Score);
+        await this._playerStatsService.updateAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newData.player2Score);
+        
+        return await this.db.updateDocument(this.db.collections.games, id, newData) as IGameWithId;
     }
 
     public splitGames(games: IGameWithId[], toursCount: number) {

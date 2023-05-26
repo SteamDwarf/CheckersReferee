@@ -66,6 +66,23 @@ class PlayerService extends BaseService {
         return updatedPlayers;
     }
 
+    public async updatePlayersAfterTournament(playersStats: IPlayerStatsWithID[]){
+        const updatedPlayers = [];
+    
+        for(const playerStats of playersStats) {
+            const player = await this.getPlayer(playerStats.playerID);
+    
+            player.previousAdamovichRank = player.currentAdamovichRank;
+            player.currentAdamovichRank = playerStats.lastAdamovichRank;
+    
+            const updatedPlayer = await this.updatePlayer(player._id.toString(), player);
+    
+            updatedPlayers.push(updatedPlayer);
+        }
+    
+        return updatedPlayers;
+    }
+
     public async deletePlayer (id: string) {
         const playerForDelete = await this.getPlayer(id);
     

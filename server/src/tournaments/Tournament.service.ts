@@ -1,6 +1,7 @@
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import RoundRobinDraw from "../draw/RoundRobinDraw";
+import { InputError } from "../errors/Input.error";
 import { NotFoundError } from "../errors/NotFound.error";
 import GameService from "../games/Game.service";
 import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tournaments.model";
@@ -91,6 +92,20 @@ class TournamentService extends BaseService {
         }
         
         return await this.updateTournament(id, tournamentForStart);
+    }
+
+    public async finishTournament (id: string){
+        const tournamentForFinish = await this.getTournamentByID(id);
+    
+        const playersStats = await this._playerStatsService.getPlayersStatsOfTournament(id);
+        const games = await this._gameService.getGamesOfTournament(id);
+    
+        await this._playerStatsService.updateAfterTournament(playersStats, games);
+        await this._playerService.updatePlayersAfterTournament(playersStats);
+    
+        tournamentForFinish.isFinished = true;
+    
+        return await this.updateTournament(id, tournamentForFinish);
     }
 
     private async findPlayers(playersIDs: string[]) {

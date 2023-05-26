@@ -3,12 +3,20 @@ import BaseService from "../common/Base.service";
 import { IGame } from "../models/games.model";
 import { ISportsCategory } from "../models/sportsCategory.model";
 import { IPlayerWithId } from "../players/players.model";
+import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import Utils from "../utils/Utils";
+import PlayerStatsComparator from "./PlayerStats.comparator";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "./playerStats.model";
 
 class PlayerStatsService extends BaseService {
-    constructor(db: DataBase) {
+    private readonly _sportsCategoryService;
+    private readonly _comparator;
+
+    constructor(db: DataBase, sportsCategoryService: SportsCategoryService) {
         super(db);
+
+        this._sportsCategoryService = sportsCategoryService;
+        this._comparator = new PlayerStatsComparator();
     }
 
     public async getPlayersStats (){
@@ -17,6 +25,10 @@ class PlayerStatsService extends BaseService {
 
     public async getPlayerStatsByID (id: string) {
         return await this.db.findDocumentById(this.db.collections.playerStats, id) as IPlayerStatsWithID;
+    }
+
+    public async getPlayersStatsOfTournament(tournamentID: string) {
+        return await this.db.findDocumentsWithFilter(this.db.collections.playerStats, {tournamentID}) as IPlayerStatsWithID[];
     }
 
     public async createPlayerStats(player: IPlayerWithId, tournamentID: string) {
@@ -41,7 +53,54 @@ class PlayerStatsService extends BaseService {
     public async updatePlayerStats(playerStats: IPlayerStatsWithID) {
         const {_id: id, ...playerStatsData} = playerStats;
 
-        return await this.db.updateDocument(this.db.collections.playerStats, id.toString(), playerStatsData);
+        return await this.db.updateDocument(this.db.collections.playerStats, id.toString(), playerStatsData) as IPlayerStatsWithID;
+    }
+
+    public async updateAfterGame(
+        playerStats: IPlayerStatsWithID | undefined, 
+        competitorAdamovichRank: number | undefined, 
+        prevScore: number, 
+        curScore: number
+    ) {
+        if(playerStats) {
+            playerStats.score = playerStats.score - prevScore + curScore;
+    
+            
+            if(competitorAdamovichRank && Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
+                playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(playerStats, competitorAdamovichRank);
+                playerStats.lastAdamovichTimeStamp = Date.now();
+            }
+            
+    
+           return await this.updatePlayerStats(playerStats) as IPlayerStatsWithID;
+        }
+    }
+
+    public async updateAfterTournament (playersStats: IPlayerStatsWithID[],  games: IGame[]) {
+        const updatedPlayersStats = [];
+
+        for(let i = 0; i < playersStats.length; i++) {
+            const sportCategory = await this._sportsCategoryService.findSportsCategoryByID(playersStats[i].sportsCategoryID);
+            const playerGames = games.filter(game => game.player1StatsID === playersStats[i]._id.toString() || game.player2StatsID === playersStats[i]._id.toString());
+            
+            playersStats[i].lastAdamovichRank = this.calculateAdamovichAfterTournament(playersStats[i], sportCategory, playersStats);
+            playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i]._id.toString(), playerGames, playersStats);
+        }
+    
+        playersStats.sort(this._comparator.compareByScore.bind(this._comparator));
+        playersStats = playersStats.map((stat, i) => {
+            stat.place = i + 1;
+            stat.startAdamovichRank = stat.lastAdamovichRank;
+            return stat;
+        });
+        
+        for(const playerStats of playersStats) {
+            const updatedStats = await this.updatePlayerStats(playerStats);
+
+            updatedPlayersStats.push(updatedStats);
+        }
+
+        return updatedPlayersStats;
     }
 
     public async deletePlayersStats (){

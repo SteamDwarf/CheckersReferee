@@ -27,7 +27,10 @@ class TournamentController extends BaseController {
                 [this.asyncHandler(this._tournamentMidleware.checkTournamentforStart)], 
                 this.asyncHandler(this.start)
             ),
-            new ControllerRoute('/finish/:id','put', [], this.asyncHandler(this.finishTournament)),
+            new ControllerRoute('/finish/:id','put', 
+                [this.asyncHandler(this._tournamentMidleware.checkTournamentForFinish)], 
+                this.asyncHandler(this.finishTournament)
+            ),
             new ControllerRoute('/finish-tour/:id','put', [], this.asyncHandler(this.finishTour))
         ]);
     }
@@ -79,7 +82,10 @@ class TournamentController extends BaseController {
         response.json(startedTournament);
     }
     private async finishTournament(request: Request, response: Response) {
-        return;
+        const {id} = request.params;
+        const updatedTournament = await this._tournamentService.finishTournament(id);
+
+        response.json(updatedTournament);
     }
     private async finishTour(request: Request, response: Response) {
         return;

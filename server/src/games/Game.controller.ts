@@ -1,5 +1,6 @@
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
+import { IGame } from "../models/games.model";
 import GameService from "./Game.service";
 import {Request, Response} from "express";
 
@@ -31,7 +32,11 @@ class GameController extends BaseController {
         response.json(game)
     }
     private async update(request: Request, response: Response) {
-        return;
+        const gameID = request.params.id;
+        const newGameData: IGame = request.body;
+        const updatedGame = await this._gameService.updateGame(gameID, newGameData);
+
+        response.json(updatedGame);
     }
     private async delete(request: Request, response: Response) {
         const result = await this._gameService.deleteGames();

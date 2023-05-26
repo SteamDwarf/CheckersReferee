@@ -36,10 +36,10 @@ const sportsCategoryController = new SportsCategoryController(sportsCategoryServ
 const playerService = new PlayerService(database, sportsCategoryService);
 const playerController = new PlayerController(playerService);
 
-const playerStatsService = new PlayerStatsService(database);
+const playerStatsService = new PlayerStatsService(database, sportsCategoryService);
 const playerStatsController = new PlayerStatsController(playerStatsService);
 
-const gameService = new GameService(database);
+const gameService = new GameService(database, playerStatsService);
 const gameController = new GameController(gameService);
 
 const tournamentService = new TournamentService(database, playerService, playerStatsService, gameService);

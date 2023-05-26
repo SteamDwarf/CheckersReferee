@@ -28,6 +28,7 @@ abstract class BaseController{
                 const handler = callback.bind(this);
                 await handler(req, resp, next);
             }catch(error) {
+                console.error("ERRRRRor");
                 next(error);
             }
         }
