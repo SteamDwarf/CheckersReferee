@@ -27,6 +27,8 @@ export const Game = (
                 player1Name: string, 
                 player2StatsID: string, 
                 player2Name: string,
+                player1CheckersColor?: CheckersColor,
+                player2CheckersColor?: CheckersColor
             ):IGame => {
     return {
         tournamentID,
@@ -36,8 +38,8 @@ export const Game = (
         player2Name,
         player1Score: 0,
         player2Score: 0,
-        player1CheckersColor: CheckersColor.black,
-        player2CheckersColor: CheckersColor.black
+        player1CheckersColor: player1CheckersColor || CheckersColor.black,
+        player2CheckersColor: player2CheckersColor || CheckersColor.black
     }
 }
 

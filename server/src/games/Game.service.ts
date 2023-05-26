@@ -1,10 +1,31 @@
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
-import { IGameWithId } from "../models/games.model";
+import { CheckersColor, Game, IGameWithId } from "../models/games.model";
+import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 
 class GameService extends BaseService {
     constructor(db: DataBase) {
         super(db);
+    }
+
+    public async createGame(
+        tournamentID: string, 
+        player1: IPlayerStatsWithID, 
+        player2: IPlayerStatsWithID, 
+        checkersColor?: CheckersColor[]
+    ) {
+        const game = Game(
+            tournamentID,
+            player1._id.toString(),
+            player1.playerName,
+            player2._id.toString(),
+            player2.playerName,
+            checkersColor ? checkersColor[0] : CheckersColor.black,
+            checkersColor ? checkersColor[1] : CheckersColor.black
+        );
+        const savedGame = await this.db.createDocument(this.db.collections.games, game) as IGameWithId;
+
+        return savedGame;
     }
 
     public async getGames(tournamentID: string | undefined) {
@@ -27,7 +48,7 @@ class GameService extends BaseService {
         return await this.db.deleteDocuments(this.db.collections.games);
     }
 
-    private splitGames(games: IGameWithId[], toursCount: number) {
+    public splitGames(games: IGameWithId[], toursCount: number) {
         const gamesInTour = games.length / toursCount;
         const tours: IGameWithId[][] = [];
         const toursGamesIDs: string[][] = [];

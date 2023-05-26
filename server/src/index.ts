@@ -39,12 +39,14 @@ const playerController = new PlayerController(playerService);
 const playerStatsService = new PlayerStatsService(database);
 const playerStatsController = new PlayerStatsController(playerStatsService);
 
-const tournamentMiddleware = new TournamentMiddleware();
-const tournamentService = new TournamentService(database);
-const tournamentController = new TournamentController(tournamentMiddleware, tournamentService);
-
 const gameService = new GameService(database);
 const gameController = new GameController(gameService);
+
+const tournamentService = new TournamentService(database, playerService, playerStatsService, gameService);
+const tournamentMiddleware = new TournamentMiddleware(tournamentService);
+const tournamentController = new TournamentController(tournamentMiddleware, tournamentService);
+
+
 
 const errorHandler = new ErrorHandler();
 

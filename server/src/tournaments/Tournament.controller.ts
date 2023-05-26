@@ -23,7 +23,10 @@ class TournamentController extends BaseController {
             new ControllerRoute('/:id','get', [], this.asyncHandler(this.getByID)),
             new ControllerRoute('/:id','put', [], this.asyncHandler(this.update)),
             new ControllerRoute('/:id','delete', [], this.asyncHandler(this.delete)),
-            new ControllerRoute('/start/:id','put', [], this.asyncHandler(this.start)),
+            new ControllerRoute('/start/:id','put', 
+                [this.asyncHandler(this._tournamentMidleware.checkTournamentforStart)], 
+                this.asyncHandler(this.start)
+            ),
             new ControllerRoute('/finish/:id','put', [], this.asyncHandler(this.finishTournament)),
             new ControllerRoute('/finish-tour/:id','put', [], this.asyncHandler(this.finishTour))
         ]);
@@ -70,7 +73,10 @@ class TournamentController extends BaseController {
         response.json(deleteResult);
     }
     private async start(request: Request, response: Response) {
-        return;
+        const {id} = request.params;
+        const startedTournament = await this._tournamentService.startTournament(id);
+
+        response.json(startedTournament);
     }
     private async finishTournament(request: Request, response: Response) {
         return;
@@ -82,51 +88,9 @@ class TournamentController extends BaseController {
 
 export default TournamentController;
 
-/* export const startTournament = expressAsyncHandler(async(request: Request, response: Response) => {
-    const {id} = request.params;
-    const tournamentForStart = await findDocumentById(getDBCollections().tournaments, id) as ITournamentWithId;
-
-    if(!tournamentForStart) throw new NotFoundError("По указанному id турнир не найден");
-    if(tournamentForStart.isStarted) throw new InputError("Данный турнир уже стартовал");
-    if(tournamentForStart.isFinished) throw new InputError("Данный турнир уже завершен");
-    if(tournamentForStart.tournamentSystem !== TournamentSystems.round && tournamentForStart.tournamentSystem !== TournamentSystems.swiss) {
-        throw new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'");
-    }
-    if(tournamentForStart.tournamentSystem === TournamentSystems.round && tournamentForStart.playersIDs.length < 3) {
-        throw new InputError("Для старта турнира по круговой системе нужно как минимум 3 участника");
-    }
-    if(tournamentForStart.tournamentSystem === TournamentSystems.swiss && tournamentForStart.playersIDs.length < 11) {
-        throw new InputError("Для старта турнира по швейцарской системе нужно как минимум 11 участников");
-    }
-
-    const players = await findPlayers(tournamentForStart.playersIDs as string[]) as IPlayerWithId[];
-    const playersStats = players.map(player => PlayerStat(player as IPlayerWithId, id));
-    //TODO неявно меняется статистика - плохо
-    const savedPlayersStats = await createDocuments(getDBCollections().playerStats, playersStats) as IPlayerStatsWithID[];
-    const {games, toursCount} = makeDraw(tournamentForStart, savedPlayersStats);
-    const savedGames = await createDocuments(getDBCollections().games, games) as IGameWithId[];
-
-    await saveStatsToPlayers(players, savedPlayersStats);
-
-    tournamentForStart.toursCount = toursCount;
-    tournamentForStart.isStarted = true;
-    tournamentForStart.playersStatsIDs = savedPlayersStats.map(stat => stat._id.toString());
-    
-    if(tournamentForStart.tournamentSystem === TournamentSystems.round) {
-        const {toursGamesIDs} = splitGames(savedGames, toursCount);
-        tournamentForStart.gamesIDs = toursGamesIDs;
-    } else if(tournamentForStart.tournamentSystem === TournamentSystems.swiss) {
-        tournamentForStart.gamesIDs.push(savedGames.map(game => game._id.toString()));
-    }
-    
-    const updatedTournament = await updateDocument(getDBCollections().tournaments, id, tournamentForStart);
-
-    response.json(updatedTournament);
-
-});
 
 
-export const finishTournament = expressAsyncHandler(async(request: Request, response: Response) => {
+/* export const finishTournament = expressAsyncHandler(async(request: Request, response: Response) => {
     const {id} = request.params;
     const tournamentForFinish = await findDocumentById(getDBCollections().tournaments, id) as ITournamentWithId;
 

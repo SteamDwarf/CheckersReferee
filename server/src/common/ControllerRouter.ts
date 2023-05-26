@@ -6,7 +6,7 @@ class ControllerRoute {
     private readonly _middlewares;
     private readonly _handler;
 
-    constructor(url: string, method: RouterMethod, middlewares: RequestHandler[],  handler: RequestHandlerAsync) {
+    constructor(url: string, method: RouterMethod, middlewares: RequestHandler[] | RequestHandlerAsync[],  handler: RequestHandlerAsync) {
         this._url = url;
         this._method = method;
         this._middlewares = middlewares;

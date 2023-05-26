@@ -33,7 +33,7 @@ class PlayerController extends BaseController{
 
         const page = request.query.page || "1";
         const limit = request.query.limit || "10";
-        const players = await this._playerService.getPlayers(+page, +limit);
+        const players = await this._playerService.getAllPlayers(+page, +limit);
 
         response.json(players);
     }

@@ -4,6 +4,7 @@ import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
 import DataBase from "../DB/DataBase";
+import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 
 class PlayerService extends BaseService {
     private readonly _sportsCategoryService;
@@ -29,10 +30,16 @@ class PlayerService extends BaseService {
     }
 
     //TODO вынести paginateData в класс UtilsService
-    public async getPlayers(page: number, limit: number) {
+    public async getAllPlayers(page: number, limit: number) {
         const players = await this.db.findDocuments(this.db.collections.players) as IPlayerWithId[];
 
         return this.paginateData(players, limit, page);
+    }
+
+    public async getPlayersByID(ids: string[]) {
+        const players = await this.db.findDocumentsById(this.db.collections.players, ids) as IPlayerWithId[];
+
+        return players;
     }
 
     public async updatePlayer (id: string, playerData: IPlayer){
@@ -43,6 +50,20 @@ class PlayerService extends BaseService {
         const updatedPlayer = await this.db.updateDocument(this.db.collections.players, id, playerData) as IPlayerWithId;
     
         return updatedPlayer;
+    }
+
+    public async saveStatsToPlayers(players: IPlayerWithId[], playerStats: IPlayerStatsWithID[]) {
+        const updatedPlayers = [];
+
+        for(const player of players) {
+            const playerStat = playerStats.find(stat => stat.playerID === player._id.toString());
+            player.playerStatsIDs.push(playerStat?._id.toString() as string);
+
+            const updatedPlayer = await this.updatePlayer(player._id.toString(), player);
+            updatedPlayers.push(updatedPlayer);
+        }
+
+        return updatedPlayers;
     }
 
     public async deletePlayer (id: string) {

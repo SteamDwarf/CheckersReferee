@@ -2,8 +2,9 @@ import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { IGame } from "../models/games.model";
 import { ISportsCategory } from "../models/sportsCategory.model";
+import { IPlayerWithId } from "../players/players.model";
 import Utils from "../utils/Utils";
-import { IPlayerStats, IPlayerStatsWithID } from "./playerStats.model";
+import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "./playerStats.model";
 
 class PlayerStatsService extends BaseService {
     constructor(db: DataBase) {
@@ -16,6 +17,31 @@ class PlayerStatsService extends BaseService {
 
     public async getPlayerStatsByID (id: string) {
         return await this.db.findDocumentById(this.db.collections.playerStats, id) as IPlayerStatsWithID;
+    }
+
+    public async createPlayerStats(player: IPlayerWithId, tournamentID: string) {
+        const playerStats = PlayerStat(player, tournamentID);
+        const savedPlayerStats = await this.db.createDocument(this.db.collections.playerStats, playerStats) as IPlayerStatsWithID;
+
+        return savedPlayerStats;
+    }
+
+    public async createPlayersStats(players: IPlayerWithId[], tournamentID: string) {
+        const playersStats: IPlayerStats[] = [];
+
+        for(const player of players) {
+            const playerStats = PlayerStat(player, tournamentID);
+
+            playersStats.push(playerStats);
+        }
+
+        return await this.db.createDocuments(this.db.collections.playerStats, playersStats) as IPlayerStatsWithID[];
+    }
+
+    public async updatePlayerStats(playerStats: IPlayerStatsWithID) {
+        const {_id: id, ...playerStatsData} = playerStats;
+
+        return await this.db.updateDocument(this.db.collections.playerStats, id.toString(), playerStatsData);
     }
 
     public async deletePlayersStats (){
