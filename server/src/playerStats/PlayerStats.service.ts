@@ -1,6 +1,6 @@
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
-import { IGame } from "../models/games.model";
+import { CheckersColor, IGame, IGameWithId } from "../models/games.model";
 import { ISportsCategory } from "../models/sportsCategory.model";
 import { IPlayerWithId } from "../players/players.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
@@ -76,6 +76,27 @@ class PlayerStatsService extends BaseService {
         }
     }
 
+    public async updateAfterDraw(
+        playerStats: IPlayerStatsWithID | undefined, 
+        checkersColor: CheckersColor,
+        competitorID: string
+    ) {
+        if(playerStats) {
+            //TODO сделать чистой
+            this.changeCheckersColor(playerStats, checkersColor);
+    
+            console.log(playerStats.playerName, playerStats.lastColor, playerStats.colorUsed);
+            
+            if(playerStats.competitorsID.at(-1) !== competitorID) {
+                playerStats.competitorsID.push(competitorID);
+            }
+            
+            await this.updatePlayerStats(playerStats);
+        }
+    }
+
+    
+
     public async updateAfterTournament (playersStats: IPlayerStatsWithID[],  games: IGame[]) {
         const updatedPlayersStats = [];
 
@@ -105,6 +126,17 @@ class PlayerStatsService extends BaseService {
 
     public async deletePlayersStats (){
         return await this.db.deleteDocuments(this.db.collections.playerStats);
+    }
+
+    public getSortedPlayersStats(playersStats: IPlayerStatsWithID[]) {
+        return [...playersStats].sort(this._comparator.compareByScore.bind(this._comparator));
+    }
+
+    private changeCheckersColor(playerStats: IPlayerStatsWithID, color: CheckersColor) {
+        const colorUsed = playerStats.colorUsed === 0 || playerStats.lastColor !== color ? 1 : playerStats.colorUsed + 1;
+    
+        playerStats.colorUsed = colorUsed;
+        playerStats.lastColor = color;
     }
 
     private calculateAdamovichAfterGame(playerStats: IPlayerStats, competitorAdamovichRank: number){

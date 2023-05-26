@@ -18,32 +18,14 @@ class RoundRobinDraw extends Draw{
             for (let j = 0; j < playersData.length / 2; j++) {
                 const player1 = playersData[j];
                 const player2 = playersData[playersData.length - 1 - j];
-                const checkersColor = this.getCheckersColor(player1, player2);
-                const game = await this.gameService.createGame(
-                    tournamentID,
-                    player1,
-                    player2,
-                    checkersColor
-                );
-            
-                games.push(game);     
+                const game = await this.makeGame(tournamentID, player1, player2);
                 
-                //TODO разобраться с этим
-                if(checkersColor) {
-                    this.changeCheckersColor(player1, checkersColor[0]);
-                    this.changeCheckersColor(player2, checkersColor[1]);
-
-                    console.log(player1.playerName, player1.lastColor, player1.colorUsed);
-                    console.log(player2.playerName, player2.lastColor, player2.colorUsed);
-                }
+                games.push(game);  
                 
-                //TODO разобраться с этим
-                player1.competitorsID.push(player2._id.toString());
-                player2.competitorsID.push(player1._id.toString());
-                
-                await this.playerStatsService.updatePlayerStats(player1);
-                await this.playerStatsService.updatePlayerStats(player2);
+                await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2._id.toString());
+                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1._id.toString());
             }
+
             playersData.splice(1, 0, playersData[playersData.length - 1]);
             playersData.pop();
         }

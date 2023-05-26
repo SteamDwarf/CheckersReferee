@@ -45,22 +45,17 @@ class Draw {
         return this._playerStatsService;
     }
 
-    /* protected updateCheckersColor (player1: IPlayerStatsWithID, player2: IPlayerStatsWithID, game: IGame) {
-        if(!player1.playerName || !player2.playerName) {
-            return;
-        }
-    
-        const colors = getCheckersColor(player1, player2);
-    
-        changeCheckersColor(player1, colors[0]);
-        game.player1CheckersColor = colors[0];
-    
-        changeCheckersColor(player2, colors[1]);
-        game.player2CheckersColor = colors[1];
-    
-        //console.log(player1.playerName, player1.lastColor, player1.colorUsed);
-        //console.log(player2.playerName, player2.lastColor, player2.colorUsed);
-    } */
+    protected async makeGame(tournamentID: string, player1: IPlayerStatsWithID, player2: IPlayerStatsWithID) {
+        const checkersColor = this.getCheckersColor(player1, player2);
+        const game = await this.gameService.createGame(
+            tournamentID,
+            player1,
+            player2,
+            checkersColor
+        );
+
+        return game;
+    }
     
     /**
      * @description Данная функция принимает данные игроков и возвращает цвет шашек для первого и второго игрока 
@@ -104,12 +99,12 @@ class Draw {
      * @param playerStats - данные игрока
      * @param color - новый цвет шашек
      */
-    protected changeCheckersColor(playerStats: IPlayerStatsWithID, color: CheckersColor) {
+    /* protected changeCheckersColor(playerStats: IPlayerStatsWithID, color: CheckersColor) {
         const colorUsed = playerStats.colorUsed === 0 || playerStats.lastColor !== color ? 1 : playerStats.colorUsed + 1;
     
         playerStats.colorUsed = colorUsed;
         playerStats.lastColor = color;
-    }
+    } */
 }
 
 export default Draw;

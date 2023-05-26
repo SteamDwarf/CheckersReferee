@@ -1,6 +1,7 @@
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import RoundRobinDraw from "../draw/RoundRobinDraw";
+import SwissDraw from "../draw/SwissDraw";
 import { InputError } from "../errors/Input.error";
 import { NotFoundError } from "../errors/NotFound.error";
 import GameService from "../games/Game.service";
@@ -14,6 +15,7 @@ class TournamentService extends BaseService {
     private readonly _playerStatsService;
     private readonly _gameService;
     private readonly _roundRobinDraw;
+    private readonly _swissDraw;
 
     constructor(
         db: DataBase, 
@@ -27,6 +29,7 @@ class TournamentService extends BaseService {
         this._playerStatsService = playerStatsService;
         this._gameService = gameService;
         this._roundRobinDraw = new RoundRobinDraw(this._gameService, this._playerStatsService);
+        this._swissDraw = new SwissDraw(this._gameService, this._playerStatsService);
     }
 
     public async getTournaments (page: number, limit: number){
@@ -94,6 +97,24 @@ class TournamentService extends BaseService {
         return await this.updateTournament(id, tournamentForStart);
     }
 
+    public async finishTour(id: string) {
+        const playersStats = await this._playerStatsService.getPlayersStatsOfTournament(id);
+        let tournament = await this.getTournamentByID(id);
+
+        if(tournament.tournamentSystem === TournamentSystems.swiss) {
+            const games = await this._swissDraw.makeDrawAfterTour(id, playersStats);
+            const savedGamesIDs = games.map(game => game._id.toString());
+
+            //TODO сохранить playerStats
+            //TODO создать поле в tournament указывающий номер текущего тура
+            tournament.gamesIDs.push(savedGamesIDs);
+
+            tournament = await this.updateTournament(id, tournament);
+        } 
+
+        return tournament;
+    }
+
     public async finishTournament (id: string){
         const tournamentForFinish = await this.getTournamentByID(id);
     
@@ -125,11 +146,11 @@ class TournamentService extends BaseService {
     }
 
     private async makeStartDraw(tournament: ITournamentWithId, playersStats: IPlayerStatsWithID[]) {
-        /* if(tournament.tournamentSystem === TournamentSystems.swiss) {
-            return makeFirstSwissDraw(tournament._id.toString(), playerStats);
-        } else  { */
+        if(tournament.tournamentSystem === TournamentSystems.swiss) {
+            return this._swissDraw.makeStartDraw(tournament._id.toString(), playersStats);
+        } else  {
             return this._roundRobinDraw.makeStartDraw(tournament._id.toString(), playersStats);
-        /* } */ 
+        } 
     }
 }
 

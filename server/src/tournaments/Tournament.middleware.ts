@@ -43,10 +43,21 @@ class TournamentMiddleware {
 
     public async checkTournamentForFinish(request: Request, response: Response, next: NextFunction) {
         const {id} = request.params;
-        const tournamentForFinish = await this._tournamentService.getTournamentByID(id);
+        const tournament = await this._tournamentService.getTournamentByID(id);
 
-        if(!tournamentForFinish) throw new NotFoundError("По указанному id турнир не найден");
-        if(tournamentForFinish.isFinished) throw new InputError("Данный турнир уже стартовал");
+        if(!tournament) throw new NotFoundError("По указанному id турнир не найден");
+        if(tournament.isFinished) throw new InputError("Данный турнир уже стартовал");
+
+        next();
+    }
+
+    public async checkTournamentForTourFinish(request: Request, response: Response, next: NextFunction) {
+        const {id} = request.params;
+        const tournament = await this._tournamentService.getTournamentByID(id);
+
+        if(!tournament) throw new NotFoundError("По указанному id турнир не найден");
+        if(!tournament.isStarted) throw new NotFoundError("Данный турнир еще не стартовал");
+        if(tournament.isFinished) throw new NotFoundError("Данный турнир уже завершился");
 
         next();
     }
