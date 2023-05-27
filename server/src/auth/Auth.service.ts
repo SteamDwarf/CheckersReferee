@@ -4,10 +4,13 @@ import { AuthError } from "../errors/Auth.error";
 import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
 import DataBase from "../DB/DataBase";
+import { inject, injectable } from "inversify";
+import { MAIN } from "../common/injectables.types";
 
 //TODO в конструктор передавать бд
+@injectable()
 class AuthService extends BaseService{
-    constructor(db: DataBase) {
+    constructor(@inject(MAIN.Database) db: DataBase) {
         super(db);
     }
 

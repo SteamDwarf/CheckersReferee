@@ -1,16 +1,17 @@
+import { inject, injectable } from "inversify";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import { IGame } from "../models/games.model";
 import GameService from "./Game.service";
 import {Request, Response} from "express";
+import { SERVICES } from "../common/injectables.types";
 
+@injectable()
 class GameController extends BaseController {
-    private readonly _gameService;
 
-    constructor(gameService: GameService) {
+    constructor(@inject(SERVICES.Game) private readonly _gameService: GameService) {
         super();
 
-        this._gameService = gameService;
         this.initRoutes([
             new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
             new ControllerRoute('/', 'delete', [], this.asyncHandler(this.delete)),

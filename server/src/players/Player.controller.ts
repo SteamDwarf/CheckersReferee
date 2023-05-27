@@ -3,15 +3,15 @@ import { IPlayer} from "./players.model";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import PlayerService from "./Player.service";
+import { inject, injectable } from "inversify";
+import { SERVICES } from "../common/injectables.types";
 
-
+@injectable()
 class PlayerController extends BaseController{
-    private readonly _playerService;
 
-    constructor(playerService: PlayerService) {
+    constructor(@inject(SERVICES.Player) private readonly _playerService: PlayerService) {
         super();
 
-        this._playerService = playerService;
         this.initRoutes([
             new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
             new ControllerRoute('/', 'post', [], this.asyncHandler(this.create)),

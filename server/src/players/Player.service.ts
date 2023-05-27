@@ -5,13 +5,16 @@ import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
 import DataBase from "../DB/DataBase";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
+import { inject, injectable } from "inversify";
+import { MAIN, SERVICES } from "../common/injectables.types";
 
+@injectable()
 class PlayerService extends BaseService {
-    private readonly _sportsCategoryService;
-
-    constructor(db: DataBase, sportsCategoryService: SportsCategoryService) {
+    constructor(
+        @inject(MAIN.Database) db: DataBase, 
+        @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService
+    ) {
         super(db);
-        this._sportsCategoryService = sportsCategoryService;
     }
     
     public async createPlayer(playerData: IPlayer) {

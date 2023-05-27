@@ -2,13 +2,13 @@ import BaseController from "../common/Base.controller";
 import { Request, Response } from "express";
 import SportsCategoryService from "./SportsCategory.service";
 import ControllerRoute from "../common/ControllerRouter";
+import { inject, injectable } from "inversify";
+import { SERVICES } from "../common/injectables.types";
 
+@injectable()
 class SportsCategoryController extends BaseController {
-    private readonly _sportsCategoryService;
-
-    constructor(sportCategoryService: SportsCategoryService) {
+    constructor(@inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService) {
         super();
-        this._sportsCategoryService = sportCategoryService;
         this.initRoutes([
             new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
             new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getById))

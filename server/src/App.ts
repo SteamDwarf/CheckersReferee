@@ -1,8 +1,5 @@
 import express from 'express';
 import path from "path";
-//import authRouter from './routes/auth.router';
-import tournamentsRouter from './routes/tournaments.router';
-import gamesRouter from './routes/games.router';
 import cors from 'cors';
 import AuthController from './auth/Auth.controller';
 import SportsCategoryController from './sportsCategory/SportsCategory.controller';
@@ -12,43 +9,26 @@ import PlayerStatsController from './playerStats/PlayerStats.controller';
 import DataBase from './DB/DataBase';
 import TournamentController from './tournaments/Tournament.controller';
 import GameController from './games/Game.controller';
+import { inject, injectable } from 'inversify';
+import { CONTROLLERS, MAIN, MIDDLEWARES } from './common/injectables.types';
 
+@injectable()
 class App {
-    private readonly _port;
-    private readonly _uri;
-    private readonly _app;
-    private readonly _db;
-    private readonly _authController;
-    private readonly _sportsCategoryController;
-    private readonly _playerController;
-    private readonly _playerStatsController;
-    private readonly _tournamentController;
-    private readonly _gameController;
-    private readonly _errorHandler;
+    private readonly _app; 
 
     constructor(
-        port: string, 
-        uri: string, 
-        database: DataBase,
-        authController: AuthController, 
-        sportCategoryController: SportsCategoryController,
-        playerController: PlayerController,
-        playerStatsController: PlayerStatsController,
-        tournamentController: TournamentController,
-        gameController: GameController,
-        errorHandler: ErrorHandler
+        @inject(MAIN.AppPort) private readonly _port: string, 
+        @inject(MAIN.AppURI) private readonly _uri: string, 
+        @inject(MAIN.Database) private readonly _db: DataBase,
+        @inject(CONTROLLERS.Auth) private readonly _authController: AuthController, 
+        @inject(CONTROLLERS.SportsCategory) private readonly _sportsCategoryController: SportsCategoryController,
+        @inject(CONTROLLERS.Player) private readonly _playerController: PlayerController,
+        @inject(CONTROLLERS.PlayerStats) private readonly _playerStatsController: PlayerStatsController,
+        @inject(CONTROLLERS.Tournament) private readonly _tournamentController: TournamentController,
+        @inject(CONTROLLERS.Game) private readonly _gameController: GameController,
+        @inject(MIDDLEWARES.Error) private readonly _errorHandler: ErrorHandler
     ){
-        this._port = port;
-        this._uri = uri;
         this._app = express();
-        this._db = database;
-        this._authController = authController;
-        this._sportsCategoryController = sportCategoryController;
-        this._playerController = playerController;
-        this._playerStatsController = playerStatsController;
-        this._tournamentController = tournamentController;
-        this._gameController = gameController;
-        this._errorHandler = errorHandler;
     }
 
     public start(successCallback?: () => void) {

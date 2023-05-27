@@ -1,11 +1,10 @@
+import { inject, injectable} from "inversify";
 import DataBase from "../DB/DataBase";
+import { MAIN } from "./injectables.types";
 
+@injectable()
 class BaseService {
-    private readonly _db;
-
-    constructor(database: DataBase) {
-        this._db = database;
-    }
+    constructor(@inject(MAIN.Database) private readonly _db: DataBase) {}
 
     protected get db() {
         return this._db;

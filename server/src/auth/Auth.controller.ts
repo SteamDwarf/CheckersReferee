@@ -3,14 +3,16 @@ import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import AuthMiddleware from "./Auth.middleware";
 import AuthService from "./Auth.service";
+import { inject, injectable } from "inversify";
+import { MIDDLEWARES, SERVICES } from "../common/injectables.types";
 
-
+@injectable()
 class AuthController extends BaseController{
-    private readonly _authService;
-
-    constructor(authMiddleware: AuthMiddleware, authService: AuthService) {
+    constructor(
+        @inject(MIDDLEWARES.Auth) private readonly authMiddleware: AuthMiddleware, 
+        @inject(SERVICES.Auth) private readonly _authService: AuthService
+    ) {
         super();
-        this._authService = authService;
         this.initRoutes(
             [new ControllerRoute('/', 'post', [authMiddleware.checkEmptyData], this.asyncHandler(this.auth))]
         )

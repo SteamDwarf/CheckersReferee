@@ -1,7 +1,9 @@
 import validator from "validator";
 import { NextFunction, Request, Response } from "express";
 import { InputError } from "../errors/Input.error";
+import { injectable } from "inversify";
 
+@injectable()
 class AuthMiddleware {
     public checkEmptyData(request: Request, response: Response, next: NextFunction) {
         const {login, password} = request.body;

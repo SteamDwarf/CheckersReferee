@@ -1,7 +1,9 @@
 import { NextFunction, Router, Response, Request } from "express";
 import ControllerRoute from "./ControllerRouter";
 import { RequestHandler, RequestHandlerAsync } from "./types";
+import { injectable } from "inversify";
 
+@injectable()
 abstract class BaseController{
     private readonly _router;
 

@@ -1,9 +1,12 @@
+import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { MAIN } from "../common/injectables.types";
 
+@injectable()
 class SportsCategoryService extends BaseService {
-    constructor(db: DataBase) {
+    constructor(@inject(MAIN.Database) db: DataBase) {
         super(db);
     }
 

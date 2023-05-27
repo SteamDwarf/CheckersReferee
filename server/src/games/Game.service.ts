@@ -1,17 +1,19 @@
+import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { NotFoundError } from "../errors/NotFound.error";
 import { CheckersColor, Game, IGame, IGameWithId } from "../models/games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
+import { MAIN, SERVICES } from "../common/injectables.types";
 
+@injectable()
 class GameService extends BaseService {
-    private readonly _playerStatsService;
-
-    constructor(db: DataBase, playerStatsService: PlayerStatsService) {
+    constructor(
+        @inject(MAIN.Database) db: DataBase, 
+        @inject(SERVICES.PlayerStats) private readonly _playerStatsService: PlayerStatsService
+    ) {
         super(db);
-
-        this._playerStatsService = playerStatsService;
     }
 
     public async createGame(

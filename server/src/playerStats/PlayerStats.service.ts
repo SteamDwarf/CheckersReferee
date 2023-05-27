@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { CheckersColor, IGame, IGameWithId } from "../models/games.model";
@@ -7,15 +8,18 @@ import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import Utils from "../utils/Utils";
 import PlayerStatsComparator from "./PlayerStats.comparator";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "./playerStats.model";
+import { MAIN, SERVICES } from "../common/injectables.types";
 
+@injectable()
 class PlayerStatsService extends BaseService {
-    private readonly _sportsCategoryService;
     private readonly _comparator;
 
-    constructor(db: DataBase, sportsCategoryService: SportsCategoryService) {
+    constructor(
+        @inject(MAIN.Database) db: DataBase, 
+        @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService
+    ) {
         super(db);
 
-        this._sportsCategoryService = sportsCategoryService;
         this._comparator = new PlayerStatsComparator();
     }
 

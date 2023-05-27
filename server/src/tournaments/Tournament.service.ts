@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import RoundRobinDraw from "../draw/RoundRobinDraw";
@@ -9,25 +10,21 @@ import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tou
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import PlayerService from "../players/Player.service";
+import { MAIN, SERVICES } from "../common/injectables.types";
 
+@injectable()
 class TournamentService extends BaseService {
-    private readonly _playerService;
-    private readonly _playerStatsService;
-    private readonly _gameService;
     private readonly _roundRobinDraw;
     private readonly _swissDraw;
 
     constructor(
-        db: DataBase, 
-        playerService: PlayerService, 
-        playerStatsService: PlayerStatsService,
-        gameService: GameService,
+        @inject(MAIN.Database) db: DataBase, 
+        @inject(SERVICES.Player) private readonly _playerService: PlayerService, 
+        @inject(SERVICES.PlayerStats) private readonly _playerStatsService: PlayerStatsService,
+        @inject(SERVICES.Game) private readonly _gameService: GameService,
     ) {
         super(db);
 
-        this._playerService = playerService;
-        this._playerStatsService = playerStatsService;
-        this._gameService = gameService;
         this._roundRobinDraw = new RoundRobinDraw(this._gameService, this._playerStatsService);
         this._swissDraw = new SwissDraw(this._gameService, this._playerStatsService);
     }

@@ -4,35 +4,37 @@ import ControllerRoute from "../common/ControllerRouter";
 import TournamentService from "./Tournament.service";
 import TournamentMiddleware from "./Tournament.middleware";
 import { ITournament } from "../models/tournaments.model";
+import { inject, injectable } from "inversify";
+import { MIDDLEWARES, SERVICES } from "../common/injectables.types";
 
+@injectable()
 class TournamentController extends BaseController {
-    private readonly _tournamentMidleware;
-    private readonly _tournamentService;
+    constructor(
+        @inject(MIDDLEWARES.Tournament) private readonly _tournamentMiddleware: TournamentMiddleware, 
+        @inject(SERVICES.Tournament) private readonly _tournamentService: TournamentService
+    ) {
 
-    constructor(tournamentMiddleware: TournamentMiddleware, tournamenService: TournamentService) {
         super();
 
-        this._tournamentMidleware = tournamentMiddleware;
-        this._tournamentService = tournamenService;
         this.initRoutes([
             new ControllerRoute('/','get', [], this.asyncHandler(this.get)),
             new ControllerRoute('/','post', 
-                [ this._tournamentMidleware.validateTournamentSystem], 
+                [ this._tournamentMiddleware.validateTournamentSystem], 
                 this.asyncHandler(this.create)
             ),
             new ControllerRoute('/:id','get', [], this.asyncHandler(this.getByID)),
             new ControllerRoute('/:id','put', [], this.asyncHandler(this.update)),
             new ControllerRoute('/:id','delete', [], this.asyncHandler(this.delete)),
             new ControllerRoute('/start/:id','put', 
-                [this.asyncHandler(this._tournamentMidleware.checkTournamentforStart)], 
+                [this.asyncHandler(this._tournamentMiddleware.checkTournamentforStart)], 
                 this.asyncHandler(this.start)
             ),
             new ControllerRoute('/finish/:id','put', 
-                [this.asyncHandler(this._tournamentMidleware.checkTournamentForFinish)], 
+                [this.asyncHandler(this._tournamentMiddleware.checkTournamentForFinish)], 
                 this.asyncHandler(this.finishTournament)
             ),
             new ControllerRoute('/finish-tour/:id','put', 
-                [this.asyncHandler(this._tournamentMidleware.checkTournamentForTourFinish)], 
+                [this.asyncHandler(this._tournamentMiddleware.checkTournamentForTourFinish)], 
                 this.asyncHandler(this.finishTour)
             )
         ]);

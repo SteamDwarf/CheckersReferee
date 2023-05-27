@@ -2,13 +2,13 @@ import { Request, Response} from "express";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import PlayerStatsService from "./PlayerStats.service";
+import { inject, injectable } from "inversify";
+import { SERVICES } from "../common/injectables.types";
 
+@injectable()
 class PlayerStatsController extends BaseController{
-    private readonly _playerStatsService;
-
-    constructor(playerStatsService: PlayerStatsService) {
+    constructor(@inject(SERVICES.PlayerStats) private readonly _playerStatsService: PlayerStatsService) {
         super();
-        this._playerStatsService = playerStatsService;
 
         this.initRoutes([
             new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),

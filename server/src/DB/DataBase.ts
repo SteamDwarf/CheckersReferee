@@ -7,17 +7,18 @@ import { userSchema } from "../auth/users.model";
 import { tournamentSchema } from "../models/tournaments.model";
 import { gamesSchema } from "../models/games.model";
 import { playerStatsSchema } from "../playerStats/playerStats.model";
+import { inject, injectable } from "inversify";
+import { MAIN } from "../common/injectables.types";
 
+@injectable()
 class DataBase {
     private readonly _client;
     private readonly _collections: IDBCollections;
-    private readonly _URI;
 
     private _database: Db | undefined;
 
-    constructor(mongoURI: string) {
-        this._URI = mongoURI;
-        this._client = new MongoClient(mongoURI);
+    constructor(@inject(MAIN.DatabaseURI) private readonly _URI: string) {
+        this._client = new MongoClient(_URI);
         this._collections = {
             players: undefined,
             sportsCategories: undefined,
@@ -44,7 +45,7 @@ class DataBase {
             await this.setCollectionsValidation();
     
             if(callback) callback();
-    
+
         } catch (error) {
             console.error(error);
         }

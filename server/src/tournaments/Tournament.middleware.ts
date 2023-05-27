@@ -3,13 +3,12 @@ import { TournamentSystems } from "../models/tournaments.model";
 import { InputError } from "../errors/Input.error";
 import TournamentService from "./Tournament.service";
 import { NotFoundError } from "../errors/NotFound.error";
+import { inject, injectable } from "inversify";
+import { SERVICES } from "../common/injectables.types";
 
+@injectable()
 class TournamentMiddleware {
-    private readonly _tournamentService;
-
-    constructor(tournamentService: TournamentService) {
-        this._tournamentService = tournamentService;
-    }
+    constructor(@inject(SERVICES.Tournament) private readonly _tournamentService: TournamentService) {}
 
     public validateTournamentSystem(request: Request, response: Response, next: NextFunction) {
         const tournamentData = request.body;

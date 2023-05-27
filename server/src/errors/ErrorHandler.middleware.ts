@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { ServerError } from "./Server.error";
 import { DataBaseError } from "./DataBase.error";
 import { InternalServerError } from "./InternalServer.error";
+import { injectable } from "inversify";
 //TODO Переделать в классы
 
+@injectable()
 class ErrorHandler {
     public handleError(error: ServerError, request: Request, response: Response, next: NextFunction) {
         const responseError = this.defineError(error);
