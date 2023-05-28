@@ -2,11 +2,12 @@ import GameService from "../games/Game.service";
 import { Game, IGame, IGameWithId } from "../models/games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
+import Utils from "../utils/Utils";
 import Draw from "./Draw";
 
 class RoundRobinDraw extends Draw{
-    constructor(gameService: GameService, playerStatsService: PlayerStatsService) {
-        super(gameService, playerStatsService);
+    constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
+        super(gameService, playerStatsService, utils);
     }
 
     public async makeStartDraw(tournamentID: string, playersStats: IPlayerStatsWithID[]) {

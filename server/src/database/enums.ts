@@ -4,5 +4,6 @@ export enum CollectionNames {
     SPORTS_CATEGORIES = "sportsCategories",
     TOURNAMENTS = "tournaments",
     GAMES = "games",
-    PLAYER_STATS = "playerStats"
+    PLAYER_STATS = "playerStats",
+    RANK_LISTS = "rankLists"
 }

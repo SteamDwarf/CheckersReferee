@@ -1,6 +1,9 @@
+import { injectable } from "inversify";
+
+@injectable()
 class Utils {
 
-    static clamp(value: number, min: number, max: number){
+    public clamp(value: number, min: number, max: number){
         if(value < min) return min;
         if(value > max) return max;
 
@@ -12,7 +15,7 @@ class Utils {
     * @params {T[]} array - Массив элементов
     * @params {number} itemsInSubArray - количество элементов которое должно быть в подмассиве (не более указанного числа)
     */
-    static splitArrayByItemsCount <T>(array: T[], itemsInSubArray: number){
+    public splitArrayByItemsCount <T>(array: T[], itemsInSubArray: number){
         const mainArray: T[][] = [];
 
         for(let i = 0; i < array.length; i++) {
@@ -33,15 +36,15 @@ class Utils {
  * @params {T[]} array - Массив элементов
  * @params {number} subArraysCount - количество подмассивов на которое необходимо разделить переданный массив
 */
-    static splitArrayBySubArraysCount<T>(array: T[], subArraysCount: number){
+    public splitArrayBySubArraysCount<T>(array: T[], subArraysCount: number){
         const itemsInSubArray = Math.ceil(array.length / subArraysCount);
-        const mainArray: T[][] = Utils.splitArrayByItemsCount(array, itemsInSubArray);
+        const mainArray: T[][] = this.splitArrayByItemsCount(array, itemsInSubArray);
 
         return mainArray;
     }
 
 
-    static shuffle<T>(array: T[]){
+    public shuffle<T>(array: T[]){
         const shuffledArray = [...array];
 
         for(let i = shuffledArray.length - 1; i > 0; i--) {
@@ -53,7 +56,7 @@ class Utils {
         return shuffledArray;
     }
 
-    static shuffleMutator<T>(array: T[]){
+    public shuffleMutator<T>(array: T[]){
 
         for(let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -62,7 +65,7 @@ class Utils {
         }
     }
 
-    static getRandomItem <T>(array: T[], currentIndex?: number){
+    public getRandomItem <T>(array: T[], currentIndex?: number){
         let index = Math.floor(Math.random() * array.length);
 
         if(currentIndex) {

@@ -6,15 +6,15 @@ import Utils from "../utils/Utils";
 import Draw from "./Draw";
 
 class SwissDraw extends Draw {
-    constructor(gameService: GameService, playerStatsService: PlayerStatsService) {
-        super(gameService, playerStatsService);
+    constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
+        super(gameService, playerStatsService, utils);
     }
 
     public async makeStartDraw(tournamentID: string, playersStats: IPlayerStatsWithID[]) {
         const sortedPlayersStats = this.playerStatsService.getSortedPlayersStats(playersStats);
         const playersData = sortedPlayersStats.length % 2 === 0 ? [...sortedPlayersStats] : [...sortedPlayersStats, this.fakePlayer];
 
-        const splitedPlayers = Utils.splitArrayByItemsCount(playersData, 6).map(array => Utils.splitArrayBySubArraysCount(array, 2));
+        const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
         const games: IGameWithId[] = [];
         const toursCount = this.getToursCount(playersStats.length);
 
@@ -44,7 +44,7 @@ class SwissDraw extends Draw {
         console.log(this.fakePlayer);
 
         const scoreGroups: IPlayerStatsWithID[][] = this.makeScoreGroups(sortedPlayers);
-        const splitedScoreGroups = scoreGroups.map(scoreGroup => Utils.splitArrayBySubArraysCount(scoreGroup, 2));
+        const splitedScoreGroups = scoreGroups.map(scoreGroup => this.utils.splitArrayBySubArraysCount(scoreGroup, 2));
         const pairs = this.makeDraw(splitedScoreGroups);
         const games = [];
 
@@ -136,7 +136,7 @@ class SwissDraw extends Draw {
         
         while(unPairedPlayers.length > 0) {
             unPairedPlayers = this.playerStatsService.getSortedPlayersStats(unPairedPlayers);
-            pairs = Utils.shuffle(pairs);
+            pairs = this.utils.shuffle(pairs);
             
             const subGroup1 = unPairedPlayers.slice(0, Math.floor(unPairedPlayers.length / 2));
             const subGroup2 = unPairedPlayers.slice(Math.floor(unPairedPlayers.length / 2), unPairedPlayers.length);

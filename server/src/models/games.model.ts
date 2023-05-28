@@ -1,10 +1,5 @@
 import { ObjectId} from "mongodb";
-import { tournamentSchema } from "./tournaments.model";
-
-export enum CheckersColor {
-    black = "Черные",
-    white = "Белые"
-}
+import { CheckersColor } from "../common/enums";
 
 export interface IGame {
     tournamentID: string,

@@ -11,6 +11,7 @@ import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import PlayerService from "../players/Player.service";
 import { MAIN, SERVICES } from "../common/injectables.types";
+import Utils from "../utils/Utils";
 
 @injectable()
 class TournamentService extends BaseService {
@@ -22,11 +23,12 @@ class TournamentService extends BaseService {
         @inject(SERVICES.Player) private readonly _playerService: PlayerService, 
         @inject(SERVICES.PlayerStats) private readonly _playerStatsService: PlayerStatsService,
         @inject(SERVICES.Game) private readonly _gameService: GameService,
+        @inject(MAIN.Utils) _utils: Utils
     ) {
         super(db);
 
-        this._roundRobinDraw = new RoundRobinDraw(this._gameService, this._playerStatsService);
-        this._swissDraw = new SwissDraw(this._gameService, this._playerStatsService);
+        this._roundRobinDraw = new RoundRobinDraw(this._gameService, this._playerStatsService, _utils);
+        this._swissDraw = new SwissDraw(this._gameService, this._playerStatsService, _utils);
     }
 
     public async getTournaments (page: number, limit: number){

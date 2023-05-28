@@ -11,6 +11,7 @@ import TournamentController from './tournaments/Tournament.controller';
 import GameController from './games/Game.controller';
 import { inject, injectable } from 'inversify';
 import { CONTROLLERS, MAIN, MIDDLEWARES } from './common/injectables.types';
+import RankListController from './documents/rankList/RankList.controller';
 
 @injectable()
 class App {
@@ -26,6 +27,7 @@ class App {
         @inject(CONTROLLERS.PlayerStats) private readonly _playerStatsController: PlayerStatsController,
         @inject(CONTROLLERS.Tournament) private readonly _tournamentController: TournamentController,
         @inject(CONTROLLERS.Game) private readonly _gameController: GameController,
+        @inject(CONTROLLERS.RankList) private readonly _rankListController: RankListController,
         @inject(MIDDLEWARES.Error) private readonly _errorHandler: ErrorHandler
     ){
         this._app = express();
@@ -59,6 +61,7 @@ class App {
         this._app.use('/api/tournaments', this._tournamentController.router);
         this._app.use('/api/games', this._gameController.router);
         this._app.use('/api/player-stats', this._playerStatsController.router);
+        this._app.use('/api/documents', this._rankListController.router);
         
         this._app.use(this._errorHandler.handleNotFoundError.bind(this._errorHandler));
         this._app.use(this._errorHandler.handleError.bind(this._errorHandler));

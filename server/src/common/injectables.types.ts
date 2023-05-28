@@ -3,32 +3,40 @@ export const MAIN = {
     AppPort: Symbol.for("AppPort"),
     DatabaseURI: Symbol.for("DatabaseURI"),
     Database: Symbol.for("Database"),
-    App: Symbol.for("App")
+    App: Symbol.for("App"),
+    Utils: Symbol.for("Utils")
+}
+
+export const REPOSITORIES = {
+    RankList: Symbol.for("RankListRepository")
 }
 
 export const SERVICES = {
-    Auth: Symbol.for("AuthS"),
-    SportsCategory: Symbol.for("SportsCategoryS"),
-    Player: Symbol.for("PlayerS"),
-    PlayerStats: Symbol.for("PlayerStatsS"),
-    Tournament: Symbol.for("TournamentS"),
-    Game: Symbol.for("GameS")
+    Auth: Symbol.for("AuthService"),
+    SportsCategory: Symbol.for("SportsCategoryService"),
+    Player: Symbol.for("PlayerService"),
+    PlayerStats: Symbol.for("PlayerStatsService"),
+    Tournament: Symbol.for("TournamentService"),
+    Game: Symbol.for("GameService"),
+    RankList: Symbol.for("RankListService")
 }
 
 export const CONTROLLERS = {
-    Auth: Symbol.for("AuthC"),
-    SportsCategory: Symbol.for("SportsCategoryC"),
-    Player: Symbol.for("PlayerC"),
-    PlayerStats: Symbol.for("PlayerStatsC"),
-    Tournament: Symbol.for("TournamentC"),
-    Game: Symbol.for("GameC")
+    Auth: Symbol.for("AuthController"),
+    SportsCategory: Symbol.for("SportsCategoryController"),
+    Player: Symbol.for("PlayerController"),
+    PlayerStats: Symbol.for("PlayerStatsController"),
+    Tournament: Symbol.for("TournamentController"),
+    Game: Symbol.for("GameController"),
+    RankList: Symbol.for("RankListController")
 }
 
 export const MIDDLEWARES = {
-    Auth: Symbol.for("AuthM"),
-    SportsCategory: Symbol.for("SportsCategoryM"),
-    Player: Symbol.for("PlayerM"),
-    PlayerStats: Symbol.for("PlayerStatsM"),
-    Tournament: Symbol.for("TournamentM"),
-    Error: Symbol.for("ErrorM")
+    Auth: Symbol.for("AuthMiddleware"),
+    SportsCategory: Symbol.for("SportsCategoryMiddleware"),
+    Player: Symbol.for("PlayerMiddleware"),
+    PlayerStats: Symbol.for("PlayerStatsMiddleware"),
+    Tournament: Symbol.for("TournamentMiddleware"),
+    RankList: Symbol.for("RankListMiddleware"),
+    Error: Symbol.for("ErrorMiddleware")
 }

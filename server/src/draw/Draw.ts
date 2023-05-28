@@ -1,17 +1,20 @@
 import { ObjectId } from "mongodb";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import { CheckersColor } from "../models/games.model";
 import GameService from "../games/Game.service";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
+import { CheckersColor } from "../common/enums";
+import Utils from "../utils/Utils";
 
 class Draw {
     private readonly _fakePlayer: IPlayerStatsWithID;
     private readonly _gameService;
     private readonly _playerStatsService;
+    private readonly _utils;
 
-    constructor(gameService: GameService, playerStatsService: PlayerStatsService) {
+    constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
         this._gameService = gameService;
         this._playerStatsService = playerStatsService;
+        this._utils = utils;
         this._fakePlayer = {
             _id: new ObjectId("000000000000000000000000"),
             playerID: "0",
@@ -43,6 +46,10 @@ class Draw {
 
     get playerStatsService() {
         return this._playerStatsService;
+    }
+
+    get utils() {
+        return this._utils;
     }
 
     protected async makeGame(tournamentID: string, player1: IPlayerStatsWithID, player2: IPlayerStatsWithID) {

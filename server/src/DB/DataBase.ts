@@ -9,6 +9,7 @@ import { gamesSchema } from "../models/games.model";
 import { playerStatsSchema } from "../playerStats/playerStats.model";
 import { inject, injectable } from "inversify";
 import { MAIN } from "../common/injectables.types";
+import { rankListsSchema } from "../documents/rankList/RankList.scheme";
 
 @injectable()
 class DataBase {
@@ -25,7 +26,8 @@ class DataBase {
             users: undefined,
             tournaments: undefined,
             games: undefined,
-            playerStats: undefined
+            playerStats: undefined,
+            rankLists: undefined
         }
     }
 
@@ -106,6 +108,15 @@ class DataBase {
         return documents;
     }
 
+    /* public async lookup(
+        parentCollection: Collection | undefined, 
+        childCollection: Collection | undefined,
+        localField: string,
+        foreignField: string
+    ) {
+
+    } */
+
     private setCollections() {
         this._collections.users = this._database?.collection(CollectionNames.USERS);
         this._collections.players = this._database?.collection(CollectionNames.PLAYERS);
@@ -113,6 +124,7 @@ class DataBase {
         this._collections.tournaments = this._database?.collection(CollectionNames.TOURNAMENTS);
         this._collections.games = this._database?.collection(CollectionNames.GAMES);
         this._collections.playerStats = this._database?.collection(CollectionNames.PLAYER_STATS);
+        this._collections.rankLists = this._database?.collection(CollectionNames.RANK_LISTS);
     }
 
     private async setCollectionsValidation(){
@@ -122,6 +134,7 @@ class DataBase {
         await this._database?.command({collMod: CollectionNames.TOURNAMENTS, validator: tournamentSchema.validator})
         await this._database?.command({collMod: CollectionNames.GAMES, validator: gamesSchema.validator})
         await this._database?.command({collMod: CollectionNames.PLAYER_STATS, validator: playerStatsSchema.validator})
+        await this._database?.command({collMod: CollectionNames.RANK_LISTS, validator: rankListsSchema.validator})
     }
 
     

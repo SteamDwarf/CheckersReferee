@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
-import { CheckersColor, IGame, IGameWithId } from "../models/games.model";
+import { IGame, IGameWithId } from "../models/games.model";
 import { ISportsCategory } from "../models/sportsCategory.model";
 import { IPlayerWithId } from "../players/players.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
@@ -9,13 +9,15 @@ import Utils from "../utils/Utils";
 import PlayerStatsComparator from "./PlayerStats.comparator";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "./playerStats.model";
 import { MAIN, SERVICES } from "../common/injectables.types";
+import { CheckersColor } from "../common/enums";
 
 @injectable()
 class PlayerStatsService extends BaseService {
     private readonly _comparator;
 
     constructor(
-        @inject(MAIN.Database) db: DataBase, 
+        @inject(MAIN.Database) db: DataBase,
+        @inject(MAIN.Utils) private readonly _utils: Utils,
         @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService
     ) {
         super(db);
@@ -198,7 +200,7 @@ class PlayerStatsService extends BaseService {
     
     
     private clampAdamovichRank (sportCategory: ISportsCategory, newRank: number) {
-        return Utils.clamp(newRank, sportCategory.minAdamovichRank, sportCategory.maxAdamovichRank);
+        return this._utils.clamp(newRank, sportCategory.minAdamovichRank, sportCategory.maxAdamovichRank);
     }
     
     private getPlayerName (player: {firstName: string, middleName: string, lastName: string}) {
