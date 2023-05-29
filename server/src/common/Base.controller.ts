@@ -17,11 +17,11 @@ abstract class BaseController{
 
     protected initRoutes(routes: ControllerRoute[]) {
         routes.forEach(route => {
-            const handler = route.handler.bind(this);
-            //TODO исправить тупой биндинг
-            const middlewares = route.middlewares.map(middleware => middleware.bind(this));
-            //TODO Прокидывать handler через asyncHandler тут
-            this._router[route.method](route.url, middlewares, handler);
+            const handler = this.asyncHandler(route.handler.bind(this));
+            const middlewares = route.middlewares.map(middleware => middleware.execute.bind(middleware));
+            const asyncMiddlewares = route.asyncMiddlewares.map(middleware => this.asyncHandler(middleware.execute.bind(middleware)));
+            
+            this._router[route.method](route.url, middlewares, asyncMiddlewares, handler);
         });
     }
 

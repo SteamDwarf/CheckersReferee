@@ -10,8 +10,8 @@ class SportsCategoryController extends BaseController {
     constructor(@inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService) {
         super();
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
-            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getById))
+            new ControllerRoute('/', 'get', [], [],this.get),
+            new ControllerRoute('/:id', 'get', [],[], this.getById)
         ])
     }
 

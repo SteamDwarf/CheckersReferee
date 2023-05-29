@@ -62,4 +62,4 @@ class TournamentMiddleware {
     }
 }
 
-export default TournamentMiddleware;
+//export default TournamentMiddleware;

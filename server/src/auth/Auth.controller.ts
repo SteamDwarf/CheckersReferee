@@ -5,16 +5,25 @@ import AuthMiddleware from "./Auth.middleware";
 import AuthService from "./Auth.service";
 import { inject, injectable } from "inversify";
 import { MIDDLEWARES, SERVICES } from "../common/injectables.types";
+import AuthCheckEmptyMiddleware from "./middlewares/AuthCheckEmpty.middleware";
 
 @injectable()
 class AuthController extends BaseController{
+    private readonly _checkEmptyMiddleware: AuthCheckEmptyMiddleware
+
     constructor(
-        @inject(MIDDLEWARES.Auth) private readonly authMiddleware: AuthMiddleware, 
         @inject(SERVICES.Auth) private readonly _authService: AuthService
     ) {
         super();
+
+        this._checkEmptyMiddleware = new AuthCheckEmptyMiddleware();
+
         this.initRoutes(
-            [new ControllerRoute('/', 'post', [authMiddleware.checkEmptyData], this.asyncHandler(this.auth))]
+            [new ControllerRoute('/', 'post', 
+                [this._checkEmptyMiddleware], 
+                [],
+                this.auth)
+            ]
         )
     }
 

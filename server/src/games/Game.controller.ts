@@ -13,14 +13,16 @@ class GameController extends BaseController {
         super();
 
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
-            new ControllerRoute('/', 'delete', [], this.asyncHandler(this.delete)),
-            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getByID)),
-            new ControllerRoute('/:id', 'put', [], this.asyncHandler(this.update))
+            new ControllerRoute('/', 'get', [], [], this.get),
+            new ControllerRoute('/', 'delete', [], [], this.delete),
+            new ControllerRoute('/:id', 'get', [], [], this.getByID),
+            new ControllerRoute('/:id', 'put', [], [], this.update)
         ]);
     }
 
     private async get(request: Request, response: Response) {
+                //TODO также отправлять игры связанных с турниром
+
         const tournamentID = request.query.tournamentID?.toString();
         const games = await this._gameService.getGames(tournamentID);
 

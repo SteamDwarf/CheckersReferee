@@ -13,11 +13,11 @@ class PlayerController extends BaseController{
         super();
 
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
-            new ControllerRoute('/', 'post', [], this.asyncHandler(this.create)),
-            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getById)),
-            new ControllerRoute('/:id', 'put', [], this.asyncHandler(this.update)),
-            new ControllerRoute('/:id', 'delete', [], this.asyncHandler(this.delete)),
+            new ControllerRoute('/', 'get', [], [], this.get),
+            new ControllerRoute('/', 'post', [], [], this.create),
+            new ControllerRoute('/:id', 'get', [], [], this.getById),
+            new ControllerRoute('/:id', 'put', [], [], this.update),
+            new ControllerRoute('/:id', 'delete', [], [], this.delete),
         ])
     }
 
@@ -30,7 +30,7 @@ class PlayerController extends BaseController{
     }
     private async get(request: Request, response: Response) {
         console.log("work");
-
+        //TODO также отправлять игроков связанных с турниром
         const page = request.query.page || "1";
         const limit = request.query.limit || "10";
         const players = await this._playerService.getAllPlayers(+page, +limit);

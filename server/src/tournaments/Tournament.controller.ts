@@ -2,40 +2,56 @@ import { Request, Response } from "express";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import TournamentService from "./Tournament.service";
-import TournamentMiddleware from "./Tournament.middleware";
 import { ITournament } from "../models/tournaments.model";
 import { inject, injectable } from "inversify";
 import { MIDDLEWARES, SERVICES } from "../common/injectables.types";
+import TournamentValidateSystemMiddleware from "./middleware/TournamentValidateSystem.middleware";
+import TournamentStartMiddleware from "./middleware/TournamentStart.middleware";
+import TournamentFinishMiddleware from "./middleware/TournamentFinish.middleware";
+import TournamentFinishTourMiddleware from "./middleware/TournamentFinishTour.middleware";
 
 @injectable()
 class TournamentController extends BaseController {
+    private readonly _tournamentValidateSystemMiddleware: TournamentValidateSystemMiddleware;
+    private readonly _tournamentStartMiddleware: TournamentStartMiddleware;
+    private readonly _tournamentFinishMiddleware: TournamentFinishMiddleware;
+    private readonly _tournamentFinishTourMiddleware: TournamentFinishTourMiddleware;
+
     constructor(
-        @inject(MIDDLEWARES.Tournament) private readonly _tournamentMiddleware: TournamentMiddleware, 
         @inject(SERVICES.Tournament) private readonly _tournamentService: TournamentService
     ) {
 
         super();
 
+        this._tournamentValidateSystemMiddleware = new TournamentValidateSystemMiddleware();
+        this._tournamentStartMiddleware = new TournamentStartMiddleware(this._tournamentService);
+        this._tournamentFinishMiddleware = new TournamentFinishMiddleware(this._tournamentService);
+        this._tournamentFinishTourMiddleware = new TournamentFinishTourMiddleware(this._tournamentService);
+
         this.initRoutes([
-            new ControllerRoute('/','get', [], this.asyncHandler(this.get)),
+            new ControllerRoute('/','get', [], [], this.get),
             new ControllerRoute('/','post', 
-                [ this._tournamentMiddleware.validateTournamentSystem], 
-                this.asyncHandler(this.create)
+                [ this._tournamentValidateSystemMiddleware],
+                [],
+                this.create
             ),
-            new ControllerRoute('/:id','get', [], this.asyncHandler(this.getByID)),
-            new ControllerRoute('/:id','put', [], this.asyncHandler(this.update)),
-            new ControllerRoute('/:id','delete', [], this.asyncHandler(this.delete)),
+            new ControllerRoute('/:id','get', [], [], this.getByID),
+            new ControllerRoute('/:id','put', [], [], this.update),
+            new ControllerRoute('/:id','delete', [], [], this.delete),
             new ControllerRoute('/start/:id','put', 
-                [this.asyncHandler(this._tournamentMiddleware.checkTournamentforStart)], 
-                this.asyncHandler(this.start)
+                [], 
+                [this._tournamentStartMiddleware],
+                this.start
             ),
             new ControllerRoute('/finish/:id','put', 
-                [this.asyncHandler(this._tournamentMiddleware.checkTournamentForFinish)], 
-                this.asyncHandler(this.finishTournament)
+                [], 
+                [this._tournamentFinishMiddleware],
+                this.finishTournament
             ),
             new ControllerRoute('/finish-tour/:id','put', 
-                [this.asyncHandler(this._tournamentMiddleware.checkTournamentForTourFinish)], 
-                this.asyncHandler(this.finishTour)
+                [], 
+                [this._tournamentFinishTourMiddleware],
+                this.finishTour
             )
         ]);
     }

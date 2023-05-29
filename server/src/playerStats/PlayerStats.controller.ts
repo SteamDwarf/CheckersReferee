@@ -11,13 +11,15 @@ class PlayerStatsController extends BaseController{
         super();
 
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], this.asyncHandler(this.get)),
-            new ControllerRoute('/', 'delete', [], this.asyncHandler(this.delete)),
-            new ControllerRoute('/:id', 'get', [], this.asyncHandler(this.getByID))
+            new ControllerRoute('/', 'get', [], [], this.get),
+            new ControllerRoute('/', 'delete', [], [], this.delete),
+            new ControllerRoute('/:id', 'get', [], [], this.getByID)
         ]);
     }
 
     private async get(request: Request, response: Response) {
+        //TODO также отправлять статистку игроков связанных с турниром
+
         const playersStats = await this._playerStatsService.getPlayersStats();
 
         response.json(playersStats);
