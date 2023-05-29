@@ -18,8 +18,9 @@ abstract class BaseController{
     protected initRoutes(routes: ControllerRoute[]) {
         routes.forEach(route => {
             const handler = route.handler.bind(this);
+            //TODO исправить тупой биндинг
             const middlewares = route.middlewares.map(middleware => middleware.bind(this));
-
+            //TODO Прокидывать handler через asyncHandler тут
             this._router[route.method](route.url, middlewares, handler);
         });
     }

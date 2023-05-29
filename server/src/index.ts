@@ -26,6 +26,9 @@ import RankListService from "./documents/rankList/RankList.service";
 import RankListController from "./documents/rankList/RankList.controller";
 import RankListRepository from "./documents/rankList/RankList.repository";
 import RankListMiddleware from "./documents/rankList/RankList.middleware";
+import DocumentsDatabase from "./documents/DocumentsDatabase";
+import path from "path";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -68,4 +71,3 @@ container.bind<ErrorHandler>(MIDDLEWARES.Error).to(ErrorHandler);
 const app = container.get<App>(MAIN.App);
 
 app.start();
-

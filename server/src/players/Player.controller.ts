@@ -66,21 +66,3 @@ class PlayerController extends BaseController{
 
 export default PlayerController;
 
-/* export const updatePlayersAfterTournament = async(playersStats: IPlayerStatsWithID[]) => {
-    const updatedPlayers = [];
-
-    for(let i = 0; i < playersStats.length; i++) {
-        const stat = playersStats[i];
-        const player = await findDocumentById(getDBCollections().players, stat.playerID) as IPlayerWithId;
-
-        player.previousAdamovichRank = player.currentAdamovichRank;
-        player.currentAdamovichRank = stat.lastAdamovichRank;
-
-        const updatedPlayer = await updateDocument(getDBCollections().players, player._id.toString(), player);
-
-        updatedPlayers.push(updatedPlayer);
-    }
-
-    return updatedPlayers;
-} */
-
