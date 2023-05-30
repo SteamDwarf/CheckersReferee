@@ -5,20 +5,17 @@ class ControllerRoute {
     private readonly _url;
     private readonly _method;
     private readonly _middlewares;
-    private readonly _asyncMiddlewares;
     private readonly _handler;
 
     constructor(
         url: string, 
         method: RouterMethod, 
         middlewares: IMiddleware[],
-        asyncMiddlewares: IMiddlewareAsync[],
         handler: RequestHandlerAsync
     ) {
         this._url = url;
         this._method = method;
         this._middlewares = middlewares;
-        this._asyncMiddlewares = asyncMiddlewares;
         this._handler = handler;
 
     }
@@ -34,9 +31,6 @@ class ControllerRoute {
     }
     get middlewares() {
         return this._middlewares;
-    }
-    get asyncMiddlewares() {
-        return this._asyncMiddlewares;
     }
 }
 

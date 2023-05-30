@@ -11,9 +11,9 @@ class PlayerStatsController extends BaseController{
         super();
 
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], [], this.get),
-            new ControllerRoute('/', 'delete', [], [], this.delete),
-            new ControllerRoute('/:id', 'get', [], [], this.getByID)
+            new ControllerRoute('/', 'get', [], this.get),
+            new ControllerRoute('/', 'delete', [], this.delete),
+            new ControllerRoute('/:id', 'get', [], this.getByID)
         ]);
     }
 

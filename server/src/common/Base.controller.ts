@@ -19,9 +19,8 @@ abstract class BaseController{
         routes.forEach(route => {
             const handler = this.asyncHandler(route.handler.bind(this));
             const middlewares = route.middlewares.map(middleware => middleware.execute.bind(middleware));
-            const asyncMiddlewares = route.asyncMiddlewares.map(middleware => this.asyncHandler(middleware.execute.bind(middleware)));
             
-            this._router[route.method](route.url, middlewares, asyncMiddlewares, handler);
+            this._router[route.method](route.url, middlewares, handler);
         });
     }
 
@@ -31,10 +30,15 @@ abstract class BaseController{
                 const handler = callback.bind(this);
                 await handler(req, resp, next);
             }catch(error) {
-                console.error("ERRRRRor");
                 next(error);
             }
         }
+    }
+
+    protected paginateData <T>(dataArray: T[], limit: number, page: number){
+        const startInd = (page - 1) * limit;
+        const endInd = limit * page;
+        return dataArray.slice(startInd, endInd)
     }
 }
 

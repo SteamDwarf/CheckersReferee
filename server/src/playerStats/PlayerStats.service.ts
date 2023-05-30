@@ -10,6 +10,7 @@ import PlayerStatsComparator from "./PlayerStats.comparator";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "./playerStats.model";
 import { MAIN, SERVICES } from "../common/injectables.types";
 import { CheckersColor } from "../common/enums";
+import PlayerDocument from "../players/PlayerDocument.entity";
 
 @injectable()
 class PlayerStatsService extends BaseService {
@@ -37,14 +38,14 @@ class PlayerStatsService extends BaseService {
         return await this.db.findDocumentsWithFilter(this.db.collections.playerStats, {tournamentID}) as IPlayerStatsWithID[];
     }
 
-    public async createPlayerStats(player: IPlayerWithId, tournamentID: string) {
+    public async createPlayerStats(player: PlayerDocument, tournamentID: string) {
         const playerStats = PlayerStat(player, tournamentID);
         const savedPlayerStats = await this.db.createDocument(this.db.collections.playerStats, playerStats) as IPlayerStatsWithID;
 
         return savedPlayerStats;
     }
 
-    public async createPlayersStats(players: IPlayerWithId[], tournamentID: string) {
+    public async createPlayersStats(players: PlayerDocument[], tournamentID: string) {
         const playersStats: IPlayerStats[] = [];
 
         for(const player of players) {

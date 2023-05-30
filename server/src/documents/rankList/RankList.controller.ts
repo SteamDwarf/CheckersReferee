@@ -17,7 +17,6 @@ class RankListController extends BaseController {
         this.initRoutes([
             new ControllerRoute("/rank-list/", "get", 
             [], 
-            [],
             this.asyncHandler(this.get))
         ]);
     }

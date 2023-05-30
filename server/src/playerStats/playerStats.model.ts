@@ -1,4 +1,5 @@
 import { CheckersColor } from "../common/enums"
+import PlayerDocument from "../players/PlayerDocument.entity"
 import { IPlayerWithId } from "../players/players.model"
 import { getPlayerName } from "../utils/player.utils"
 import { ObjectId } from "mongodb"
@@ -26,9 +27,9 @@ export interface IPlayerStatsWithID extends IPlayerStats {
     _id: ObjectId
 }
 
-export const PlayerStat = (player: IPlayerWithId, tournamentID: string): IPlayerStats => {
+export const PlayerStat = (player: PlayerDocument, tournamentID: string): IPlayerStats => {
     const playerStat: IPlayerStats = {
-        playerID: player._id.toString(),
+        playerID: player.id.toString(),
         playerName: getPlayerName(player),
         birthday: player.birthday,
         tournamentID: tournamentID,

@@ -13,10 +13,10 @@ class GameController extends BaseController {
         super();
 
         this.initRoutes([
-            new ControllerRoute('/', 'get', [], [], this.get),
-            new ControllerRoute('/', 'delete', [], [], this.delete),
-            new ControllerRoute('/:id', 'get', [], [], this.getByID),
-            new ControllerRoute('/:id', 'put', [], [], this.update)
+            new ControllerRoute('/', 'get', [], this.get),
+            new ControllerRoute('/', 'delete', [], this.delete),
+            new ControllerRoute('/:id', 'get', [], this.getByID),
+            new ControllerRoute('/:id', 'put', [], this.update)
         ]);
     }
 

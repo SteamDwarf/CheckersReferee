@@ -10,7 +10,7 @@ import { MAIN, MIDDLEWARES} from "./common/injectables.types";
 import Utils from "./utils/Utils";
 import authBindings from "./auth/Auth.bindings";
 import gameBindings from "./games/Game.bindings";
-import playerBindings from "./players/Player.bindings";
+import playerBindings from "./players/Players.bindings";
 import playerStatsBindings from "./playerStats/PlayerStats.bindings";
 import tournamentBindings from "./tournaments/Tournament.bindings";
 import sportsCategoriesBindings from "./sportsCategory/SporttsCategory.bindings";

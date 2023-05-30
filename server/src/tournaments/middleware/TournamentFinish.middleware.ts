@@ -18,13 +18,21 @@ class TournamentFinishMiddleware implements IMiddlewareAsync {
         const {id} = request.params;
         const tournament = await this._tournamentService.getTournamentByID(id);
 
-        if(!tournament) throw new NotFoundError("По указанному id турнир не найден");
-        if(tournament.isFinished) throw new InputError("Данный турнир уже завершен");
-        if(tournament.tournamentSystem !== TournamentSystems.round && tournament.tournamentSystem !== TournamentSystems.swiss) {
-            throw new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'");
-        }
+        //TODO в асинхронных middleware пока решается проблема так
+        try {
+            if(!tournament) return next(new NotFoundError("По указанному id турнир не найден"));
+            if(tournament.isFinished) return next(new InputError("Данный турнир уже завершен"));
+            if(tournament.tournamentSystem !== TournamentSystems.round && tournament.tournamentSystem !== TournamentSystems.swiss) {
+                return next(new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'"));
+            }
 
-        next();
+            next();
+
+        }catch(error) {
+            next(error);
+        }
+        
+
     }
 }
 

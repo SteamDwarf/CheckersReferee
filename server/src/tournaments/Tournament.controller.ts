@@ -29,27 +29,23 @@ class TournamentController extends BaseController {
         this._tournamentFinishTourMiddleware = new TournamentFinishTourMiddleware(this._tournamentService);
 
         this.initRoutes([
-            new ControllerRoute('/','get', [], [], this.get),
+            new ControllerRoute('/','get', [], this.get),
             new ControllerRoute('/','post', 
                 [ this._tournamentValidateSystemMiddleware],
-                [],
                 this.create
             ),
-            new ControllerRoute('/:id','get', [], [], this.getByID),
-            new ControllerRoute('/:id','put', [], [], this.update),
-            new ControllerRoute('/:id','delete', [], [], this.delete),
+            new ControllerRoute('/:id','get', [], this.getByID),
+            new ControllerRoute('/:id','put', [], this.update),
+            new ControllerRoute('/:id','delete', [], this.delete),
             new ControllerRoute('/start/:id','put', 
-                [], 
                 [this._tournamentStartMiddleware],
                 this.start
             ),
             new ControllerRoute('/finish/:id','put', 
-                [], 
                 [this._tournamentFinishMiddleware],
                 this.finishTournament
             ),
             new ControllerRoute('/finish-tour/:id','put', 
-                [], 
                 [this._tournamentFinishTourMiddleware],
                 this.finishTour
             )

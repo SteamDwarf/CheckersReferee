@@ -18,11 +18,11 @@ class TournamentFinishTourMiddleware implements IMiddlewareAsync {
         const {id} = request.params;
         const tournament = await this._tournamentService.getTournamentByID(id);
 
-        if(!tournament) throw new NotFoundError("По указанному id турнир не найден");
-        if(!tournament.isStarted) throw new NotFoundError("Данный турнир еще не стартовал");
-        if(tournament.isFinished) throw new NotFoundError("Данный турнир уже завершился");
+        if(!tournament) return next(new NotFoundError("По указанному id турнир не найден"));
+        if(!tournament.isStarted) return next(new NotFoundError("Данный турнир еще не стартовал"));
+        if(tournament.isFinished) return next(new NotFoundError("Данный турнир уже завершился"));
         if(tournament.tournamentSystem !== TournamentSystems.round && tournament.tournamentSystem !== TournamentSystems.swiss) {
-            throw new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'");
+            return next(new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'"));
         }
 
         next();

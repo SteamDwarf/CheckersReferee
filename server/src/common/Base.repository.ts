@@ -8,7 +8,7 @@ class BaseRepository{
         @inject(MAIN.Database) private readonly _db: DataBase
     ){}
 
-    get db() {
+    protected get db() {
         return this._db;
     }
 }

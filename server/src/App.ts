@@ -3,7 +3,7 @@ import path from "path";
 import cors from 'cors';
 import AuthController from './auth/Auth.controller';
 import SportsCategoryController from './sportsCategory/SportsCategory.controller';
-import PlayerController from './players/Player.controller';
+import PlayerController from './players/Players.controller';
 import ErrorHandler from './errors/ErrorHandler.middleware';
 import PlayerStatsController from './playerStats/PlayerStats.controller';
 import DataBase from './DB/DataBase';

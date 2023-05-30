@@ -8,6 +8,7 @@ export const MAIN = {
 }
 
 export const REPOSITORIES = {
+    Player: Symbol.for("PlayerRepository"),
     RankList: Symbol.for("RankListRepository")
 }
 

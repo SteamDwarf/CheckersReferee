@@ -9,7 +9,7 @@ import GameService from "../games/Game.service";
 import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tournaments.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import PlayerService from "../players/Player.service";
+import PlayerService from "../players/Players.service";
 import { MAIN, SERVICES } from "../common/injectables.types";
 import Utils from "../utils/Utils";
 
@@ -133,7 +133,7 @@ class TournamentService extends BaseService {
     
         if(players.length < playersIDs.length) {
             const notFoundedPlayers = playersIDs.filter(id => {
-                const playerData = players.find(player => player._id.toString() === id);
+                const playerData = players.find(player => player.id.toString() === id);
     
                 return !playerData;
             });

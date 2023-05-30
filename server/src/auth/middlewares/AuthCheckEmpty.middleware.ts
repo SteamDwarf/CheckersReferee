@@ -12,7 +12,7 @@ class AuthCheckEmptyMiddleware implements IMiddleware{
                             ||validator.isEmpty(login, {ignore_whitespace: true}) 
                             || validator.isEmpty(password, {ignore_whitespace: true});
                             
-        if(isEmptyData) throw new InputError("Необходимо ввести логин и пароль");
+        if(isEmptyData) return next(new InputError("Необходимо ввести логин и пароль"));
 
         next();
     }

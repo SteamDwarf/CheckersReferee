@@ -21,7 +21,6 @@ class AuthController extends BaseController{
         this.initRoutes(
             [new ControllerRoute('/', 'post', 
                 [this._checkEmptyMiddleware], 
-                [],
                 this.auth)
             ]
         )
