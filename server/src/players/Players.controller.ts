@@ -53,13 +53,20 @@ class PlayerController extends BaseController{
         response.json(player ? player.data : null);
     }
     private async get(request: Request, response: Response) {
-        //TODO также отправлять игроков связанных с турниром
-        const page = request.query.page || "1";
-        const limit = request.query.limit || "10";
-        const playersDocuments = await this._playerService.getAllPlayers();
-        const playersData = playersDocuments.map(document => document.data);
-        
-        response.json(this.paginateData(playersData, +limit, +page));
+        const tournamentID = request.query.tournamentID?.toString();
+
+        if(tournamentID) {
+            const playersDocuments = await this._playerService.getPlayersFromTournament(tournamentID);
+            const playersData = playersDocuments.map(document => document.data);
+            response.json(playersData);
+        }else {
+            const page = request.query.page || "1";
+            const limit = request.query.limit || "10";
+            const playersDocuments = await this._playerService.getAllPlayers();
+            const playersData = playersDocuments.map(document => document.data);
+            
+            response.json(this.paginateData(playersData, +limit, +page));
+        }        
     }
     
     private async update(request: Request, response: Response) {

@@ -5,16 +5,19 @@ import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
 import DataBase from "../DB/DataBase";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import { inject, injectable } from "inversify";
+import { Container, inject, injectable } from "inversify";
 import { MAIN, REPOSITORIES, SERVICES } from "../common/injectables.types";
 import PlayerCreateDTO from "./dtos/PlayerCreate.dto";
 import PlayerDocument from "./PlayerDocument.entity";
 import PlayerPlain from "./PlayerPlain.entity";
 import PlayerRepository from "./Players.repository";
 import PlayerUpdateDTO from "./dtos/PlayerUpdate.dto";
+import TournamentService from "../tournaments/Tournament.service";
 
 @injectable()
 class PlayerService extends BaseService {
+    private _tournamentService: TournamentService;
+
     constructor(
         //TODO убрать db
         @inject(MAIN.Database) db: DataBase, 
@@ -22,6 +25,10 @@ class PlayerService extends BaseService {
         @inject(REPOSITORIES.Player) private readonly _playerRepository: PlayerRepository
     ) {
         super(db);
+    }
+
+    public lazyInject(container: Container) {
+        this._tournamentService = container.get<TournamentService>(SERVICES.Tournament);
     }
     
     public async createPlayer(playerData: PlayerCreateDTO) {
@@ -62,11 +69,18 @@ class PlayerService extends BaseService {
         return playersDocuments;
     }
 
-    public async updatePlayer (id: string, playerData: PlayerUpdateDTO){
-        /* const playerForUpdate = await this.getPlayerByID(id);
-    
-        if(!playerForUpdate) throw new NotFoundError("По указанному id игрок не найден"); */
-    
+    public async getPlayersFromTournament(tournamentID: string) {
+        const tournament = await this._tournamentService.getTournamentByID(tournamentID);
+
+        if(!tournament) throw new NotFoundError("По указанному id турнир не найден");
+
+        const playersIDs = tournament.playersIDs as string[];
+        const players = await this.getPlayersByID(playersIDs);
+
+        return players;
+    }
+
+    public async updatePlayer (id: string, playerData: PlayerUpdateDTO){    
         const playerPlainDocument = await this._playerRepository.updatePlayer(id, playerData);
         const playerDocument = new PlayerDocument(playerPlainDocument);
     
@@ -106,49 +120,13 @@ class PlayerService extends BaseService {
         return updatedPlayers;
     }
 
-    public async deletePlayer (id: string) {
-/*         const playerForDelete = await this.getPlayerByID(id);
-    
-        if(!playerForDelete) throw new NotFoundError("По указанному id игрок не найден"); */
-    
+    public async deletePlayer (id: string) {    
         const deletingResult = await this._playerRepository.deletePlayer(id);
     
         return deletingResult;
     }
     
-    private createPlayerPlain(player: PlayerCreateDTO, sportCategory: ISportsCategoryWithID): IPlayer {
-        return {
-            ...player,
-            playerStatsIDs: [],
-            sportsCategoryID: sportCategory._id.toString(),
-            sportsCategoryAbbr: sportCategory.shortTitle,
-            currentAdamovichRank: player.currentAdamovichRank ? player.currentAdamovichRank : sportCategory.minAdamovichRank
-        }
-    }
-
-    private setSportCategory (sportCategory: ISportsCategoryWithID, playerDocument: IPlayer) {
-        /* const playerCopy = {
-            ...playerDocument,
-            sportsCategoryID: sportCategory._id.toString(),
-            sportsCategoryAbbr: sportCategory.shortTitle
-        }
-
-        if(!playerCopy.currentAdamovichRank) {
-            playerCopy.currentAdamovichRank = sportCategory.minAdamovichRank;
-        }
-
-        return playerCopy; */
-        const playerCopy = {...playerDocument};
     
-        playerCopy.sportsCategoryID = sportCategory._id.toString();
-        playerCopy.sportsCategoryAbbr = sportCategory.shortTitle;
-        
-        if(!playerCopy.currentAdamovichRank) {
-            playerCopy.currentAdamovichRank = sportCategory.minAdamovichRank;
-        }
-    
-        return playerCopy;
-    }
     
 }
 

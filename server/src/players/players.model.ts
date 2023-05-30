@@ -14,7 +14,7 @@ export interface IPlayer {
     birthday: string,                   //Дата рождения
     region: string,                     //Место проживания
     sportsCategoryID: string,           //ID спортивного разряда
-    playerStatsIDs: string[],      //Массив ID документов ститистики игрока в турнирах
+    playerStatsIDs: string[],           //Массив ID документов ститистики игрока в турнирах
     sportsCategoryAbbr: string,         //Краткое название разряда
     sportsOrganization?: string,         //Спортивная организация
     currentAdamovichRank: number,       //Текущий рейтинг Адамовича

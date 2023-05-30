@@ -15,7 +15,7 @@ class PlayerDocument {
     private readonly _sportsOrganization?: string;
     private  _currentAdamovichRank: number;
     private  _previousAdamovichRank?: number;
-
+    
     constructor(playerData: IPlayerWithId) {
         this._id = playerData._id.toString();
         this._firstName = playerData.firstName;
@@ -32,7 +32,6 @@ class PlayerDocument {
         this._previousAdamovichRank = playerData.previousAdamovichRank;
     }
 
-    
     public get id(): string {
         return this._id;
     }

@@ -6,7 +6,7 @@ import App from './App';
 import ErrorHandler from './errors/ErrorHandler.middleware';
 import DataBase from './DB/DataBase';
 import { Container, ContainerModule, interfaces } from "inversify";
-import { MAIN, MIDDLEWARES} from "./common/injectables.types";
+import { MAIN, MIDDLEWARES, SERVICES} from "./common/injectables.types";
 import Utils from "./utils/Utils";
 import authBindings from "./auth/Auth.bindings";
 import gameBindings from "./games/Game.bindings";
@@ -14,6 +14,8 @@ import playerBindings from "./players/Players.bindings";
 import playerStatsBindings from "./playerStats/PlayerStats.bindings";
 import tournamentBindings from "./tournaments/Tournament.bindings";
 import sportsCategoriesBindings from "./sportsCategory/SporttsCategory.bindings";
+import getDecorators from "inversify-inject-decorators";
+import PlayerService from "./players/Players.service";
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -43,6 +45,14 @@ container.load(
     sportsCategoriesBindings
 )
 
+const app = container.get<App>(MAIN.App);
+const playerService = container.get<PlayerService>(SERVICES.Player);
+
+app.start();
+playerService.lazyInject(container);
+
+export {container}
+
 
 
 //container.bind<RankListRepository>(REPOSITORIES.RankList).to(RankListRepository);
@@ -55,6 +65,3 @@ container.load(
 //container.bind<TournamentMiddleware>(MIDDLEWARES.Tournament).to(TournamentMiddleware);
 //container.bind<RankListMiddleware>(MIDDLEWARES.RankList).to(RankListMiddleware);
 
-const app = container.get<App>(MAIN.App);
-
-app.start();
