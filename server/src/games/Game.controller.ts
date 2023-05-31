@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
-import { IGame } from "../models/games.model";
+import { IGame } from "./games.model";
 import GameService from "./Game.service";
 import {Request, Response} from "express";
 import { SERVICES } from "../common/injectables.types";
@@ -22,7 +22,6 @@ class GameController extends BaseController {
 
     private async get(request: Request, response: Response) {
                 //TODO также отправлять игры связанных с турниром
-
         const tournamentID = request.query.tournamentID?.toString();
         const games = await this._gameService.getGames(tournamentID);
 

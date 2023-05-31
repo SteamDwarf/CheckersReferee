@@ -1,5 +1,5 @@
 import GameService from "../games/Game.service";
-import { Game, IGame, IGameWithId } from "../models/games.model";
+import { Game, IGame, IGameWithId } from "../games/games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import Utils from "../utils/Utils";

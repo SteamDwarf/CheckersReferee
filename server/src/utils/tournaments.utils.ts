@@ -1,5 +1,5 @@
 import { group } from "console";
-import { CheckersColor, Game, IGame} from "../models/games.model";
+import { CheckersColor, Game, IGame} from "../games/games.model";
 import { IPlayerStats, IPlayerStatsWithID, playerStatsSchema } from "../playerStats/playerStats.model";
 import { shuffle, shuffleMutator, splitArrayByItemsCount, splitArrayBySubArraysCount } from "./math";
 import { compareByAdamovichRank, compareByScore } from "./playerStats.utils";

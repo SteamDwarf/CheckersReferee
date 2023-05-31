@@ -16,18 +16,25 @@ import tournamentBindings from "./tournaments/Tournament.bindings";
 import sportsCategoriesBindings from "./sportsCategory/SporttsCategory.bindings";
 import getDecorators from "inversify-inject-decorators";
 import PlayerService from "./players/Players.service";
+import DocumentsDatabase from "./DB/DocumentsDatabase";
+import path from "path";
+import documentsBindings from "./documents/Documents.bindings";
 
 dotenv.config({path: `${__dirname}/../.env`});
 
 const PORT = process.env.PORT || '5000';
 const URI = process.env.URI || 'http://localhost';
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017";
+const DOCUMENTS_PATH = path.resolve(__dirname, "assets/documents");
 
 const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<string>(MAIN.AppURI).toConstantValue(URI);
     bind<string>(MAIN.AppPort).toConstantValue(PORT);
     bind<string>(MAIN.DatabaseURI).toConstantValue(MONGO_URI);
+    bind<string>(MAIN.DocumentsPath).toConstantValue(DOCUMENTS_PATH);
+
     bind<DataBase>(MAIN.Database).to(DataBase).inSingletonScope();
+    bind<DocumentsDatabase>(MAIN.DocumentsDatabase).to(DocumentsDatabase).inSingletonScope();
     bind<App>(MAIN.App).to(App);
     bind<Utils>(MAIN.Utils).to(Utils);
     bind<ErrorHandler>(MIDDLEWARES.Error).to(ErrorHandler);
@@ -42,7 +49,8 @@ container.load(
     playerBindings,
     playerStatsBindings,
     tournamentBindings,
-    sportsCategoriesBindings
+    sportsCategoriesBindings,
+    documentsBindings
 )
 
 const app = container.get<App>(MAIN.App);
@@ -50,9 +58,14 @@ const playerService = container.get<PlayerService>(SERVICES.Player);
 
 app.start();
 playerService.lazyInject(container);
-
-export {container}
-
+/* 
+const documentsDB = new DocumentsDatabase(path.resolve(__dirname, "assets/documents/setificate/document-files"), path.resolve(__dirname, "assets/documents/setificate"));
+documentsDB.createDocument("template.html", "Справка", {
+    format: "A4",
+    orientation: "portrait",
+    border: "10mm"
+}, {})
+ */
 
 
 //container.bind<RankListRepository>(REPOSITORIES.RankList).to(RankListRepository);

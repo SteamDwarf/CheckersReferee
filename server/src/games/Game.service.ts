@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { NotFoundError } from "../errors/NotFound.error";
-import { Game, IGame, IGameWithId } from "../models/games.model";
+import { Game, IGame, IGameWithId } from "./games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { MAIN, SERVICES } from "../common/injectables.types";

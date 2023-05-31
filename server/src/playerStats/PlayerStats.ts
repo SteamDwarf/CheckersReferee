@@ -1,4 +1,5 @@
-import { CheckersColor } from "../models/games.model";
+
+import { CheckersColor } from "../common/enums";
 import { IPlayerWithId } from "../players/players.model";
 
 class PlayerStats {

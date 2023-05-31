@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
-import { IGame, IGameWithId } from "../models/games.model";
+import { IGame, IGameWithId } from "../games/games.model";
 import { ISportsCategory } from "../models/sportsCategory.model";
 import { IPlayerWithId } from "../players/players.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
@@ -152,7 +152,12 @@ class PlayerStatsService extends BaseService {
         return newRank;
     }
     
-    private calculateAdamovichAfterTournament (playerStats: IPlayerStats, sportsCategory: ISportsCategory, playersStats: IPlayerStats[]){
+    private calculateAdamovichAfterTournament (
+        playerStats: IPlayerStats, 
+        sportsCategory: ISportsCategory, 
+        playersStats: IPlayerStats[]
+    )
+    {
         let playedGames = 0;
     
         const constCoeff = this.getConstCoefficient(playerStats.birthday, sportsCategory);

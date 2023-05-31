@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { deleteDocuments, findDocumentById, findDocuments, findDocumentsWithFilter, getDBCollections, updateDocument, updateDocuments } from "../database/database";
 import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { calculateAdamovichAfterGame, calculateAdamovichAfterTournament, calculateGorinRank } from "../utils/player.utils";
-import { IGame } from "../models/games.model";
+import { IGame } from "../games/games.model";
 import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { compareByScore } from "../utils/playerStats.utils";
 

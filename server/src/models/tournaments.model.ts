@@ -11,6 +11,7 @@ export interface ITournament {
     endDate?: string,
     country: string,
     city: string,
+    //TODO сделать обязательным
     region?: string,
     isStarted: boolean,
     isFinished: boolean,

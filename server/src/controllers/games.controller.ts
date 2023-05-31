@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getDBCollections, findDocumentById, updateDocument, findDocuments, findDocumentsWithFilter, findDocument, deleteDocuments} from "../database/database";
-import { IGame, IGameWithId} from "../models/games.model";
+import { IGame, IGameWithId} from "../games/games.model";
 import expressAsyncHandler from "express-async-handler";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { updatePlayerStatsAfterGame } from "./playerStats.controller";

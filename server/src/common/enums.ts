@@ -6,6 +6,9 @@ export enum CheckersColor {
 export enum DocumentTemplates {
     RankList = "RankList.html"
 }
+export enum DocumentCollections{
+    PlayerSertificate = "sertificate"
+}
 
 export const ValidationMessages = {
     IsNotEmpty: "Поле не должно быть пустым",

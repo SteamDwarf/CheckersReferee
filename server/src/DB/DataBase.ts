@@ -5,7 +5,7 @@ import { sportsCategorySchema } from "../models/sportsCategory.model";
 import { playersSchema } from "../players/players.model";
 import { userSchema } from "../auth/users.model";
 import { tournamentSchema } from "../models/tournaments.model";
-import { gamesSchema } from "../models/games.model";
+import { gamesSchema } from "../games/games.model";
 import { playerStatsSchema } from "../playerStats/playerStats.model";
 import { inject, injectable } from "inversify";
 import { MAIN } from "../common/injectables.types";
