@@ -28,6 +28,7 @@ export const getTournaments = expressAsyncHandler(async(request: Request, respon
     const limit = request.query.limit || "10";
     const tournaments = await findDocuments(getDBCollections().tournaments);
 
+    response.setHeader("x-total-count", tournaments?.length || 0);
     response.json(paginateData(tournaments || [], +limit, +page))
 });
 

@@ -52,6 +52,7 @@ export const getPlayers = expressAsyncHandler(async(request: Request, response: 
         const limit = request.query.limit || "10";
 
         players = await findDocuments(getDBCollections().players) as IPlayerWithId[];
+        response.setHeader("x-total-count", players.length);
         players = paginateData(players, +limit, +page);
     }
 
