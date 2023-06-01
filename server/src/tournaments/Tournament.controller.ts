@@ -56,9 +56,10 @@ class TournamentController extends BaseController {
         console.log("work");
         const page = request.query.page || "1";
         const limit = request.query.limit || "10";
-        const tournaments = await this._tournamentService.getTournaments(+page, +limit);
+        const tournaments = await this._tournamentService.getTournaments();
 
-        response.json(tournaments);
+        response.setHeader("x-total-count", tournaments.length);
+        response.json(this.paginateData(tournaments, +limit, +page));
     }
     private async getByID(request: Request, response: Response) {
         console.log("work");

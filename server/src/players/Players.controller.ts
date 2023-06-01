@@ -65,6 +65,7 @@ class PlayerController extends BaseController{
             const playersDocuments = await this._playerService.getAllPlayers();
             const playersData = playersDocuments.map(document => document.data);
             
+            response.setHeader("x-total-count", playersDocuments.length);
             response.json(this.paginateData(playersData, +limit, +page));
         }        
     }

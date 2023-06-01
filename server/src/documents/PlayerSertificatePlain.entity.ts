@@ -33,7 +33,6 @@ class PlayerSertificatePlain {
         sportsCategory: ISportsCategoryWithID
     ) {
         this.documentTitle = `Справка_${playerStats.playerID}`;
-        //this.documentTitle = `Справка_${playerStats.playerName}_${new Date().toUTCString()}`;
         this.fullName = playerStats.playerName;
         this.groups = ["юноши и девушки до 17 лет", "юноши и девушки до 14 лет"],
         this.sportCategory = sportsCategory.title;

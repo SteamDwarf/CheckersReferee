@@ -9,13 +9,10 @@ const pdf = require("pdf-creator-node");
 
 @injectable()
 class DocumentsDatabase {
-    //private readonly _templatesPath: string;
 
     constructor(
         @inject(MAIN.DocumentsPath) private readonly _documentsPath: string,
-        //templatesPath: string
     ) {
-        //this._templatesPath = templatesPath;
     }
 
     public async findDocument(documentTitle: string) {
@@ -41,10 +38,7 @@ class DocumentsDatabase {
             data,
             path: path.resolve(this._documentsPath, collectionName, "document-files", `${documentTitle}.pdf`)
         }
-        return await pdf.create(document, options) as {filename: string};
-        /* console.log(document.path);
-        console.log(result); */
-        
+        return await pdf.create(document, options) as {filename: string};        
     }
 }
 

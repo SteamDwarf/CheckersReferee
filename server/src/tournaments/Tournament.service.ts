@@ -31,10 +31,11 @@ class TournamentService extends BaseService {
         this._swissDraw = new SwissDraw(this._gameService, this._playerStatsService, _utils);
     }
 
-    public async getTournaments (page: number, limit: number){
+    public async getTournaments (){
         const tournaments = await this.db.findDocuments(this.db.collections.tournaments) as ITournamentWithId[];
-    
-        return this.paginateData(tournaments || [], limit, page);
+        
+        return tournaments;
+        //return this.paginateData(tournaments || [], limit, page);
     }
 
     public async getTournamentByID(id:  string) {
