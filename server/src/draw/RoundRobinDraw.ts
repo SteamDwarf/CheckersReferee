@@ -1,4 +1,5 @@
-import GameService from "../games/Game.service";
+import GameService from "../games/Games.service";
+import GameDocument from "../games/GameDocument.entity";
 import { Game, IGame, IGameWithId } from "../games/games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
@@ -13,7 +14,7 @@ class RoundRobinDraw extends Draw{
     public async makeStartDraw(tournamentID: string, playersStats: IPlayerStatsWithID[]) {
         const playersData = playersStats.length % 2 === 0 ? [...playersStats] : [...playersStats, this.fakePlayer];
         const toursCount = playersData.length - 1;
-        const games: IGameWithId[] = [];
+        const games: GameDocument[] = [];
 
         for(let i = 0; i < toursCount; i++) {
             for (let j = 0; j < playersData.length / 2; j++) {

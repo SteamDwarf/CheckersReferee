@@ -16,19 +16,16 @@ import TournamentService from "../tournaments/Tournament.service";
 
 @injectable()
 class PlayerService extends BaseService {
-    private _tournamentService: TournamentService;
+    
 
     constructor(
         //TODO убрать db
         @inject(MAIN.Database) db: DataBase, 
         @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService,
-        @inject(REPOSITORIES.Player) private readonly _playerRepository: PlayerRepository
+        @inject(REPOSITORIES.Player) private readonly _playerRepository: PlayerRepository,
+        @inject(SERVICES.Tournament) private readonly _tournamentService: TournamentService
     ) {
         super(db);
-    }
-
-    public lazyInject(container: Container) {
-        this._tournamentService = container.get<TournamentService>(SERVICES.Tournament);
     }
     
     public async createPlayer(playerData: PlayerCreateDTO) {
@@ -87,14 +84,19 @@ class PlayerService extends BaseService {
         return playerDocument;
     }
 
+    public async updatePlayerDocument(id: string, playerDocument: PlayerDocument) {
+        const {_id: _, ...playerData} = playerDocument.data;
+        return await this.updatePlayer(id, playerData);
+    }
+
     public async saveStatsToPlayers(players: PlayerDocument[], playerStats: IPlayerStatsWithID[]) {
         const updatedPlayers = [];
-
+        
         for(const player of players) {
             const playerStat = playerStats.find(stat => stat.playerID === player.id.toString());
             player.addPlayerStats(playerStat?._id);
-
-            const updatedPlayer = await this.updatePlayer(player.id.toString(), player);
+            
+            const updatedPlayer = await this.updatePlayerDocument(player.id.toString(), player);
             updatedPlayers.push(updatedPlayer);
         }
 

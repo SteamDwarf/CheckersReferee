@@ -1,4 +1,5 @@
-import GameService from "../games/Game.service";
+import GameService from "../games/Games.service";
+import GameDocument from "../games/GameDocument.entity";
 import { IGame, IGameWithId } from "../games/games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
@@ -15,7 +16,7 @@ class SwissDraw extends Draw {
         const playersData = sortedPlayersStats.length % 2 === 0 ? [...sortedPlayersStats] : [...sortedPlayersStats, this.fakePlayer];
         
         const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
-        const games: IGameWithId[] = [];
+        const games: GameDocument[] = [];
         //TODO при нечётном количестве в данном диапазоне игроков программа напоминает судье, что необходимо добавить 1 тур дополнительно
         const toursCount = this.getToursCount(playersStats.length);
 

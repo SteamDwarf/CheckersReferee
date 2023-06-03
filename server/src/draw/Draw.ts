@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import GameService from "../games/Game.service";
+import GameService from "../games/Games.service";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { CheckersColor } from "../common/enums";
 import Utils from "../utils/Utils";

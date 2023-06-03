@@ -19,6 +19,7 @@ import PlayerService from "./players/Players.service";
 import DocumentsDatabase from "./DB/DocumentsDatabase";
 import path from "path";
 import documentsBindings from "./documents/Documents.bindings";
+import TournamentService from "./tournaments/Tournament.service";
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -54,10 +55,10 @@ container.load(
 )
 
 const app = container.get<App>(MAIN.App);
-const playerService = container.get<PlayerService>(SERVICES.Player);
+const tournamentService = container.get<TournamentService>(SERVICES.Tournament);
 
 app.start();
-playerService.lazyInject(container);
+tournamentService.lazyInject(container);
 /* 
 const documentsDB = new DocumentsDatabase(path.resolve(__dirname, "assets/documents/setificate/document-files"), path.resolve(__dirname, "assets/documents/setificate"));
 documentsDB.createDocument("template.html", "Справка", {

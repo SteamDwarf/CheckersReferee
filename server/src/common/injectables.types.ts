@@ -11,6 +11,7 @@ export const MAIN = {
 
 export const REPOSITORIES = {
     Player: Symbol.for("PlayerRepository"),
+    Game: Symbol.for("GameRepository"),
     RankList: Symbol.for("RankListRepository"),
     Document: Symbol.for("DocumentsRepository")
 }

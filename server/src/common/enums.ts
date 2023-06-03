@@ -12,6 +12,7 @@ export enum DocumentCollections{
 
 export const ValidationMessages = {
     IsNotEmpty: "Поле не должно быть пустым",
+    IsEmpty: "Данное поле нельзя изменить",
     IsString: "Поле должно быть строкой",
     IsNumber: "Поле должно быть числом",
     IsArray: "Поле должно быть массивом",

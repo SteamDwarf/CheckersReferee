@@ -1,34 +1,45 @@
-import { inject, injectable } from "inversify";
+import { Container, inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import RoundRobinDraw from "../draw/RoundRobinDraw";
 import SwissDraw from "../draw/SwissDraw";
 import { InputError } from "../errors/Input.error";
 import { NotFoundError } from "../errors/NotFound.error";
-import GameService from "../games/Game.service";
+import GameService from "../games/Games.service";
 import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tournaments.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import PlayerService from "../players/Players.service";
+import PlayersService from "../players/Players.service";
 import { MAIN, SERVICES } from "../common/injectables.types";
 import Utils from "../utils/Utils";
 
 @injectable()
 class TournamentService extends BaseService {
-    private readonly _roundRobinDraw;
-    private readonly _swissDraw;
+    private _roundRobinDraw: RoundRobinDraw;
+    private  _swissDraw: SwissDraw;
+    private _playersService: PlayersService;
+    private _gamesService: GameService;
 
     constructor(
         @inject(MAIN.Database) db: DataBase, 
-        @inject(SERVICES.Player) private readonly _playerService: PlayerService, 
+        //@inject(SERVICES.Player) private readonly _playerService: PlayerService, 
         @inject(SERVICES.PlayerStats) private readonly _playerStatsService: PlayerStatsService,
-        @inject(SERVICES.Game) private readonly _gameService: GameService,
-        @inject(MAIN.Utils) _utils: Utils
+        //@inject(SERVICES.Game) private readonly _gameService: GameService,
+        @inject(MAIN.Utils) private readonly _utils: Utils
     ) {
         super(db);
 
-        this._roundRobinDraw = new RoundRobinDraw(this._gameService, this._playerStatsService, _utils);
-        this._swissDraw = new SwissDraw(this._gameService, this._playerStatsService, _utils);
+        //this._roundRobinDraw = new RoundRobinDraw(this._gameService, this._playerStatsService, _utils);
+        //this._swissDraw = new SwissDraw(this._gameService, this._playerStatsService, _utils);
+    }
+
+    
+    public lazyInject(container: Container) {
+        this._playersService = container.get<PlayersService>(SERVICES.Player);
+        this._gamesService = container.get<GameService>(SERVICES.Game);
+
+        this._roundRobinDraw = new RoundRobinDraw(this._gamesService, this._playerStatsService, this._utils);
+        this._swissDraw = new SwissDraw(this._gamesService, this._playerStatsService, this._utils);
     }
 
     public async getTournaments (){
@@ -80,18 +91,19 @@ class TournamentService extends BaseService {
         const playersStats  = await this._playerStatsService.createPlayersStats(players, id);
 
         const {games, toursCount} = await this.makeStartDraw(tournamentForStart, playersStats);
-    
-        await this._playerService.saveStatsToPlayers(players, playersStats);
+        console.log("maked games");
+        await this._playersService.saveStatsToPlayers(players, playersStats);
+        console.log("saved to playerStats");
     
         tournamentForStart.toursCount = toursCount;
         tournamentForStart.isStarted = true;
         tournamentForStart.playersStatsIDs = playersStats.map(stat => stat._id.toString());
         
         if(tournamentForStart.tournamentSystem === TournamentSystems.round) {
-            const {toursGamesIDs} = this._gameService.splitGames(games, toursCount);
+            const {toursGamesIDs} = this._gamesService.splitGames(games, toursCount);
             tournamentForStart.gamesIDs = toursGamesIDs;
         } else if(tournamentForStart.tournamentSystem === TournamentSystems.swiss) {
-            tournamentForStart.gamesIDs.push(games.map(game => game._id.toString()));
+            tournamentForStart.gamesIDs.push(games.map(game => game.id.toString()));
         }
         
         return await this.updateTournament(id, tournamentForStart);
@@ -103,7 +115,7 @@ class TournamentService extends BaseService {
 
         if(tournament.tournamentSystem === TournamentSystems.swiss) {
             const games = await this._swissDraw.makeDrawAfterTour(id, playersStats);
-            const savedGamesIDs = games.map(game => game._id.toString());
+            const savedGamesIDs = games.map(game => game.id.toString());
 
             //TODO сохранить playerStats
             //TODO создать поле в tournament указывающий номер текущего тура
@@ -119,10 +131,10 @@ class TournamentService extends BaseService {
         const tournamentForFinish = await this.getTournamentByID(id);
     
         const playersStats = await this._playerStatsService.getPlayersStatsOfTournament(id);
-        const games = await this._gameService.getGamesOfTournament(id);
+        const games = await this._gamesService.getGamesFromTournament(id);
     
         await this._playerStatsService.updateAfterTournament(playersStats, games);
-        await this._playerService.updatePlayersAfterTournament(playersStats);
+        await this._playersService.updatePlayersAfterTournament(playersStats);
     
         tournamentForFinish.isFinished = true;
     
@@ -130,7 +142,7 @@ class TournamentService extends BaseService {
     }
 
     private async findPlayers(playersIDs: string[]) {
-        const players = await this._playerService.getPlayersByID(playersIDs);
+        const players = await this._playersService.getPlayersByID(playersIDs);
     
         if(players.length < playersIDs.length) {
             const notFoundedPlayers = playersIDs.filter(id => {

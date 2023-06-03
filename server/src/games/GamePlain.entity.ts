@@ -17,7 +17,7 @@ class GamePlain implements IGame {
         tournamentID: string, 
         player1Stats: IPlayerStatsWithID,
         player2Stats: IPlayerStatsWithID,
-        checkersColors: CheckersColor[]
+        checkersColors?: CheckersColor[]
     ) {
         this.tournamentID = tournamentID;
         this.player1StatsID = player1Stats._id.toString();
@@ -26,8 +26,8 @@ class GamePlain implements IGame {
         this.player2Name = player2Stats.playerName;
         this.player1Score = 0;
         this.player2Score = 0;
-        this.player1CheckersColor = checkersColors[0] || CheckersColor.black;
-        this.player2CheckersColor = checkersColors[1] || CheckersColor.black;
+        this.player1CheckersColor = checkersColors ? checkersColors[0] : CheckersColor.black;
+        this.player2CheckersColor = checkersColors ? checkersColors[1] : CheckersColor.black;
     }
 }
 

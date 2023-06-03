@@ -20,7 +20,7 @@ class PlayerRepository extends BaseRepository{
         return await this.db.findDocumentsById(this.db.collections.players, ids) as IPlayerWithId[];
     }
 
-    public async updatePlayer(id: string, player: Partial<IPlayer>) {
+    public async updatePlayer(id: string, player: Partial<IPlayerWithId>) {
         return await this.db.updateDocument(this.db.collections.players, id, player) as IPlayerWithId;
     }
 

@@ -8,7 +8,7 @@ import ErrorHandler from './errors/ErrorHandler.middleware';
 import PlayerStatsController from './playerStats/PlayerStats.controller';
 import DataBase from './DB/DataBase';
 import TournamentController from './tournaments/Tournament.controller';
-import GameController from './games/Game.controller';
+import GameController from './games/Games.controller';
 import { inject, injectable } from 'inversify';
 import { CONTROLLERS, MAIN, MIDDLEWARES } from './common/injectables.types';
 import RankListController from './documents/rankList/RankList.controller';

@@ -1,11 +1,13 @@
 import { ContainerModule, interfaces } from "inversify";
-import { CONTROLLERS, SERVICES } from "../common/injectables.types";
-import GameService from "./Game.service";
-import GameController from "./Game.controller";
+import { CONTROLLERS, REPOSITORIES, SERVICES } from "../common/injectables.types";
+import GamesRepository from "./Games.repository";
+import GamesService from "./Games.service";
+import GamesController from "./Games.controller";
 
 const gameBindings = new ContainerModule((bind: interfaces.Bind) => {
-    bind<GameService>(SERVICES.Game).to(GameService);
-    bind<GameController>(CONTROLLERS.Game).to(GameController);
+    bind<GamesService>(SERVICES.Game).to(GamesService);
+    bind<GamesController>(CONTROLLERS.Game).to(GamesController);
+    bind<GamesRepository>(REPOSITORIES.Game).to(GamesRepository);
 });
 
 export default gameBindings;
