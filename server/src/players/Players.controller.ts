@@ -56,6 +56,7 @@ class PlayerController extends BaseController{
         const tournamentID = request.query.tournamentID?.toString();
 
         if(tournamentID) {
+            //TODO проверить с турниром без игроков
             const playersDocuments = await this._playerService.getPlayersFromTournament(tournamentID);
             const playersData = playersDocuments.map(document => document.data);
             response.json(playersData);
@@ -72,14 +73,11 @@ class PlayerController extends BaseController{
     
     private async update(request: Request, response: Response) {
         const {id} = request.params;
-        const playerData: IPlayer = request.body;
-        const updatedPlayer = await this._playerService.updatePlayer(id, playerData);
+        const updatedPlayer = await this._playerService.updatePlayer(id, request.body);
 
         response.json(updatedPlayer.data);
     }
     private async delete(request: Request, response: Response) {
-        console.log("work");
-
         const {id} = request.params;
         const deleteResult = await this._playerService.deletePlayer(id);
 

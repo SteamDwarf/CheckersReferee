@@ -1,6 +1,6 @@
 import { CheckersColor } from "../common/enums";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import { Game, IGame } from "./games.model";
+import {IGame } from "./games.model";
 
 class GamePlain implements IGame {
     public readonly tournamentID: string;

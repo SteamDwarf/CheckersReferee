@@ -16,6 +16,7 @@ export interface IGameWithId extends IGame{
     _id: ObjectId,
 }
 
+//TODO удалить
 export const Game = (
                 tournamentID: string, 
                 player1StatsID: string, 

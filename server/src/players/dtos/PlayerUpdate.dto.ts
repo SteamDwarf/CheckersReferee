@@ -1,8 +1,11 @@
-import { IsArray, IsIn, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { IsArray, IsEmpty, IsIn, IsNumber, IsOptional, IsString, Min } from "class-validator";
 import { ValidationMessages } from "../../common/enums";
 import { Gender } from "../players.model";
 
 class PlayerUpdateDTO {
+    @IsEmpty({message:ValidationMessages.IsEmpty})
+    _id?: string;
+
     @IsOptional()
     @IsString({message: ValidationMessages.IsString})
     firstName?: string;
@@ -31,9 +34,9 @@ class PlayerUpdateDTO {
     @IsString({message: ValidationMessages.IsString})
     sportsCategoryID?: string;
 
-    @IsOptional()
+    /* @IsEmpty({message: ValidationMessages.IsEmpty})
     @IsArray({message: ValidationMessages.IsArray})
-    playerStatsIDs?: string[];
+    playerStatsIDs?: string[]; */
 
     @IsOptional()
     @IsString()
@@ -48,9 +51,7 @@ class PlayerUpdateDTO {
     @Min(255, {message: ValidationMessages.Min(255)})
     currentAdamovichRank?: number;
 
-    @IsOptional()
-    @IsNumber({}, {message: ValidationMessages.IsNumber})
-    @Min(255, {message: ValidationMessages.Min(255)})
+    @IsEmpty({message: ValidationMessages.IsEmpty})
     previousAdamovichRank?: number;
 }
 

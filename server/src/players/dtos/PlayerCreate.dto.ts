@@ -1,4 +1,4 @@
-import {IsString, IsIn, IsNotEmpty, IsOptional, IsNumber, Min} from "class-validator";
+import {IsString, IsIn, IsNotEmpty, IsOptional, IsNumber, Min, IsEmpty} from "class-validator";
 import { Gender } from "../players.model";
 import { ValidationMessages } from "../../common/enums";
 

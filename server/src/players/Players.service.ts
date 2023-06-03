@@ -112,7 +112,7 @@ class PlayerService extends BaseService {
             if(player) {
                 player.currentAdamovichRank = playerStats.lastAdamovichRank;
     
-                const updatedPlayer = await this.updatePlayer(player.id.toString(), player);
+                const updatedPlayer = await this.updatePlayerDocument(player.id.toString(), player);
         
                 updatedPlayers.push(updatedPlayer);
             }

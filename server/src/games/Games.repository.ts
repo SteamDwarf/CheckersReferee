@@ -22,7 +22,7 @@ class GamesRepository extends BaseRepository{
     }
 
     public async getGameByID(id: string) {
-        return await this.db.findDocumentById(this.db.collections.games, id) as IGameWithId | null;
+        return await this.db.findDocumentById(this.db.collections.games, id) as IGameWithId | undefined;
     }
 
     public async getGamesByIDs(ids: string[]) {
@@ -38,7 +38,7 @@ class GamesRepository extends BaseRepository{
     }
 
     public async getGamesFromTournament(tournamentID: string) {
-        return await this.db.findDocumentsWithFilter(this.db.collections.games, {tournamentID}) as IGameWithId[];
+        return await this.db.findDocumentsWithFilter(this.db.collections.games, {tournamentID}) as (IGameWithId[] | []);
     }
 }
 

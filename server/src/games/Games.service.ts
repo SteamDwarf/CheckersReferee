@@ -2,7 +2,6 @@ import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { NotFoundError } from "../errors/NotFound.error";
-import { Game, IGame, IGameWithId } from "./games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { MAIN, REPOSITORIES, SERVICES } from "../common/injectables.types";
@@ -30,19 +29,9 @@ class GamesService extends BaseService {
         player2: IPlayerStatsWithID, 
         checkersColor?: CheckersColor[]
     ) {
-        /*const game = Game(
-            tournamentID,
-            player1._id.toString(),
-            player1.playerName,
-            player2._id.toString(),
-            player2.playerName,
-            checkersColor ? checkersColor[0] : CheckersColor.black,
-            checkersColor ? checkersColor[1] : CheckersColor.black
-        );*/
         const gamePlain = new GamePlain(tournamentID, player1, player2, checkersColor);
         const gamePlainDocument = await this._gamesRepository.createGame(gamePlain);
         const gameDocument = new GameDocument(gamePlainDocument);
-        //const savedGame = await this.db.createDocument(this.db.collections.games, game) as IGameWithId;
 
         return gameDocument;
     }
@@ -52,15 +41,6 @@ class GamesService extends BaseService {
         const gamesDocuments = gamesPlainDocuments.map(game => new GameDocument(game));
 
         return gamesDocuments;
-        /* let games;
-    
-        if(tournamentID) {
-            games = await this.db.findDocumentsWithFilter(this.db.collections.games, {tournamentID}) as IGameWithId[];
-        } else {
-            games = await this.db.findDocuments(this.db.collections.games) as IGameWithId[];
-        }   
-    
-        return games; */
     }
 
     public async getToursFromTournament(tournamentID: string) {
@@ -97,16 +77,10 @@ class GamesService extends BaseService {
         }
 
         return null;
-       // return await this.db.findDocumentById(this.db.collections.games, id) as IGameWithId;
     }
-
-    /* public async getGamesOfTournament(tournamentID: string) {
-        return await this.db.findDocumentsWithFilter(this.db.collections.games, {tournamentID}) as IGameWithId[];
-    } */
 
     public async deleteAllGames() {
         return await this._gamesRepository.deleteAllGames();
-        //return await this.db.deleteDocuments(this.db.collections.games);
     }
 
     public async updateGame (id: string, newData: GameUpdateDTO) {
@@ -123,7 +97,6 @@ class GamesService extends BaseService {
         const gameDocument = new GameDocument(gamePlainDocument);
 
         return gameDocument;
-        //return await this.db.updateDocument(this.db.collections.games, id, newData) as IGameWithId;
     }
 
     public splitGames(games: GameDocument[], toursCount: number) {
@@ -149,22 +122,4 @@ class GamesService extends BaseService {
 }
 
 export default GamesService;
-
-/* export const updateGame = expressAsyncHandler(async(request: Request, response: Response) => {
-    const gameID = request.params.id;
-    const newGameData: IGame = request.body;
-    const oldGameData = await findDocumentById(this.db.collections.games, gameID) as IGameWithId;
-
-    if(!oldGameData) throw new NotFoundError("По указанному id игра не найдена");
-
-    const player1Stats = await findDocumentById(this.db.collections.playerStats, oldGameData.player1StatsID) as IPlayerStatsWithID;
-    const player2Stats = await findDocumentById(this.db.collections.playerStats, oldGameData.player2StatsID) as IPlayerStatsWithID;
-
-    await updatePlayerStatsAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newGameData.player1Score);
-    await updatePlayerStatsAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newGameData.player2Score);
-    
-    const savedGame = await updateDocument(this.db.collections.games, gameID, newGameData) as IGameWithId;
-
-    response.json(savedGame);
-}); */
 

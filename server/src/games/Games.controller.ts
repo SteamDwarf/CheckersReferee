@@ -43,10 +43,6 @@ class GamesController extends BaseController {
             
             response.json(gamesData);
         }    
-        /* const tournamentID = request.query.tournamentID?.toString();
-        const games = await this._gamesService.getGames(tournamentID);
-
-        response.json(games); */
     }
     private async getByID(request: Request, response: Response) {
         const {id} = request.params;
@@ -69,23 +65,3 @@ class GamesController extends BaseController {
 }
 
 export default GamesController;
-
-
-/* export const updateGame = expressAsyncHandler(async(request: Request, response: Response) => {
-    const gameID = request.params.id;
-    const newGameData: IGame = request.body;
-    const oldGameData = await findDocumentById(getDBCollections().games, gameID) as IGameWithId;
-
-
-    if(!oldGameData) throw new NotFoundError("По указанному id игра не найдена");
-
-    const player1Stats = await findDocumentById(getDBCollections().playerStats, oldGameData.player1StatsID) as IPlayerStatsWithID;
-    const player2Stats = await findDocumentById(getDBCollections().playerStats, oldGameData.player2StatsID) as IPlayerStatsWithID;
-
-    await updatePlayerStatsAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newGameData.player1Score);
-    await updatePlayerStatsAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newGameData.player2Score);
-    
-    const savedGame = await updateDocument(getDBCollections().games, gameID, newGameData) as IGameWithId;
-
-    response.json(savedGame);
-}); */
