@@ -4,13 +4,14 @@ import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import Utils from "../utils/Utils";
 import Draw from "./Draw";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 class RoundRobinDraw extends Draw{
     constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
         super(gameService, playerStatsService, utils);
     }
 
-    public async makeStartDraw(tournamentID: string, playersStats: IPlayerStatsWithID[]) {
+    public async makeStartDraw(tournamentID: string, playersStats: PlayerStatsDocument[]) {
         const playersData = playersStats.length % 2 === 0 ? [...playersStats] : [...playersStats, this.fakePlayer];
         const toursCount = playersData.length - 1;
         const games: GameDocument[] = [];
@@ -23,8 +24,8 @@ class RoundRobinDraw extends Draw{
                 
                 games.push(game);  
                 
-                await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2._id.toString());
-                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1._id.toString());
+                await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2.id);
+                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1.id);
             }
 
             playersData.splice(1, 0, playersData[playersData.length - 1]);

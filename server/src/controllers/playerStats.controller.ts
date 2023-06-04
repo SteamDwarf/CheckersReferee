@@ -4,7 +4,7 @@ import { deleteDocuments, findDocumentById, findDocuments, findDocumentsWithFilt
 import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { calculateAdamovichAfterGame, calculateAdamovichAfterTournament, calculateGorinRank } from "../utils/player.utils";
 import { IGame } from "../games/games.model";
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import { compareByScore } from "../utils/playerStats.utils";
 
 export const getPlayersStats = expressAsyncHandler(async(request: Request, response: Response) => {

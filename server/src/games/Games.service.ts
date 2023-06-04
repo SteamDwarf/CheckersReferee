@@ -11,6 +11,7 @@ import GamesRepository from "./Games.repository";
 import GameDocument from "./GameDocument.entity";
 import TournamentService from "../tournaments/Tournament.service";
 import GameUpdateDTO from "./dtos/GameUpdate.dto";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 @injectable()
 class GamesService extends BaseService {
@@ -25,8 +26,8 @@ class GamesService extends BaseService {
 
     public async createGame(
         tournamentID: string, 
-        player1: IPlayerStatsWithID, 
-        player2: IPlayerStatsWithID, 
+        player1: PlayerStatsDocument, 
+        player2: PlayerStatsDocument, 
         checkersColor?: CheckersColor[]
     ) {
         const gamePlain = new GamePlain(tournamentID, player1, player2, checkersColor);
@@ -45,6 +46,9 @@ class GamesService extends BaseService {
 
     public async getToursFromTournament(tournamentID: string) {
         const tournament = await this._tournamentsService.getTournamentByID(tournamentID);
+
+        if(!tournament) throw new NotFoundError("По указанному id турнир не найден");
+
         const tours = tournament.gamesIDs;
         const games: GameDocument[][]  = [];
 
@@ -90,8 +94,12 @@ class GamesService extends BaseService {
         const player1Stats = await this._playerStatsService.getPlayerStatsByID(oldGameData.player1StatsID);
         const player2Stats = await this._playerStatsService.getPlayerStatsByID(oldGameData.player2StatsID);
         
-        await this._playerStatsService.updateAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newData.player1Score);
-        await this._playerStatsService.updateAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newData.player2Score);
+        if(player1Stats) {
+            await this._playerStatsService.updateAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newData.player1Score);
+        }
+        if(player2Stats) {
+            await this._playerStatsService.updateAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newData.player2Score);
+        }
         
         const gamePlainDocument = await this._gamesRepository.updateGame(newData, id);
         const gameDocument = new GameDocument(gamePlainDocument);

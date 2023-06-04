@@ -1,4 +1,4 @@
-import { ISportsCategory, ISportsCategoryWithID} from "../models/sportsCategory.model"
+import { ISportsCategory, ISportsCategoryWithID} from "../sportsCategory/sportsCategory.model"
 import { clamp } from "./math";
 import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { IGame, IGameWithId } from "../games/games.model";

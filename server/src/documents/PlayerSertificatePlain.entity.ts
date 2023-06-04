@@ -1,7 +1,9 @@
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import { ITournamentWithId } from "../models/tournaments.model";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import PlayerDocument from "../players/PlayerDocument.entity";
+import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 class PlayerSertificatePlain {
     public readonly documentTitle: string;
@@ -28,9 +30,9 @@ class PlayerSertificatePlain {
     public readonly date: string;
     
     constructor(
-        playerStats: IPlayerStatsWithID, 
+        playerStats: PlayerStatsDocument, 
         tournament: ITournamentWithId,
-        sportsCategory: ISportsCategoryWithID
+        sportsCategory: SportsCategoryDocument
     ) {
         this.documentTitle = `Справка_${playerStats.playerID}`;
         this.fullName = playerStats.playerName;

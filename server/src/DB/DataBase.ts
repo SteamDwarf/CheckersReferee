@@ -1,7 +1,7 @@
 import { Collection, Db, MongoClient, ObjectId } from "mongodb";
 import { CollectionNames } from "../database/enums";
 import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "../database/types";
-import { sportsCategorySchema } from "../models/sportsCategory.model";
+import { sportsCategorySchema } from "../sportsCategory/sportsCategory.model";
 import { playersSchema } from "../players/players.model";
 import { userSchema } from "../auth/users.model";
 import { tournamentSchema } from "../models/tournaments.model";

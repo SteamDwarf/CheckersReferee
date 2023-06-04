@@ -4,6 +4,7 @@ import { MAIN } from "../common/injectables.types";
 import DataBase from "../DB/DataBase";
 import { IGame, IGameWithId } from "./games.model";
 import GameUpdateDTO from "./dtos/GameUpdate.dto";
+import GamePlain from "./GamePlain.entity";
 
 @injectable()
 class GamesRepository extends BaseRepository{
@@ -13,7 +14,7 @@ class GamesRepository extends BaseRepository{
         super(database);
     }
 
-    public async createGame(game: IGame) {
+    public async createGame(game: GamePlain) {
         return await this.db.createDocument(this.db.collections.games, game) as IGameWithId;
     }
 

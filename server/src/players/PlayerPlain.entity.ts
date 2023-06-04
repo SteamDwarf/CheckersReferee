@@ -1,4 +1,5 @@
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
+import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import PlayerCreateDTO from "./dtos/PlayerCreate.dto";
 import { Gender, IPlayer } from "./players.model";
 
@@ -16,14 +17,14 @@ class PlayerPlain implements IPlayer {
     public readonly currentAdamovichRank: number;
     public readonly previousAdamovichRank?: number;
 
-    constructor(playerData: PlayerCreateDTO, sportsCategory: ISportsCategoryWithID) {
+    constructor(playerData: PlayerCreateDTO, sportsCategory: SportsCategoryDocument) {
         this.firstName = playerData.firstName;
         this.middleName = playerData.middleName;
         this.lastName = playerData.lastName;
         this.gender = playerData.gender;
         this.birthday = playerData.birthday;
         this.region = playerData.region;
-        this.sportsCategoryID = sportsCategory._id.toString();
+        this.sportsCategoryID = sportsCategory.id.toString();
         this.sportsCategoryAbbr = sportsCategory.shortTitle;
         this.playerStatsIDs = [],
         this.currentAdamovichRank = playerData.currentAdamovichRank || sportsCategory.minAdamovichRank;

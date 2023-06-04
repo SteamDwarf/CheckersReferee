@@ -10,10 +10,12 @@ export const MAIN = {
 }
 
 export const REPOSITORIES = {
+    SportsCategory: Symbol.for("SportsCategory"),
     Player: Symbol.for("PlayerRepository"),
     Game: Symbol.for("GameRepository"),
+    PlayerStats: Symbol.for("PlayerStats"),
     RankList: Symbol.for("RankListRepository"),
-    Document: Symbol.for("DocumentsRepository")
+    Document: Symbol.for("DocumentsRepository"),
 }
 
 export const SERVICES = {

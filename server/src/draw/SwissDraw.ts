@@ -5,15 +5,18 @@ import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import Utils from "../utils/Utils";
 import Draw from "./Draw";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 class SwissDraw extends Draw {
     constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
         super(gameService, playerStatsService, utils);
     }
 
-    public async makeStartDraw(tournamentID: string, playersStats: IPlayerStatsWithID[]) {
+    public async makeStartDraw(tournamentID: string, playersStats: PlayerStatsDocument[]) {
         const sortedPlayersStats = this.playerStatsService.getSortedPlayersStats(playersStats);
-        const playersData = sortedPlayersStats.length % 2 === 0 ? [...sortedPlayersStats] : [...sortedPlayersStats, this.fakePlayer];
+        const playersData = sortedPlayersStats.length % 2 === 0 ? 
+                            [...sortedPlayersStats] : 
+                            [...sortedPlayersStats, this.fakePlayer];
         
         const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
         const games: GameDocument[] = [];
@@ -27,8 +30,8 @@ class SwissDraw extends Draw {
                 const player2 = group[1][j];
                 const game = await this.makeGame(tournamentID, player1, player2);
             
-                await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2._id.toString());
-                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1._id.toString());
+                await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2.id.toString());
+                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1.id.toString());
 
                 games.push(game);     
             }
@@ -38,14 +41,16 @@ class SwissDraw extends Draw {
         return {games, toursCount};
     }
 
-    public async makeDrawAfterTour(tournamentID: string, playersStats: IPlayerStatsWithID[]) {
+    public async makeDrawAfterTour(tournamentID: string, playersStats: PlayerStatsDocument[]) {
         let sortedPlayers = this.playerStatsService.getSortedPlayersStats(playersStats);
-        sortedPlayers = sortedPlayers.length % 2 === 0 ? [...sortedPlayers] : [...sortedPlayers, this.fakePlayer];
+        sortedPlayers = sortedPlayers.length % 2 === 0 ? 
+                        [...sortedPlayers] : 
+                        [...sortedPlayers, this.fakePlayer];
 
-        this.fakePlayer.competitorsID = [];
+        //this.fakePlayer.competitorsID = [];
         console.log(this.fakePlayer);
 
-        const scoreGroups: IPlayerStatsWithID[][] = this.makeScoreGroups(sortedPlayers);
+        const scoreGroups: PlayerStatsDocument[][] = this.makeScoreGroups(sortedPlayers);
         const splitedScoreGroups = scoreGroups.map(scoreGroup => this.utils.splitArrayBySubArraysCount(scoreGroup, 2));
         const pairs = this.makeDraw(splitedScoreGroups);
         const games = [];
@@ -55,8 +60,8 @@ class SwissDraw extends Draw {
 
             games.push(game);
 
-            await this.playerStatsService.updateAfterDraw(pair[0], game.player1CheckersColor, pair[1]._id.toString());
-            await this.playerStatsService.updateAfterDraw(pair[1], game.player2CheckersColor, pair[0]._id.toString());
+            await this.playerStatsService.updateAfterDraw(pair[0], game.player1CheckersColor, pair[1].id);
+            await this.playerStatsService.updateAfterDraw(pair[1], game.player2CheckersColor, pair[0].id);
 
             console.log(pair[0].playerName, "score:", pair[0].score);
             console.log(pair[1].playerName, "score", pair[1].score);
@@ -74,16 +79,16 @@ class SwissDraw extends Draw {
         return 11;
     }
 
-    private makeScoreGroups (sortedPlayers: IPlayerStatsWithID[]){
+    private makeScoreGroups (sortedPlayers: PlayerStatsDocument[]){
         const players = [...sortedPlayers];
         const scoreGroups = [];
     
         while(players.length > 0) {
             const player = players.shift();
     
-            if(player && player._id !== this.fakePlayer._id) {
+            if(player && player.id !== this.fakePlayer.id) {
                 const score = player.score;
-                const scoreGroup: IPlayerStatsWithID[] = [player];
+                const scoreGroup: PlayerStatsDocument[] = [player];
     
                 while(players[0] && players[0].score === score) {
                     const otherPlayer = players.shift();
@@ -92,7 +97,7 @@ class SwissDraw extends Draw {
                 }
     
                 scoreGroups.push(scoreGroup);
-            } else if(player && player._id === this.fakePlayer._id) {
+            } else if(player && player.id === this.fakePlayer.id) {
                 scoreGroups[scoreGroups.length - 1].push(player);
             }
             
@@ -101,8 +106,8 @@ class SwissDraw extends Draw {
         return this.disturbeGroups(scoreGroups);
     }
 
-    private disturbeGroups (scoreGroups: IPlayerStatsWithID[][]){
-        const disturbedScoreGroups: IPlayerStatsWithID[][] = [];
+    private disturbeGroups (scoreGroups: PlayerStatsDocument[][]){
+        const disturbedScoreGroups: PlayerStatsDocument[][] = [];
     
         scoreGroups.forEach((scoreGroup, i) => {
             if(scoreGroup.length % 2 !== 0 && i + 1 < scoreGroups.length) {
@@ -118,7 +123,7 @@ class SwissDraw extends Draw {
         return disturbedScoreGroups;
     }
     
-    private makeDraw (groups:IPlayerStatsWithID[][][]){
+    private makeDraw (groups:PlayerStatsDocument[][][]){
         let pairs = [];
         let unPairedPlayers = [];
     
@@ -152,17 +157,17 @@ class SwissDraw extends Draw {
         return pairs;
     }
     
-    private makePairs(group: IPlayerStatsWithID[][], makedPairs?: IPlayerStatsWithID[][]) {
-        let pairs: IPlayerStatsWithID[][] = [];
-        const untouchablePairs: IPlayerStatsWithID[][] = []
+    private makePairs(group: PlayerStatsDocument[][], makedPairs?: PlayerStatsDocument[][]) {
+        let pairs: PlayerStatsDocument[][] = [];
+        const untouchablePairs: PlayerStatsDocument[][] = []
         const unPairedPlayers = [];
         const subGroup1 = group[0];
         const subGroup2 = group[1];
-        let unpairedPlayer: undefined | IPlayerStatsWithID = undefined;
+        let unpairedPlayer: undefined | PlayerStatsDocument = undefined;
     
     
         while(subGroup1.length > 0) {
-            const player1: IPlayerStatsWithID | undefined = unpairedPlayer ? unpairedPlayer : subGroup1.shift();
+            const player1: PlayerStatsDocument | undefined = unpairedPlayer ? unpairedPlayer : subGroup1.shift();
             if(!player1) continue;
     
             const player2 = this.findCompetitor(player1, group);
@@ -183,8 +188,8 @@ class SwissDraw extends Draw {
                 subGroup2.unshift(lastPair[0]);
     
             } else {
-                player1.competitorsID.push(player2._id.toString());
-                player2.competitorsID.push(player1._id.toString());
+                player1.competitorsID.push(player2.id.toString());
+                player2.competitorsID.push(player1.id.toString());
                 
                 if(unPairedPlayers) {
                     untouchablePairs.push([player1, player2]);
@@ -204,7 +209,7 @@ class SwissDraw extends Draw {
     
     }
     
-    private findCompetitor (player1: IPlayerStatsWithID, group: IPlayerStatsWithID[][]){
+    private findCompetitor (player1: PlayerStatsDocument, group: PlayerStatsDocument[][]){
         let subgroup = group[1];
         let competitor = this.searchInSubgroup(player1, subgroup);
     
@@ -216,11 +221,14 @@ class SwissDraw extends Draw {
         return competitor;
     }
     
-    private searchInSubgroup(player1: IPlayerStatsWithID, subgroup: IPlayerStatsWithID[]) {
+    private searchInSubgroup(player1: PlayerStatsDocument, subgroup: PlayerStatsDocument[]) {
         for(let i = 0; i < subgroup.length; i++) {
             const player2 = subgroup[i];
     
-            if(!player1.competitorsID.includes(player2._id.toString()) || !player2.competitorsID.includes(player1._id.toString())) {
+            if(
+                !player1.competitorsID.includes(player2.id.toString()) || 
+                !player2.competitorsID.includes(player1.id.toString())
+            ) {
                 subgroup.splice(subgroup.indexOf(player2), 1);
                 return player2;
             }

@@ -4,9 +4,10 @@ import GameService from "../games/Games.service";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { CheckersColor } from "../common/enums";
 import Utils from "../utils/Utils";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 class Draw {
-    private readonly _fakePlayer: IPlayerStatsWithID;
+    private readonly _fakePlayer: PlayerStatsDocument;
     private readonly _gameService;
     private readonly _playerStatsService;
     private readonly _utils;
@@ -15,7 +16,8 @@ class Draw {
         this._gameService = gameService;
         this._playerStatsService = playerStatsService;
         this._utils = utils;
-        this._fakePlayer = {
+        //TODO подправить
+        this._fakePlayer = new PlayerStatsDocument({
             _id: new ObjectId("000000000000000000000000"),
             playerID: "0",
             playerName: "",
@@ -33,11 +35,11 @@ class Draw {
             place: 0,
             requiredScore: 0,
             sportsCategoryID: "",
-        }
+        });
     }
 
     get fakePlayer() {
-        return {...this._fakePlayer}
+        return this._fakePlayer.clone;
     }
 
     get gameService() {
@@ -52,7 +54,7 @@ class Draw {
         return this._utils;
     }
 
-    protected async makeGame(tournamentID: string, player1: IPlayerStatsWithID, player2: IPlayerStatsWithID) {
+    protected async makeGame(tournamentID: string, player1: PlayerStatsDocument, player2: PlayerStatsDocument) {
         const checkersColor = this.getCheckersColor(player1, player2);
         const game = await this.gameService.createGame(
             tournamentID,
@@ -71,7 +73,7 @@ class Draw {
      * @param {typeof dummyStats} player2Checkers данные второго игрока
      * @returns {string[]} массив цветов шашек, для первого и второго игрока
      */
-    protected getCheckersColor (player1: IPlayerStatsWithID, player2: IPlayerStatsWithID){
+    protected getCheckersColor (player1: PlayerStatsDocument, player2: PlayerStatsDocument){
         if(!player1.playerName || !player2.playerName){
             return;
         }

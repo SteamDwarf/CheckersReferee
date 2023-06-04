@@ -1,5 +1,5 @@
 import { IPlayer, IPlayerWithId } from "./players.model";
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
@@ -13,6 +13,7 @@ import PlayerPlain from "./PlayerPlain.entity";
 import PlayerRepository from "./Players.repository";
 import PlayerUpdateDTO from "./dtos/PlayerUpdate.dto";
 import TournamentService from "../tournaments/Tournament.service";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 @injectable()
 class PlayerService extends BaseService {
@@ -29,7 +30,7 @@ class PlayerService extends BaseService {
     }
     
     public async createPlayer(playerData: PlayerCreateDTO) {
-        const sportCategory = await this._sportsCategoryService.findSportsCategoryByID(playerData.sportsCategoryID);
+        const sportCategory = await this._sportsCategoryService.getSportsCategoryByID(playerData.sportsCategoryID);
 
         if(!sportCategory) throw new NotFoundError("По указанному id спортивный разряд не найден");
         
@@ -89,12 +90,12 @@ class PlayerService extends BaseService {
         return await this.updatePlayer(id, playerData);
     }
 
-    public async saveStatsToPlayers(players: PlayerDocument[], playerStats: IPlayerStatsWithID[]) {
+    public async saveStatsToPlayers(players: PlayerDocument[], playerStats: PlayerStatsDocument[]) {
         const updatedPlayers = [];
         
         for(const player of players) {
             const playerStat = playerStats.find(stat => stat.playerID === player.id.toString());
-            player.addPlayerStats(playerStat?._id);
+            player.addPlayerStats(playerStat?.id);
             
             const updatedPlayer = await this.updatePlayerDocument(player.id.toString(), player);
             updatedPlayers.push(updatedPlayer);
@@ -103,7 +104,7 @@ class PlayerService extends BaseService {
         return updatedPlayers;
     }
 
-    public async updatePlayersAfterTournament(playersStats: IPlayerStatsWithID[]){
+    public async updatePlayersAfterTournament(playersStats: PlayerStatsDocument[]){
         const updatedPlayers = [];
     
         for(const playerStats of playersStats) {

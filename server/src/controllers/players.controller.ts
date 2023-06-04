@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById } from "../database/database";
 import { IPlayer, IPlayerWithId} from "../players/players.model";
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
 import expressAsyncHandler from "express-async-handler";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";

@@ -12,6 +12,7 @@ import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import PlayersService from "../players/Players.service";
 import { MAIN, SERVICES } from "../common/injectables.types";
 import Utils from "../utils/Utils";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 @injectable()
 class TournamentService extends BaseService {
@@ -97,7 +98,7 @@ class TournamentService extends BaseService {
     
         tournamentForStart.toursCount = toursCount;
         tournamentForStart.isStarted = true;
-        tournamentForStart.playersStatsIDs = playersStats.map(stat => stat._id.toString());
+        tournamentForStart.playersStatsIDs = playersStats.map(stat => stat.id);
         
         if(tournamentForStart.tournamentSystem === TournamentSystems.round) {
             const {toursGamesIDs} = this._gamesService.splitGames(games, toursCount);
@@ -157,7 +158,7 @@ class TournamentService extends BaseService {
         return players;
     }
 
-    private async makeStartDraw(tournament: ITournamentWithId, playersStats: IPlayerStatsWithID[]) {
+    private async makeStartDraw(tournament: ITournamentWithId, playersStats: PlayerStatsDocument[]) {
         if(tournament.tournamentSystem === TournamentSystems.swiss) {
             return this._swissDraw.makeStartDraw(tournament._id.toString(), playersStats);
         } else  {

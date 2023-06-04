@@ -7,7 +7,7 @@ import DataBase from "../DB/DataBase";
 import { inject, injectable } from "inversify";
 import { MAIN } from "../common/injectables.types";
 
-//TODO в конструктор передавать бд
+//TODO убрать у всех сервисов бд
 @injectable()
 class AuthService extends BaseService{
     constructor(@inject(MAIN.Database) db: DataBase) {

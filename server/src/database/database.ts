@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import { CollectionNames } from "./enums";
 import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "./types";
 import { playersSchema } from "../players/players.model";
-import { sportsCategorySchema } from "../models/sportsCategory.model";
+import { sportsCategorySchema } from "../sportsCategory/sportsCategory.model";
 import { IUser, userSchema } from "../auth/users.model";
 import { tournamentSchema } from "../models/tournaments.model";
 import { gamesSchema } from "../games/games.model";

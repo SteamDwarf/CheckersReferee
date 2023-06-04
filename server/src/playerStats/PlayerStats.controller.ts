@@ -4,6 +4,7 @@ import ControllerRoute from "../common/ControllerRouter";
 import PlayerStatsService from "./PlayerStats.service";
 import { inject, injectable } from "inversify";
 import { SERVICES } from "../common/injectables.types";
+import PlayerStatsDocument from "./PlayerStatsDocument.entity";
 
 @injectable()
 class PlayerStatsController extends BaseController{
@@ -12,24 +13,35 @@ class PlayerStatsController extends BaseController{
 
         this.initRoutes([
             new ControllerRoute('/', 'get', [], this.get),
+            //TODO добавить middleware на проверку существования документа
             new ControllerRoute('/', 'delete', [], this.delete),
             new ControllerRoute('/:id', 'get', [], this.getByID)
         ]);
     }
 
     private async get(request: Request, response: Response) {
-        //TODO также отправлять статистку игроков связанных с турниром
+        const tournamentID = request.query.tournamentID?.toString();
+        let playersStatsDocuments: PlayerStatsDocument[] = [];
 
-        const playersStats = await this._playerStatsService.getPlayersStats();
+        if(tournamentID) {
+            playersStatsDocuments = await this._playerStatsService.getPlayersStatsOfTournament(tournamentID);
+        }else {
+            playersStatsDocuments = await this._playerStatsService.getAllPlayersStats();
+        }
+
+        const playersStats = playersStatsDocuments.map(stats => stats.data);
 
         response.json(playersStats);
+        //const playersStats = await this._playerStatsService.getPlayersStats();
+
+        //response.json(playersStats);
     }
 
     private async getByID(request: Request, response: Response) {
         const {id} = request.params;
         const playerStats = await this._playerStatsService.getPlayerStatsByID(id);
 
-        response.json(playerStats);
+        response.json(playerStats ? playerStats.data : null);
     }
 
     private async delete(request: Request, response: Response) {

@@ -113,9 +113,9 @@ class PlayerDocument {
 
     
 
-    public addPlayerStats(playerStatsID: ObjectId | undefined) {
+    public addPlayerStats(playerStatsID: string | undefined) {
         if(playerStatsID) {
-            this._playerStatsIDs.push(playerStatsID.toString());
+            this._playerStatsIDs.push(playerStatsID);
         }
     }
 }

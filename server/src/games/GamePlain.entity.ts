@@ -1,5 +1,5 @@
 import { CheckersColor } from "../common/enums";
-import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
+import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 import {IGame } from "./games.model";
 
 class GamePlain implements IGame {
@@ -15,13 +15,13 @@ class GamePlain implements IGame {
 
     constructor(
         tournamentID: string, 
-        player1Stats: IPlayerStatsWithID,
-        player2Stats: IPlayerStatsWithID,
+        player1Stats: PlayerStatsDocument,
+        player2Stats: PlayerStatsDocument,
         checkersColors?: CheckersColor[]
     ) {
         this.tournamentID = tournamentID;
-        this.player1StatsID = player1Stats._id.toString();
-        this.player2StatsID = player2Stats._id.toString();
+        this.player1StatsID = player1Stats.id;
+        this.player2StatsID = player2Stats.id;
         this.player1Name = player1Stats.playerName;
         this.player2Name = player2Stats.playerName;
         this.player1Score = 0;

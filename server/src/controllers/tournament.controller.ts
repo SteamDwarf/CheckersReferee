@@ -16,7 +16,7 @@ import { IPlayerWithId } from "../players/players.model";
 import { paginateData } from "../utils/controllers.utils";
 import { IPlayerStats, IPlayerStatsWithID, PlayerStat } from "../playerStats/playerStats.model";
 import expressAsyncHandler from "express-async-handler";
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import { IGameWithId } from "../games/games.model";
 import { updatePlayerStatsAfterTournament } from "./playerStats.controller";
 import { updatePlayersAfterTournament } from "./players.controller";

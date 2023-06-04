@@ -27,6 +27,7 @@ export interface IPlayerStatsWithID extends IPlayerStats {
     _id: ObjectId
 }
 
+//TODO убрать
 export const PlayerStat = (player: PlayerDocument, tournamentID: string): IPlayerStats => {
     const playerStat: IPlayerStats = {
         playerID: player.id.toString(),

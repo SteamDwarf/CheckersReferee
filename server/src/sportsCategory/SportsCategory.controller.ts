@@ -16,16 +16,17 @@ class SportsCategoryController extends BaseController {
     }
 
     public async get (request: Request, response: Response){
-        const categories = await this._sportsCategoryService.findSportCategories();
-    
-        response.json(categories);
+        const categories = await this._sportsCategoryService.getSportCategories();
+        const categoriesData = categories.map(category => category.data);
+
+        response.json(categoriesData);
     }
     
     public async getById (request: Request, response: Response) {
         const {id} = request.params;
-        const category = await this._sportsCategoryService.findSportsCategoryByID(id);
+        const category = await this._sportsCategoryService.getSportsCategoryByID(id);
     
-        response.json(category);
+        response.json(category ? category.data : null);
     }
 }
 
