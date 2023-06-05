@@ -5,7 +5,7 @@ import { SERVICES } from "../../common/injectables.types";
 import TournamentService from "../Tournament.service";
 import { NotFoundError } from "../../errors/NotFound.error";
 import { InputError } from "../../errors/Input.error";
-import { TournamentSystems } from "../../models/tournaments.model";
+import { TournamentSystems } from "../tournaments.model";
 
 @injectable()
 class TournamentStartMiddleware implements IMiddlewareAsync {

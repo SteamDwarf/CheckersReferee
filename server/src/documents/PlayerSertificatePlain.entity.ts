@@ -1,9 +1,10 @@
 import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
-import { ITournamentWithId } from "../models/tournaments.model";
+import { ITournamentWithId } from "../tournaments/tournaments.model";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import PlayerDocument from "../players/PlayerDocument.entity";
 import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
+import TournamentDocument from "../tournaments/TournamentDocument.entity";
 
 class PlayerSertificatePlain {
     public readonly documentTitle: string;
@@ -31,7 +32,7 @@ class PlayerSertificatePlain {
     
     constructor(
         playerStats: PlayerStatsDocument, 
-        tournament: ITournamentWithId,
+        tournament: TournamentDocument,
         sportsCategory: SportsCategoryDocument
     ) {
         this.documentTitle = `Справка_${playerStats.playerID}`;
@@ -44,7 +45,8 @@ class PlayerSertificatePlain {
         this.tournamentStartDate = tournament.startDate || "";
         this.tournamentEndDate = tournament.endDate || "";
         this.tournamentTitle = tournament.title;
-        this.tournamentRegion = tournament.region || "";
+        //TODO заменить на city
+        this.tournamentRegion = tournament.city;
         this.tournamentSystem = tournament.tournamentSystem;
         this.toursCount = tournament.toursCount || 0;
         this.playersCount = tournament.playersIDs.length;

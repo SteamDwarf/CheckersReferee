@@ -5,7 +5,7 @@ import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "./
 import { playersSchema } from "../players/players.model";
 import { sportsCategorySchema } from "../sportsCategory/sportsCategory.model";
 import { IUser, userSchema } from "../auth/users.model";
-import { tournamentSchema } from "../models/tournaments.model";
+import { tournamentSchema } from "../tournaments/tournaments.model";
 import { gamesSchema } from "../games/games.model";
 import { playerStatsSchema } from "../playerStats/playerStats.model";
 

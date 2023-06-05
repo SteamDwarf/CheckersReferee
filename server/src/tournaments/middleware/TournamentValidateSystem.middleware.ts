@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { IMiddleware } from "../../common/interfaces";
 import { InputError } from "../../errors/Input.error";
-import { TournamentSystems } from "../../models/tournaments.model";
+import { TournamentSystems } from "../tournaments.model";
 import { injectable } from "inversify";
 
+//TODO удалить
 @injectable()
 class TournamentValidateSystemMiddleware implements IMiddleware{
     public execute(request: Request, response:Response, next: NextFunction){

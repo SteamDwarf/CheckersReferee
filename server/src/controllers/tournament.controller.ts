@@ -10,7 +10,7 @@ import { getDBCollections,
     findDocumentsWithFilter, 
     updateDocuments
 } from "../database/database";
-import { ITournament, ITournamentWithId, TournamentSystems } from "../models/tournaments.model";
+import { ITournament, ITournamentWithId, TournamentSystems } from "../tournaments/tournaments.model";
 import { makeRoundRobinDraw, makeFirstSwissDraw, makeSwissDrawAfterTour } from "../utils/tournaments.utils";
 import { IPlayerWithId } from "../players/players.model";
 import { paginateData } from "../utils/controllers.utils";

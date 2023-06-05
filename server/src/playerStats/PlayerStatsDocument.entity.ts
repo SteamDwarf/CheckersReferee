@@ -135,9 +135,12 @@ class PlayerStatsDocument {
         this._lastColor = newColor;
     }
 
+    //TODO возвращать копию
     public get competitorsID(): (string | undefined)[] {
         return this._competitorsID;
     }
+
+    //TODO сделать методы для удаления последне противника и добавления нового
 
     public get data() {
         return {

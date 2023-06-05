@@ -33,15 +33,12 @@ class PlayerStatsService extends BaseService {
     public async getAllPlayersStats (){
         const playersStatsPlainDocuments = await this._playerStatsRepository.getAllPlayersStats();
         return playersStatsPlainDocuments.map(stats => new PlayerStatsDocument(stats));
-        //return await this.db.findDocuments(this.db.collections.playerStats) as IPlayerStatsWithID[];
     }
 
-    public async getPlayersStatsOfTournament(tournamentID: string) {
+    public async getPlayersStatsFromTournament(tournamentID: string) {
         const playersStatsPlainDocuments = await this._playerStatsRepository.getPlayersStatsFromTournament(tournamentID);
         //TODO может сделать проверку на наличие турнира
         return playersStatsPlainDocuments.map(stats => new PlayerStatsDocument(stats));
-
-        //return await this.db.findDocumentsWithFilter(this.db.collections.playerStats, {tournamentID}) as IPlayerStatsWithID[];
     }
 
     public async getPlayerStatsByID (id: string) {
@@ -52,7 +49,6 @@ class PlayerStatsService extends BaseService {
         }
 
         return null;
-        //return await this.db.findDocumentById(this.db.collections.playerStats, id) as IPlayerStatsWithID;
     }
 
 
@@ -61,10 +57,6 @@ class PlayerStatsService extends BaseService {
         const playerStatsPlainDocument = await this._playerStatsRepository.createPlayerStats(playerStatsPlain);
         
         return new PlayerStatsDocument(playerStatsPlainDocument);
-        /* const playerStats = PlayerStat(player, tournamentID);
-        const savedPlayerStats = await this.db.createDocument(this.db.collections.playerStats, playerStats) as IPlayerStatsWithID;
-
-        return savedPlayerStats; */
     }
 
     public async createPlayersStats(players: PlayerDocument[], tournamentID: string) {
@@ -96,9 +88,6 @@ class PlayerStatsService extends BaseService {
             return new PlayerStatsDocument(playerStatsPlainDocument);
         }
         return null;
-        /* const {_id: id, ...playerStatsData} = playerStats;
-
-        return await this.db.updateDocument(this.db.collections.playerStats, id.toString(), playerStatsData) as IPlayerStatsWithID; */
     }
 
     public async updateAfterGame(
@@ -113,7 +102,6 @@ class PlayerStatsService extends BaseService {
             
             if(competitorAdamovichRank && Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
                 playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(playerStats, competitorAdamovichRank);
-                //playerStats.lastAdamovichTimeStamp = Date.now();
             }
             
            return await this.updatePlayerStats(playerStats);
@@ -127,7 +115,6 @@ class PlayerStatsService extends BaseService {
     ) {
         if(playerStats) {
             playerStats.lastColor = checkersColor;
-            //this.changeCheckersColor(playerStats, checkersColor);
     
             console.log(playerStats.playerName, playerStats.lastColor, playerStats.colorUsed);
             
@@ -182,8 +169,6 @@ class PlayerStatsService extends BaseService {
 
     public async deletePlayersStats (){
         return await this._playerStatsRepository.deletePlayersStats();
-
-        //return await this.db.deleteDocuments(this.db.collections.playerStats);
     }
 
     public getSortedPlayersStats(playersStats: PlayerStatsDocument[]) {
@@ -218,7 +203,6 @@ class PlayerStatsService extends BaseService {
     
         const newRank = (20 * playerStats.startAdamovichRank + sumCompetitorsRank + constCoeff * (playerStats.score - playedGames)) / (20 + playedGames);
     
-        //return newRank;
         return this.clampAdamovichRank(sportsCategory, newRank);
     }
     

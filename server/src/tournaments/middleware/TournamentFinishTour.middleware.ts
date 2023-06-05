@@ -4,7 +4,7 @@ import TournamentService from "../Tournament.service";
 import { SERVICES } from "../../common/injectables.types";
 import { Request, Response, NextFunction } from "express";
 import { NotFoundError } from "../../errors/NotFound.error";
-import { TournamentSystems } from "../../models/tournaments.model";
+import { TournamentSystems } from "../tournaments.model";
 import { InputError } from "../../errors/Input.error";
 
 @injectable()

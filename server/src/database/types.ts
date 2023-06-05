@@ -1,6 +1,6 @@
 import { Collection, ObjectId, OptionalId } from "mongodb";
 import { ISportsCategory } from "../sportsCategory/sportsCategory.model";
-import { ITournament } from "../models/tournaments.model";
+import { ITournament } from "../tournaments/tournaments.model";
 import { IGame } from "../games/games.model";
 import { IPlayerStats } from "../playerStats/playerStats.model";
 import { IUser } from "../auth/users.model";

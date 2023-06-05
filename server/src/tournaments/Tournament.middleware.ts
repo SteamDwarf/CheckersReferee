@@ -1,7 +1,7 @@
 //TODO удалить
 
 import { NextFunction, Request, Response } from "express";
-import { TournamentSystems } from "../models/tournaments.model";
+import { TournamentSystems } from "./tournaments.model";
 import { InputError } from "../errors/Input.error";
 import TournamentService from "./Tournament.service";
 import { NotFoundError } from "../errors/NotFound.error";

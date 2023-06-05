@@ -106,27 +106,6 @@ class GamesService extends BaseService {
 
         return gameDocument;
     }
-
-    public splitGames(games: GameDocument[], toursCount: number) {
-        const gamesInTour = games.length / toursCount;
-        const tours: GameDocument[][] = [];
-        const toursGamesIDs: string[][] = [];
-    
-        for(let i = 0; i < toursCount; i++) {
-            const tour: GameDocument[] = [];
-            const gamesIDs: string[] = [];
-    
-            for(let j = 0; j < gamesInTour; j++) {
-                tour.push(games[j + i * gamesInTour]);
-                gamesIDs.push(games[j + i * gamesInTour].id.toString());
-            }
-    
-            tours.push(tour);
-            toursGamesIDs.push(gamesIDs);
-        }
-    
-        return {tours, toursGamesIDs}
-    }
 }
 
 export default GamesService;

@@ -79,6 +79,7 @@ class PlayerService extends BaseService {
     }
 
     public async updatePlayer (id: string, playerData: PlayerUpdateDTO){    
+        //TODO проверить на существование игрока
         const playerPlainDocument = await this._playerRepository.updatePlayer(id, playerData);
         const playerDocument = new PlayerDocument(playerPlainDocument);
     

@@ -4,7 +4,7 @@ import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "..
 import { sportsCategorySchema } from "../sportsCategory/sportsCategory.model";
 import { playersSchema } from "../players/players.model";
 import { userSchema } from "../auth/users.model";
-import { tournamentSchema } from "../models/tournaments.model";
+import { tournamentSchema } from "../tournaments/tournaments.model";
 import { gamesSchema } from "../games/games.model";
 import { playerStatsSchema } from "../playerStats/playerStats.model";
 import { inject, injectable } from "inversify";
