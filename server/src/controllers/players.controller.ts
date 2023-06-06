@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
-import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById } from "../database/database";
-import { IPlayer, IPlayerWithId} from "../players/players.model";
-import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
+import { createDocument, findDocuments, deleteDocument, updateDocument, getDBCollections, findDocumentById, findDocumentsWithFilter } from "../database/database";
+import { IPlayer, IPlayerWithId} from "../models/players.model";
+import { ISportsCategoryWithID } from "../models/sportsCategory.model";
 import { paginateData } from "../utils/controllers.utils";
 import expressAsyncHandler from "express-async-handler";
-import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import { NotFoundError } from "../errors/NotFound.error";
+import {NotFoundError} from "../utils/ServerError";
+import { IPlayerStatsWithID } from "../models/playerStats.model";
+import { WithId } from "mongodb";
+import { ITournamentWithId } from "../models/tournaments.model";
 
 
 export const createPlayer = expressAsyncHandler(async(request: Request, response: Response) => {
@@ -33,11 +35,28 @@ export const getPlayer = expressAsyncHandler(async(request: Request, response: R
 
 
 export const getPlayers = expressAsyncHandler(async(request: Request, response: Response) => {
-    const page = request.query.page || "1";
-    const limit = request.query.limit || "10";
-    const players = await findDocuments(getDBCollections().players) || [];
+    let players:IPlayerWithId[]  = [];
+    const tournamentID = request.query.tournamentID?.toString();
 
-    response.json(paginateData(players, +limit, +page));
+    if(tournamentID) {
+        const tournament = await findDocumentById(getDBCollections().tournaments, tournamentID) as ITournamentWithId;
+
+        if(!tournament) throw new NotFoundError("Турнир с указанным id не найден");
+
+        const playersIDs = tournament.playersIDs;
+
+        players = await Promise.all(playersIDs.map(id => findDocumentById(getDBCollections().players, id as string))) as IPlayerWithId[];
+    }
+    else {
+        const page = request.query.page || "1";
+        const limit = request.query.limit || "10";
+
+        players = await findDocuments(getDBCollections().players) as IPlayerWithId[];
+        response.setHeader("x-total-count", players.length);
+        players = paginateData(players, +limit, +page);
+    }
+
+    response.json(players);
 });
 
 export const updatePlayer = expressAsyncHandler(async(request: Request, response: Response) => {

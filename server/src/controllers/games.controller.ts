@@ -4,20 +4,35 @@ import { IGame, IGameWithId} from "../games/games.model";
 import expressAsyncHandler from "express-async-handler";
 import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { updatePlayerStatsAfterGame } from "./playerStats.controller";
-import { NotFoundError } from "../errors/NotFound.error";
+import { ITournamentWithId } from "../models/tournaments.model";
+
 
 
 export const getGames = expressAsyncHandler(async(request: Request, response: Response) => {
     const tournamentID = request.query.tournamentID;
-    let games;
+    const tournamentGames: IGameWithId[][] = [];
 
     if(tournamentID) {
-        games = await findDocumentsWithFilter(getDBCollections().games, {tournamentID});
+        const tournament = await findDocumentById(getDBCollections().tournaments, tournamentID.toString()) as ITournamentWithId;
+
+        if(!tournament) throw new NotFoundError("Турнир с указанным id не найден");
+
+        const tours = tournament.gamesIDs;
+        console.log(tours);
+        for(let i = 0; i < tours.length; i++) {
+            const tour = tours[i];
+            const findedGames = await Promise.all(tour.map(gameID => findDocumentById(getDBCollections().games, gameID as string))) as IGameWithId[];
+
+            tournamentGames.push(findedGames);
+        }
+
+        response.json(tournamentGames);
+
     } else {
-        games = await findDocuments(getDBCollections().games);
+        const games = await findDocuments(getDBCollections().games) as IGameWithId[];
+        response.json(games);
     }   
 
-    response.json(games);
 });
 
 export const getGame = expressAsyncHandler(async(request: Request, response: Response) => {
