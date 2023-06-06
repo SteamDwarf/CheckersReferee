@@ -3,9 +3,8 @@ import { SERVICES } from "../common/injectables.types";
 import DocumentsService from "./Documents.service";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { InputError } from "../errors/Input.error";
-import PlayerService from "../players/Players.service";
 
 @injectable()
 class DocumentsController extends BaseController{
@@ -20,7 +19,6 @@ class DocumentsController extends BaseController{
     }
 
     public async getPlayerSertificate(request: Request, response: Response) {
-        //TODO сделать middleware для проверки наличия данного параметра
         const playerStatsID = request.query.playerStatsID?.toString();
 
         if(!playerStatsID) {

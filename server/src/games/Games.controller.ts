@@ -8,7 +8,6 @@ import { SERVICES } from "../common/injectables.types";
 import ValidateMiddleware from "../common/Validate.middleware";
 import GameUpdateDTO from "./dtos/GameUpdate.dto";
 import GameDocument from "./GameDocument.entity";
-import GameExistMiddleware from "./middlewares/GameExist.middleware";
 
 @injectable()
 class GamesController extends BaseController {

@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
 import { CheckersColor } from "../common/enums";
-import PlayerDocument from "../players/PlayerDocument.entity";
 import { IPlayerStatsWithID } from "./playerStats.model";
 
 class PlayerStatsDocument {
@@ -140,8 +139,6 @@ class PlayerStatsDocument {
         return this._competitorsID;
     }
 
-    //TODO сделать методы для удаления последне противника и добавления нового
-
     public get data() {
         return {
             _id: this._id.toString(),
@@ -175,11 +172,6 @@ class PlayerStatsDocument {
     public popCompetitor() {
         return this._competitorsID.pop();
     }
-
-    /* public updateAfterDraw(checkersColor: CheckersColor, competitorID: string) {
-        this.lastColor = checkersColor;
-        this._competitorsID.push(competitorID);
-    } */
 }
 
 export default PlayerStatsDocument;

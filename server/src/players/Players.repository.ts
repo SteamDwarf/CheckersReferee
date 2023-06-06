@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import BaseRepository from "../common/Base.repository";
-import { IPlayer, IPlayerWithId } from "./players.model";
+import { IPlayerWithId } from "./players.model";
 import PlayerPlain from "./PlayerPlain.entity";
 import PlayerUpdateDTO from "./dtos/PlayerUpdate.dto";
 

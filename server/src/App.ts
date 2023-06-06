@@ -11,7 +11,6 @@ import TournamentController from './tournaments/Tournament.controller';
 import GameController from './games/Games.controller';
 import { inject, injectable } from 'inversify';
 import { CONTROLLERS, MAIN, MIDDLEWARES } from './common/injectables.types';
-import RankListController from './documents/rankList/RankList.controller';
 import DocumentsController from './documents/Documents.controller';
 
 @injectable()
@@ -29,7 +28,6 @@ class App {
         @inject(CONTROLLERS.Tournament) private readonly _tournamentController: TournamentController,
         @inject(CONTROLLERS.Game) private readonly _gameController: GameController,
         @inject(CONTROLLERS.Document) private readonly _documentsController: DocumentsController,
-        //@inject(CONTROLLERS.RankList) private readonly _rankListController: RankListController,
         @inject(MIDDLEWARES.Error) private readonly _errorHandler: ErrorHandler
     ){
         this._app = express();

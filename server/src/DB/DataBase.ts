@@ -1,6 +1,4 @@
 import { Collection, Db, MongoClient, ObjectId } from "mongodb";
-import { CollectionNames } from "../database/enums";
-import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "../database/types";
 import { sportsCategorySchema } from "../sportsCategory/sportsCategory.model";
 import { playersSchema } from "../players/players.model";
 import { userSchema } from "../auth/users.model";
@@ -10,6 +8,8 @@ import { playerStatsSchema } from "../playerStats/playerStats.model";
 import { inject, injectable } from "inversify";
 import { MAIN } from "../common/injectables.types";
 import { rankListsSchema } from "../documents/rankList/RankList.scheme";
+import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "../common/types";
+import { CollectionNames } from "../common/enums";
 
 @injectable()
 class DataBase {

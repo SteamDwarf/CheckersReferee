@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import BaseRepository from "../common/Base.repository";
 import { MAIN } from "../common/injectables.types";
 import DataBase from "../DB/DataBase";
-import { IPlayerStats, IPlayerStatsWithID } from "./playerStats.model";
+import { IPlayerStatsWithID } from "./playerStats.model";
 import PlayerStatsPlain from "./PlayerStatsPlain.entity";
 
 @injectable()

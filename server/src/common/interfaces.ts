@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+//TODO разобраться
 export interface IMiddleware {
     execute: (request: Request, response: Response, next: NextFunction) => void;
 }

@@ -1,5 +1,6 @@
 import { IPlayerStats } from "../playerStats/playerStats.model";
 
+//TODO придумать как сортировать с помощью него в Draw
 class PlayerStatsComparator{
     public compareByScore (player1: IPlayerStats, player2: IPlayerStats){
         if(player1.score > player2.score) return -1;

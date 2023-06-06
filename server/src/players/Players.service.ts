@@ -1,12 +1,8 @@
-import { IPlayer, IPlayerWithId } from "./players.model";
-import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
-import DataBase from "../DB/DataBase";
-import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import { Container, inject, injectable } from "inversify";
-import { MAIN, REPOSITORIES, SERVICES } from "../common/injectables.types";
+import { inject, injectable } from "inversify";
+import { REPOSITORIES, SERVICES } from "../common/injectables.types";
 import PlayerCreateDTO from "./dtos/PlayerCreate.dto";
 import PlayerDocument from "./PlayerDocument.entity";
 import PlayerPlain from "./PlayerPlain.entity";
@@ -20,13 +16,11 @@ class PlayerService extends BaseService {
     
 
     constructor(
-        //TODO убрать db
-        @inject(MAIN.Database) db: DataBase, 
         @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService,
         @inject(REPOSITORIES.Player) private readonly _playerRepository: PlayerRepository,
         @inject(SERVICES.Tournament) private readonly _tournamentService: TournamentService
     ) {
-        super(db);
+        super();
     }
     
     public async createPlayer(playerData: PlayerCreateDTO) {
@@ -52,7 +46,6 @@ class PlayerService extends BaseService {
         return null;
     }
 
-    //TODO вынести paginateData в класс UtilsService
     public async getAllPlayers() {
         const playersPlainDocuments = await this._playerRepository.getAllPlayers();
         const playersDocuments = playersPlainDocuments.map(document => new PlayerDocument(document));

@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { Gender, IPlayerWithId } from "./players.model";
 
 class PlayerDocument {
@@ -110,8 +109,6 @@ class PlayerDocument {
             previousAdamovichRank: this._previousAdamovichRank
         }
     }
-
-    
 
     public addPlayerStats(playerStatsID: string | undefined) {
         if(playerStatsID) {

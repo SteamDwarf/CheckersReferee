@@ -1,7 +1,4 @@
 import { ObjectId } from "mongodb";
-import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import GameService from "../games/Games.service";
-import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { CheckersColor } from "../common/enums";
 import Utils from "../utils/Utils";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
@@ -9,14 +6,9 @@ import GamePlain from "../games/GamePlain.entity";
 
 class Draw {
     private readonly _fakePlayer: PlayerStatsDocument;
-    //TODO убрать все сервисы
-    private readonly _gameService;
-    private readonly _playerStatsService;
     private readonly _utils;
 
-    constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
-        this._gameService = gameService;
-        this._playerStatsService = playerStatsService;
+    constructor(utils: Utils) {
         this._utils = utils;
         this._fakePlayer = new PlayerStatsDocument({
             _id: new ObjectId("000000000000000000000000"),
@@ -43,14 +35,6 @@ class Draw {
         return this._fakePlayer.clone;
     }
 
-    get gameService() {
-        return this._gameService;
-    }
-
-    get playerStatsService() {
-        return this._playerStatsService;
-    }
-
     get utils() {
         return this._utils;
     }
@@ -58,12 +42,6 @@ class Draw {
     protected async makeGame(tournamentID: string, player1: PlayerStatsDocument, player2: PlayerStatsDocument) {
         const checkersColor = this.getCheckersColor(player1, player2);
         const game = new GamePlain(tournamentID, player1, player2, checkersColor);
-        /* const game = await this.gameService.createGame(
-            tournamentID,
-            player1,
-            player2,
-            checkersColor
-        ); */
 
         return game;
     }
@@ -103,19 +81,7 @@ class Draw {
     protected reverseCheckersColor(color: CheckersColor){
         return color === CheckersColor.white ? CheckersColor.black : CheckersColor.white;
     }
-    
-    /**
-     * @description Данная функция принимает данные игрока и новый цвет шашек, и соответствующим образом обновляет 
-     * цвет и количество игр сыгранных данным цветом
-     * @param playerStats - данные игрока
-     * @param color - новый цвет шашек
-     */
-    /* protected changeCheckersColor(playerStats: IPlayerStatsWithID, color: CheckersColor) {
-        const colorUsed = playerStats.colorUsed === 0 || playerStats.lastColor !== color ? 1 : playerStats.colorUsed + 1;
-    
-        playerStats.colorUsed = colorUsed;
-        playerStats.lastColor = color;
-    } */
+
 }
 
 export default Draw;

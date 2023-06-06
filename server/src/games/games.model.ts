@@ -16,29 +16,6 @@ export interface IGameWithId extends IGame{
     _id: ObjectId,
 }
 
-//TODO удалить
-export const Game = (
-                tournamentID: string, 
-                player1StatsID: string, 
-                player1Name: string, 
-                player2StatsID: string, 
-                player2Name: string,
-                player1CheckersColor?: CheckersColor,
-                player2CheckersColor?: CheckersColor
-            ):IGame => {
-    return {
-        tournamentID,
-        player1StatsID,
-        player1Name,
-        player2StatsID,
-        player2Name,
-        player1Score: 0,
-        player2Score: 0,
-        player1CheckersColor: player1CheckersColor || CheckersColor.black,
-        player2CheckersColor: player2CheckersColor || CheckersColor.black
-    }
-}
-
 export const gamesSchema = {
     validator: {
         $jsonSchema: {

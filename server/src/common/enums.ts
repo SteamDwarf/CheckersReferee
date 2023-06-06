@@ -20,3 +20,14 @@ export const ValidationMessages = {
     Min: (num: number) => `Поле должно иметь значение не менее ${num}`,
     Max: (num: number) => `Поле должно иметь значение не более ${num}`
 }
+
+export enum CollectionNames {
+    PLAYERS = "players",
+    USERS = "users",
+    SPORTS_CATEGORIES = "sportsCategories",
+    TOURNAMENTS = "tournaments",
+    GAMES = "games",
+    PLAYER_STATS = "playerStats",
+    RANK_LISTS = "rankLists"
+}
+

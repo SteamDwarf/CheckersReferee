@@ -1,27 +1,22 @@
 import { inject, injectable } from "inversify";
-import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
 import { NotFoundError } from "../errors/NotFound.error";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
-import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
-import { MAIN, REPOSITORIES, SERVICES } from "../common/injectables.types";
-import { CheckersColor } from "../common/enums";
+import { REPOSITORIES, SERVICES } from "../common/injectables.types";
 import GamePlain from "./GamePlain.entity";
 import GamesRepository from "./Games.repository";
 import GameDocument from "./GameDocument.entity";
 import TournamentService from "../tournaments/Tournament.service";
 import GameUpdateDTO from "./dtos/GameUpdate.dto";
-import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 
 @injectable()
 class GamesService extends BaseService {
     constructor(
-        @inject(MAIN.Database) db: DataBase, 
         @inject(SERVICES.PlayerStats) private readonly _playerStatsService: PlayerStatsService,
         @inject(REPOSITORIES.Game) private readonly _gamesRepository: GamesRepository,
         @inject(SERVICES.Tournament) private readonly _tournamentsService: TournamentService
     ) {
-        super(db);
+        super();
     }
 
     public async createGame(gamePlain: GamePlain) {

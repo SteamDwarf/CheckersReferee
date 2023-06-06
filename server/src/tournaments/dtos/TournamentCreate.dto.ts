@@ -1,4 +1,4 @@
-import { IsArray, IsEmpty, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ValidationMessages } from "../../common/enums";
 import { TournamentSystems } from "../tournaments.model";
 

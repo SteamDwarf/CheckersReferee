@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import BaseEntity from "./Base.entity";
 
+//TODO возможно удалить
 class BaseDocument extends BaseEntity{
     private readonly _documentTile
 

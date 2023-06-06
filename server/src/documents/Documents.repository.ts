@@ -1,7 +1,5 @@
 import { inject, injectable } from "inversify";
-import BaseRepository from "../common/Base.repository";
 import { MAIN } from "../common/injectables.types";
-import { privateDecrypt } from "crypto";
 import DocumentsDatabase from "../DB/DocumentsDatabase";
 import PlayerSertificatePlain from "./PlayerSertificatePlain.entity";
 import { DocumentCollections } from "../common/enums";

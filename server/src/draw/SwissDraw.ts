@@ -1,8 +1,5 @@
 import GameService from "../games/Games.service";
-import GameDocument from "../games/GameDocument.entity";
-import { IGame, IGameWithId } from "../games/games.model";
 import PlayerStatsService from "../playerStats/PlayerStats.service";
-import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import Utils from "../utils/Utils";
 import Draw from "./Draw";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
@@ -10,11 +7,12 @@ import GamePlain from "../games/GamePlain.entity";
 
 class SwissDraw extends Draw {
     constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
-        super(gameService, playerStatsService, utils);
+        super(utils);
     }
 
-    public async makeStartDraw(tournamentID: string, playersStats: PlayerStatsDocument[]) {
-        const sortedPlayersStats = this.playerStatsService.getSortedPlayersStats(playersStats);
+    //TODO проверить правильно ли сортируются игроки
+    public async makeStartDraw(tournamentID: string, sortedPlayersStats: PlayerStatsDocument[]) {
+        //const sortedPlayersStats = this.playerStatsService.getSortedPlayersStats(playersStats);
         const playersData = sortedPlayersStats.length % 2 === 0 ? 
                             [...sortedPlayersStats] : 
                             [...sortedPlayersStats, this.fakePlayer];
@@ -22,7 +20,7 @@ class SwissDraw extends Draw {
         const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
         const games: GamePlain[] = [];
         //TODO при нечётном количестве в данном диапазоне игроков программа напоминает судье, что необходимо добавить 1 тур дополнительно
-        const toursCount = this.getToursCount(playersStats.length);
+        const toursCount = this.getToursCount(sortedPlayersStats.length);
 
         for(let i = 0; i < splitedPlayers.length; i++) {
             const group = splitedPlayers[i];
@@ -41,12 +39,6 @@ class SwissDraw extends Draw {
                 console.log(player2.playerName, player2.lastColor, player2.colorUsed);
                 console.log("==========================================================")
 
-                /* player1.updateAfterDraw(game.player1CheckersColor, player2.id);
-                player2.updateAfterDraw(game.player2CheckersColor, player1.id); */
-
-                /* await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2.id.toString());
-                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1.id.toString()); */
-
                 games.push(game);     
             }
             
@@ -56,10 +48,10 @@ class SwissDraw extends Draw {
     }
 
     public async makeDrawAfterTour(tournamentID: string, playersStats: PlayerStatsDocument[]) {
-        let sortedPlayers = this.playerStatsService.getSortedPlayersStats(playersStats);
-        sortedPlayers = sortedPlayers.length % 2 === 0 ? 
-                        [...sortedPlayers] : 
-                        [...sortedPlayers, this.fakePlayer];
+        //let sortedPlayers = this.playerStatsService.getSortedPlayersStats(playersStats);
+        const sortedPlayers = playersStats.length % 2 === 0 ? 
+                        [...playersStats] : 
+                        [...playersStats, this.fakePlayer];
 
         //this.fakePlayer.competitorsID = [];
         console.log(this.fakePlayer);
@@ -75,14 +67,7 @@ class SwissDraw extends Draw {
             games.push(game);
 
             pair[0].lastColor = game.player1CheckersColor;
-            //pair[0].addCompetitor(pair[1].id);
-
             pair[1].lastColor = game.player2CheckersColor;
-            //pair[1].addCompetitor(pair[0].id);
-            /* pair[0].updateAfterDraw(game.player1CheckersColor, pair[1].id);
-            pair[1].updateAfterDraw(game.player2CheckersColor, pair[0].id); */
-            //await this.playerStatsService.updateAfterDraw(pair[0], game.player1CheckersColor, pair[1].id);
-            //await this.playerStatsService.updateAfterDraw(pair[1], game.player2CheckersColor, pair[0].id);
 
             console.log(pair[0].playerName, pair[0].lastColor, pair[0].colorUsed);
             console.log(pair[1].playerName, pair[1].lastColor, pair[1].colorUsed);
@@ -165,7 +150,7 @@ class SwissDraw extends Draw {
         }
         
         while(unPairedPlayers.length > 0) {
-            unPairedPlayers = this.playerStatsService.getSortedPlayersStats(unPairedPlayers);
+            //unPairedPlayers = this.playerStatsService.getSortedPlayersStats(unPairedPlayers);
             pairs = this.utils.shuffle(pairs);
             
             const subGroup1 = unPairedPlayers.slice(0, Math.floor(unPairedPlayers.length / 2));

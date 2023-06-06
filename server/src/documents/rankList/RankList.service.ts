@@ -4,7 +4,7 @@ import TournamentService from "../../tournaments/Tournament.service";
 import RankListRepository from "./RankList.repository";
 import RankList from "./RankList.entity";
 
-//TODO унаследовать от BaseService
+//TODO убрать
 @injectable()
 class RankListService {
     constructor(

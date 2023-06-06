@@ -1,5 +1,4 @@
 import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
-import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import PlayerCreateDTO from "./dtos/PlayerCreate.dto";
 import { Gender, IPlayer } from "./players.model";
 

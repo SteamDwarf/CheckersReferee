@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import BaseRepository from "../common/Base.repository";
 import { MAIN } from "../common/injectables.types";
 import DataBase from "../DB/DataBase";
-import { IGame, IGameWithId } from "./games.model";
+import { IGameWithId } from "./games.model";
 import GameUpdateDTO from "./dtos/GameUpdate.dto";
 import GamePlain from "./GamePlain.entity";
 

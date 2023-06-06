@@ -1,22 +1,8 @@
-import { inject, injectable} from "inversify";
-import DataBase from "../DB/DataBase";
-import { MAIN } from "./injectables.types";
+import { injectable} from "inversify";
 
 @injectable()
 class BaseService {
-    constructor(@inject(MAIN.Database) private readonly _db: DataBase) {}
-
-    //TODO убрать
-    protected get db() {
-        return this._db;
-    }
-
-    //TODO убрать
-    protected paginateData <T>(dataArray: T[], limit: number, page: number){
-        const startInd = (page - 1) * limit;
-        const endInd = limit * page;
-        return dataArray.slice(startInd, endInd)
-    }
+    
 }
 
 export default BaseService;

@@ -6,7 +6,6 @@ import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import Utils from "../utils/Utils";
 import PlayerStatsComparator from "./PlayerStats.comparator";
 import { MAIN, REPOSITORIES, SERVICES } from "../common/injectables.types";
-import { CheckersColor } from "../common/enums";
 import PlayerDocument from "../players/PlayerDocument.entity";
 import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
 import { NotFoundError } from "../errors/NotFound.error";
@@ -20,12 +19,11 @@ class PlayerStatsService extends BaseService {
     private readonly _comparator;
 
     constructor(
-        @inject(MAIN.Database) db: DataBase,
         @inject(MAIN.Utils) private readonly _utils: Utils,
         @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService,
         @inject(REPOSITORIES.PlayerStats) private readonly _playerStatsRepository: PlayerStatsRepository
     ) {
-        super(db);
+        super();
 
         this._comparator = new PlayerStatsComparator();
     }
@@ -69,15 +67,6 @@ class PlayerStatsService extends BaseService {
         }
 
         return playersStatsDocuments;
-        /* const playersStats: IPlayerStats[] = [];
-
-        for(const player of players) {
-            const playerStats = PlayerStat(player, tournamentID);
-
-            playersStats.push(playerStats);
-        }
-
-        return await this.db.createDocuments(this.db.collections.playerStats, playersStats) as IPlayerStatsWithID[]; */
     }
 
     public async updatePlayerStats(playerStats: PlayerStatsDocument) {
@@ -113,33 +102,12 @@ class PlayerStatsService extends BaseService {
     
             
             if(competitorAdamovichRank && Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
-                playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(playerStats, competitorAdamovichRank);
+                playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(playerStats, competitorAdamovichRank, curScore);
             }
             
            return await this.updatePlayerStats(playerStats);
         }
     }
-
-    /* public async updateAfterDraw(
-        playerStats: PlayerStatsDocument | undefined, 
-        checkersColor: CheckersColor,
-        competitorID: string
-    ) {
-        if(playerStats) {
-            playerStats.lastColor = checkersColor;
-    
-            console.log(playerStats.playerName, playerStats.lastColor, playerStats.colorUsed);
-            
-            //TODO попробовать убрать проверку
-            if(playerStats.competitorsID.at(-1) !== competitorID) {
-                playerStats.competitorsID.push(competitorID);
-            }
-            
-            return await this.updatePlayerStats(playerStats);
-        }
-    } */
-
-    
 
     public async updateAfterTournament (playersStats: PlayerStatsDocument[],  games: GameDocument[]) {
         const updatedPlayersStats = [];
@@ -164,18 +132,6 @@ class PlayerStatsService extends BaseService {
             updatedPlayersStats.push(updatedStats);
         }
 
-        /* playersStats = playersStats.map((stat, i) => {
-            stat.place = i + 1;
-            //stat.startAdamovichRank = stat.lastAdamovichRank;
-            return stat;
-        }); */
-        
-        /* for(const playerStats of playersStats) {
-            const updatedStats = await this.updatePlayerStats(playerStats);
-
-            updatedPlayersStats.push(updatedStats);
-        } */
-
         return updatedPlayersStats;
     }
 
@@ -187,8 +143,12 @@ class PlayerStatsService extends BaseService {
         return [...playersStats].sort(this._comparator.compareByScore.bind(this._comparator));
     }
 
-    private calculateAdamovichAfterGame(playerStats: PlayerStatsDocument, competitorAdamovichRank: number){
-        const newRank = (20 * playerStats.startAdamovichRank + competitorAdamovichRank + 5000/15 * (playerStats.score - 1)) / 21;
+    private calculateAdamovichAfterGame(
+        playerStats: PlayerStatsDocument, 
+        competitorAdamovichRank: number,
+        gameScore: number
+    ){
+        const newRank = (20 * playerStats.startAdamovichRank + competitorAdamovichRank + 5000/15 * (gameScore - 1)) / 21;
     
         return newRank;
     }
@@ -259,7 +219,7 @@ class PlayerStatsService extends BaseService {
         return 5000/15;
     }
     
-    //TODO age перенести с PlayerStats
+    //TODO age перенести в PlayerStats
     private countAge (birthdayString: string){
         const today = new Date();
         const birthdayDate = new Date(birthdayString);

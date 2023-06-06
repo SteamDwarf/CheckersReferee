@@ -14,8 +14,6 @@ import playerBindings from "./players/Players.bindings";
 import playerStatsBindings from "./playerStats/PlayerStats.bindings";
 import tournamentBindings from "./tournaments/Tournament.bindings";
 import sportsCategoriesBindings from "./sportsCategory/SporttsCategory.bindings";
-import getDecorators from "inversify-inject-decorators";
-import PlayerService from "./players/Players.service";
 import DocumentsDatabase from "./DB/DocumentsDatabase";
 import path from "path";
 import documentsBindings from "./documents/Documents.bindings";
@@ -59,23 +57,5 @@ const tournamentService = container.get<TournamentService>(SERVICES.Tournament);
 
 app.start();
 tournamentService.lazyInject(container);
-/* 
-const documentsDB = new DocumentsDatabase(path.resolve(__dirname, "assets/documents/setificate/document-files"), path.resolve(__dirname, "assets/documents/setificate"));
-documentsDB.createDocument("template.html", "Справка", {
-    format: "A4",
-    orientation: "portrait",
-    border: "10mm"
-}, {})
- */
 
-
-//container.bind<RankListRepository>(REPOSITORIES.RankList).to(RankListRepository);
-
-//container.bind<RankListService>(SERVICES.RankList).to(RankListService);
-
-//container.bind<RankListController>(CONTROLLERS.RankList).to(RankListController);
-
-//container.bind<AuthMiddleware>(MIDDLEWARES.Auth).to(AuthMiddleware);
-//container.bind<TournamentMiddleware>(MIDDLEWARES.Tournament).to(TournamentMiddleware);
-//container.bind<RankListMiddleware>(MIDDLEWARES.RankList).to(RankListMiddleware);
 

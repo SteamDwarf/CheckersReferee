@@ -1,8 +1,7 @@
 import { NotFoundError } from "../errors/NotFound.error";
 import BaseService from "../common/Base.service";
-import DataBase from "../DB/DataBase";
 import { inject, injectable } from "inversify";
-import { MAIN, REPOSITORIES } from "../common/injectables.types";
+import { REPOSITORIES } from "../common/injectables.types";
 import AuthRepository from "./Auth.repository";
 import UserDocument from "./UserDocument.entity";
 import UserAuthDTO from "./dtos/UserAuth.dto";
@@ -11,10 +10,9 @@ import UserAuthDTO from "./dtos/UserAuth.dto";
 @injectable()
 class AuthService extends BaseService{
     constructor(
-        @inject(MAIN.Database) db: DataBase,
         @inject(REPOSITORIES.Auth) private readonly _authRepository: AuthRepository
     ) {
-        super(db);
+        super();
     }
 
     public async auth(user: UserAuthDTO) {
@@ -24,13 +22,6 @@ class AuthService extends BaseService{
         await userDocument.comparePassword(user.password);
 
         return userDocument;
-        /* const isPasswordCompare = await bcrypt.compare(password, user.password);
-    
-        if(!isPasswordCompare) throw new AuthError("Вы ввели неверный пароль");
-
-        const {password: _, ...userData} = user;
-
-        return userData; */
     }
 
     private async findUser (login: string) {

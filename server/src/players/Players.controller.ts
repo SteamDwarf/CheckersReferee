@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { IPlayer} from "./players.model";
 import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import PlayerService from "./Players.service";
