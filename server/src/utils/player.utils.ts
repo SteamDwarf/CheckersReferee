@@ -1,18 +1,11 @@
-import { ISportsCategory, ISportsCategoryWithID} from "../models/sportsCategory.model"
+import { ISportsCategory, ISportsCategoryWithID} from "../sportsCategory/sportsCategory.model"
 import { clamp } from "./math";
-import { IPlayerStats, IPlayerStatsWithID } from "../models/playerStats.model";
-import { IGame, IGameWithId } from "../models/games.model";
+import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
+import { IGame, IGameWithId } from "../games/games.model";
 
+//TODO удалить
 
 export const calculateAdamovichAfterGame = (playerStats: IPlayerStats, competitorAdamovichRank: number) => {
-    /* const sumCompetitorsRank = playersStats.reduce((sum, curPlayerStats) => {
-        if(playerStats.playerID !== curPlayerStats.playerID) {
-            return sum += curPlayerStats.startAdamovichRank;
-        }
-
-        return sum;
-    }, 0); */
-    //TODO брать startAdamovichRank или lastAdamovichRank
     const newRank = (20 * playerStats.startAdamovichRank + competitorAdamovichRank + 5000/15 * (playerStats.score - 1)) / 21;
 
     return newRank;

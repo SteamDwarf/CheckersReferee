@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 210mm;
+        }
+
+        .federation-title {
+            font-size: 14pt;
+            color: rgb(0, 32, 96);
+            text-align: center;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .main {
+            margin-top: 45mm;
+        }
+
+        .main__title {
+            font-weight: bold;
+            text-align: center;
+            font-size: 14pt;
+            text-transform: capitalize;
+        }
+
+        .main__text {
+            margin-top: 20mm;
+            font-size: 14pt;
+            text-indent: 1.25cm;
+        }
+
+        .footer {
+            margin-top: 25mm;
+            font-size: 14pt;
+        }
+
+        .referee-block {
+            text-align: justify;
+            margin-bottom: 5mm;
+        }
+
+        .referee-block:after {
+            content: '';
+            display: inline-block;
+            width: 100%;
+        }
+
+        .job {
+            display: inline-block;
+        }
+
+        .referee-info {
+            display: inline-block;
+        }
+
+        .date {
+            margin-right: 30mm;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2 class="federation-title">
+                Региональное отделение Общероссийской общественной организации
+                "Федерация шашек России" "Федерация шашек города Севастополя"
+            </h2>
+        </header>
+        <main class="main">
+            <h1 class="main__title">Справка №________</h1>
+            <div class="main__text">
+                Дана в том, что {{fullName}} 
+                с {{tournamentStartDate}} по {{tournamentEndDate}} принимал(а) участие в турнире 
+                {{tournamentTitle}} КП № 288-1, 
+                группа: {{#each groups}}{{this}} {{/each}},
+                проведённом в {{tournamentRegion}} по {{tournamentSystem}} системе в {{toursCount}} туров 
+                при количестве участников {{playersCount}} 
+                и выполнил(а)  норматив {{sportCategory}}, 
+                набрав {{score}} очка при норме – {{normScore}}, 
+                турнирный коэффициент участника – {{playerCoefficient}}, 
+                при необходимом турнирном коэффициенте – {{tournamentCoefficient}}.
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="referee-block">
+                <span class="job">Главный судья:</span>
+                <div class="referee-info">
+                    {{mainReferee}}
+                </div>
+            </div>
+            <div class="referee-block">
+                <span class="job">Главный секретарь:</span>
+                <div class="referee-info"> 
+                    {{mainSecretary}}
+                </div>
+            </div>
+            <span class="date">{{date}}</span>
+            <span class="signature-place">м.п</span>
+        </footer>
+    </div>
+</body>
+</html>

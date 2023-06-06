@@ -2,17 +2,17 @@ import { MongoClient, Db, ObjectId, Collection, OptionalId, WithId } from "mongo
 import * as dotenv from 'dotenv';
 import { CollectionNames } from "./enums";
 import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "./types";
-import { playersSchema } from "../models/players.model";
-import { sportsCategorySchema } from "../models/sportsCategory.model";
-import { IUser, userSchema } from "../models/users.model";
-import { tournamentSchema } from "../models/tournaments.model";
-import { gamesSchema } from "../models/games.model";
-import { playerStatsSchema } from "../models/playerStats.model";
+import { playersSchema } from "../players/players.model";
+import { sportsCategorySchema } from "../sportsCategory/sportsCategory.model";
+import { IUser, userSchema } from "../auth/users.model";
+import { tournamentSchema } from "../tournaments/tournaments.model";
+import { gamesSchema } from "../games/games.model";
+import { playerStatsSchema } from "../playerStats/playerStats.model";
 
-dotenv.config({path: `${__dirname}/../../.env`});
+//dotenv.config({path: `${__dirname}/../../.env`});
 
-const URL = process.env.MONGO_URI || "mongodb://localhost:27017";
-const client = new MongoClient(URL);
+//const URL = process.env.MONGO_URI || "mongodb://localhost:27017";
+//const client = new MongoClient(URL);
 
 let database: Db;
 
@@ -28,7 +28,7 @@ const collections: IDBCollections = {
 export const getDBCollections = (): IDBCollections => Object.assign({}, collections);
 
 export const connectToDatabase = async(callback?: () => void) => {
-    try {
+    /* try {
         await client.connect()
 
         console.log(`Успешно установлено подключение к базе данных ${URL}`);
@@ -42,7 +42,7 @@ export const connectToDatabase = async(callback?: () => void) => {
 
     } catch (error) {
         console.error(error);
-    }
+    } */
 }
 
 const setCollections = () => {

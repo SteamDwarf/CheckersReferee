@@ -1,5 +1,5 @@
-import { IGameWithId } from "../models/games.model";
-
+import { IGameWithId } from "../games/games.model";
+//TODO удалить
 export const splitGames = (games: IGameWithId[], toursCount: number) => {
     const gamesInTour = games.length / toursCount;
     const tours: IGameWithId[][] = [];

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { getDBCollections, findDocumentById, updateDocument, findDocuments, findDocumentsWithFilter, findDocument, deleteDocuments} from "../database/database";
-import { IGame, IGameWithId} from "../models/games.model";
+import { IGame, IGameWithId} from "../games/games.model";
 import expressAsyncHandler from "express-async-handler";
-import { NotFoundError } from "../utils/ServerError";
-import { IPlayerStatsWithID } from "../models/playerStats.model";
+import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { updatePlayerStatsAfterGame } from "./playerStats.controller";
 import { ITournamentWithId } from "../models/tournaments.model";
+
 
 
 export const getGames = expressAsyncHandler(async(request: Request, response: Response) => {

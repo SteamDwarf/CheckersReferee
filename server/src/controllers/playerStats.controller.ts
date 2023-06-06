@@ -1,10 +1,10 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import { deleteDocuments, findDocumentById, findDocuments, findDocumentsWithFilter, getDBCollections, updateDocument, updateDocuments } from "../database/database";
-import { IPlayerStats, IPlayerStatsWithID } from "../models/playerStats.model";
+import { IPlayerStats, IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import { calculateAdamovichAfterGame, calculateAdamovichAfterTournament, calculateGorinRank } from "../utils/player.utils";
-import { IGame } from "../models/games.model";
-import { ISportsCategoryWithID } from "../models/sportsCategory.model";
+import { IGame } from "../games/games.model";
+import { ISportsCategoryWithID } from "../sportsCategory/sportsCategory.model";
 import { compareByScore } from "../utils/playerStats.utils";
 
 export const getPlayersStats = expressAsyncHandler(async(request: Request, response: Response) => {
