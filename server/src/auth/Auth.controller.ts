@@ -5,32 +5,31 @@ import AuthMiddleware from "./Auth.middleware";
 import AuthService from "./Auth.service";
 import { inject, injectable } from "inversify";
 import { MIDDLEWARES, SERVICES } from "../common/injectables.types";
-import AuthCheckEmptyMiddleware from "./middlewares/AuthCheckEmpty.middleware";
+import ValidateMiddleware from "../common/Validate.middleware";
+import UserAuthDTO from "./dtos/UserAuth.dto";
 
 @injectable()
 class AuthController extends BaseController{
-    private readonly _checkEmptyMiddleware: AuthCheckEmptyMiddleware
 
     constructor(
         @inject(SERVICES.Auth) private readonly _authService: AuthService
     ) {
         super();
 
-        this._checkEmptyMiddleware = new AuthCheckEmptyMiddleware();
-
         this.initRoutes(
-            [new ControllerRoute('/', 'post', 
-                [this._checkEmptyMiddleware], 
-                this.auth)
+            [
+                new ControllerRoute('/', 'post', 
+                    [new ValidateMiddleware(UserAuthDTO)], 
+                    this.auth
+                )
             ]
         )
     }
 
     private async auth (request: Request, response: Response){
-        const {login, password} = request.body;
-        const compareResult = await this._authService.comparePassword(login, password);
+        const userDocument = await this._authService.auth(request.body);
 
-        response.json(compareResult);
+        response.json(userDocument.data);
     }
 }
 

@@ -1,11 +1,12 @@
+import { ObjectId } from "mongodb"
 
-enum UserRoles {
+export enum UserRoles {
     ADMIN = "ADMIN",
     GUEST = "GUEST"
 }
 
-export interface IUser {
-    _id: string,
+export interface IUserWithID {
+    _id: ObjectId,
     login: string,
     password: string,
     role?: UserRoles
