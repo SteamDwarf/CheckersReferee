@@ -167,6 +167,19 @@ class PlayerStatsDocument {
     public get clone() {
         return new PlayerStatsDocument({...this.data, _id: new ObjectId(this._id)});
     }
+
+    public addCompetitor(competitorID: string) {
+        this._competitorsID.push(competitorID);
+    }
+
+    public popCompetitor() {
+        return this._competitorsID.pop();
+    }
+
+    /* public updateAfterDraw(checkersColor: CheckersColor, competitorID: string) {
+        this.lastColor = checkersColor;
+        this._competitorsID.push(competitorID);
+    } */
 }
 
 export default PlayerStatsDocument;

@@ -5,7 +5,7 @@ import { CONTROLLERS, REPOSITORIES, SERVICES } from "../common/injectables.types
 import TournamentRepository from "./Tournament.repository";
 
 const tournamentBindings = new ContainerModule((bind: interfaces.Bind) => {
-    bind<TournamentService>(SERVICES.Tournament).to(TournamentService);
+    bind<TournamentService>(SERVICES.Tournament).to(TournamentService).inSingletonScope();
     bind<TournamentController>(CONTROLLERS.Tournament).to(TournamentController);
     bind<TournamentRepository>(REPOSITORIES.Tournament).to(TournamentRepository);
 });

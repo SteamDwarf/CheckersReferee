@@ -90,6 +90,18 @@ class PlayerStatsService extends BaseService {
         return null;
     }
 
+    public async updatePlayersStats(playersStats: PlayerStatsDocument[]) {
+        const playersStatsDocuments = [];
+
+        for(const stat of playersStats) {
+            const playerStatsDocument = await this.updatePlayerStats(stat);
+
+            playersStatsDocuments.push(playerStatsDocument);
+        }
+
+        return playersStatsDocuments;
+    }
+
     public async updateAfterGame(
         playerStats: PlayerStatsDocument | undefined, 
         competitorAdamovichRank: number | undefined, 
@@ -108,7 +120,7 @@ class PlayerStatsService extends BaseService {
         }
     }
 
-    public async updateAfterDraw(
+    /* public async updateAfterDraw(
         playerStats: PlayerStatsDocument | undefined, 
         checkersColor: CheckersColor,
         competitorID: string
@@ -125,7 +137,7 @@ class PlayerStatsService extends BaseService {
             
             return await this.updatePlayerStats(playerStats);
         }
-    }
+    } */
 
     
 

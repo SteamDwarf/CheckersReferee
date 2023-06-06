@@ -24,17 +24,22 @@ class GamesService extends BaseService {
         super(db);
     }
 
-    public async createGame(
-        tournamentID: string, 
-        player1: PlayerStatsDocument, 
-        player2: PlayerStatsDocument, 
-        checkersColor?: CheckersColor[]
-    ) {
-        const gamePlain = new GamePlain(tournamentID, player1, player2, checkersColor);
+    public async createGame(gamePlain: GamePlain) {
         const gamePlainDocument = await this._gamesRepository.createGame(gamePlain);
         const gameDocument = new GameDocument(gamePlainDocument);
 
         return gameDocument;
+    }
+
+    public async createGames(gamesPlain: GamePlain[]) {
+        const gamesDocuments = [];
+
+        for(const game of gamesPlain) {
+            const gameDocument = await this.createGame(game);
+            gamesDocuments.push(gameDocument);
+        }
+
+        return gamesDocuments;
     }
 
     public async getAllGames() {

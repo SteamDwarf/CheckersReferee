@@ -24,7 +24,7 @@ class PlayerDocument {
         this._gender = playerData.gender;
         this._birthday = playerData.birthday;
         this._region = playerData.region;
-        this._sportsCategoryID = playerData._id.toString();
+        this._sportsCategoryID = playerData.sportsCategoryID;
         this._sportsCategoryAbbr = playerData.sportsCategoryAbbr;
         this._playerStatsIDs = playerData.playerStatsIDs,
         this._currentAdamovichRank = playerData.currentAdamovichRank;

@@ -5,9 +5,11 @@ import PlayerStatsService from "../playerStats/PlayerStats.service";
 import { CheckersColor } from "../common/enums";
 import Utils from "../utils/Utils";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
+import GamePlain from "../games/GamePlain.entity";
 
 class Draw {
     private readonly _fakePlayer: PlayerStatsDocument;
+    //TODO убрать все сервисы
     private readonly _gameService;
     private readonly _playerStatsService;
     private readonly _utils;
@@ -16,7 +18,6 @@ class Draw {
         this._gameService = gameService;
         this._playerStatsService = playerStatsService;
         this._utils = utils;
-        //TODO подправить
         this._fakePlayer = new PlayerStatsDocument({
             _id: new ObjectId("000000000000000000000000"),
             playerID: "0",
@@ -56,12 +57,13 @@ class Draw {
 
     protected async makeGame(tournamentID: string, player1: PlayerStatsDocument, player2: PlayerStatsDocument) {
         const checkersColor = this.getCheckersColor(player1, player2);
-        const game = await this.gameService.createGame(
+        const game = new GamePlain(tournamentID, player1, player2, checkersColor);
+        /* const game = await this.gameService.createGame(
             tournamentID,
             player1,
             player2,
             checkersColor
-        );
+        ); */
 
         return game;
     }

@@ -78,8 +78,17 @@ class PlayerService extends BaseService {
         return players;
     }
 
-    public async updatePlayer (id: string, playerData: PlayerUpdateDTO){    
-        //TODO проверить на существование игрока
+    public async updatePlayer (id: string, playerData: PlayerUpdateDTO){
+        const sportsCategoryID = playerData.sportsCategoryID
+
+        if(sportsCategoryID) {
+            const sportsCategory = await this._sportsCategoryService.getSportsCategoryByID(sportsCategoryID);
+
+            if(!sportsCategory) throw new NotFoundError("По указанному id спортивная категория не найдена");
+
+            playerData.sportsCategoryAbbr = sportsCategory.shortTitle;
+        }
+
         const playerPlainDocument = await this._playerRepository.updatePlayer(id, playerData);
         const playerDocument = new PlayerDocument(playerPlainDocument);
     
@@ -95,10 +104,10 @@ class PlayerService extends BaseService {
         const updatedPlayers = [];
         
         for(const player of players) {
-            const playerStat = playerStats.find(stat => stat.playerID === player.id.toString());
+            const playerStat = playerStats.find(stat => stat.playerID === player.id);
             player.addPlayerStats(playerStat?.id);
-            
-            const updatedPlayer = await this.updatePlayerDocument(player.id.toString(), player);
+
+            const updatedPlayer = await this.updatePlayerDocument(player.id, player);
             updatedPlayers.push(updatedPlayer);
         }
 

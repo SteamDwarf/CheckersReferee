@@ -6,6 +6,7 @@ import { IPlayerStatsWithID } from "../playerStats/playerStats.model";
 import Utils from "../utils/Utils";
 import Draw from "./Draw";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
+import GamePlain from "../games/GamePlain.entity";
 
 class SwissDraw extends Draw {
     constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
@@ -19,7 +20,7 @@ class SwissDraw extends Draw {
                             [...sortedPlayersStats, this.fakePlayer];
         
         const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
-        const games: GameDocument[] = [];
+        const games: GamePlain[] = [];
         //TODO при нечётном количестве в данном диапазоне игроков программа напоминает судье, что необходимо добавить 1 тур дополнительно
         const toursCount = this.getToursCount(playersStats.length);
 
@@ -30,8 +31,21 @@ class SwissDraw extends Draw {
                 const player2 = group[1][j];
                 const game = await this.makeGame(tournamentID, player1, player2);
             
-                await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2.id.toString());
-                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1.id.toString());
+                player1.lastColor = game.player1CheckersColor;
+                player1.addCompetitor(player2.id);
+
+                player2.lastColor = game.player2CheckersColor;
+                player2.addCompetitor(player1.id);
+
+                console.log(player1.playerName, player1.lastColor, player1.colorUsed);
+                console.log(player2.playerName, player2.lastColor, player2.colorUsed);
+                console.log("==========================================================")
+
+                /* player1.updateAfterDraw(game.player1CheckersColor, player2.id);
+                player2.updateAfterDraw(game.player2CheckersColor, player1.id); */
+
+                /* await this.playerStatsService.updateAfterDraw(player1, game.player1CheckersColor, player2.id.toString());
+                await this.playerStatsService.updateAfterDraw(player2, game.player2CheckersColor, player1.id.toString()); */
 
                 games.push(game);     
             }
@@ -60,9 +74,18 @@ class SwissDraw extends Draw {
 
             games.push(game);
 
-            await this.playerStatsService.updateAfterDraw(pair[0], game.player1CheckersColor, pair[1].id);
-            await this.playerStatsService.updateAfterDraw(pair[1], game.player2CheckersColor, pair[0].id);
+            pair[0].lastColor = game.player1CheckersColor;
+            //pair[0].addCompetitor(pair[1].id);
 
+            pair[1].lastColor = game.player2CheckersColor;
+            //pair[1].addCompetitor(pair[0].id);
+            /* pair[0].updateAfterDraw(game.player1CheckersColor, pair[1].id);
+            pair[1].updateAfterDraw(game.player2CheckersColor, pair[0].id); */
+            //await this.playerStatsService.updateAfterDraw(pair[0], game.player1CheckersColor, pair[1].id);
+            //await this.playerStatsService.updateAfterDraw(pair[1], game.player2CheckersColor, pair[0].id);
+
+            console.log(pair[0].playerName, pair[0].lastColor, pair[0].colorUsed);
+            console.log(pair[1].playerName, pair[1].lastColor, pair[1].colorUsed);
             console.log(pair[0].playerName, "score:", pair[0].score);
             console.log(pair[1].playerName, "score", pair[1].score);
             console.log("==========================================");
@@ -180,16 +203,16 @@ class SwissDraw extends Draw {
                     continue;
                 }
                 
-                lastPair[0].competitorsID.pop();
-                lastPair[1].competitorsID.pop();
+                lastPair[0].popCompetitor();
+                lastPair[1].popCompetitor();
     
                 unpairedPlayer = player1;
                 subGroup1.unshift(lastPair[1]);
                 subGroup2.unshift(lastPair[0]);
     
             } else {
-                player1.competitorsID.push(player2.id.toString());
-                player2.competitorsID.push(player1.id.toString());
+                player1.addCompetitor(player2.id);
+                player2.addCompetitor(player1.id);
                 
                 if(unPairedPlayers) {
                     untouchablePairs.push([player1, player2]);

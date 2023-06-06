@@ -17,23 +17,28 @@ class TournamentStartMiddleware implements IMiddlewareAsync {
     public async execute(request: Request, response:Response, next: NextFunction) {
         const {id} = request.params;
         const tournament = await this._tournamentService.getTournamentByID(id);
-            
-        if(!tournament) return next(new NotFoundError("По указанному id турнир не найден"));
-        if(tournament.isStarted) return next(new InputError("Данный турнир уже стартовал"));
-        if(tournament.isFinished) return next(new InputError("Данный турнир уже завершен"));
-        if(tournament.tournamentSystem !== TournamentSystems.round && 
-            tournament.tournamentSystem !== TournamentSystems.swiss
-        ) {
-            return next(new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'"));
-        }
-        if(tournament.tournamentSystem === TournamentSystems.round && tournament.playersIDs.length < 3) {
-            return next(new InputError("Для старта турнира по круговой системе нужно как минимум 3 участника"));
-        }
-        if(tournament.tournamentSystem === TournamentSystems.swiss && tournament.playersIDs.length < 11) {
-            return next(new InputError("Для старта турнира по швейцарской системе нужно как минимум 11 участников"));
-        }
+           
+        try {
+            if(!tournament) return next(new NotFoundError("По указанному id турнир не найден"));
+            if(tournament.isStarted) return next(new InputError("Данный турнир уже стартовал"));
+            if(tournament.isFinished) return next(new InputError("Данный турнир уже завершен"));
+            if(tournament.tournamentSystem !== TournamentSystems.round && 
+                tournament.tournamentSystem !== TournamentSystems.swiss
+            ) {
+                return next(new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'"));
+            }
+            if(tournament.tournamentSystem === TournamentSystems.round && tournament.playersIDs.length < 3) {
+                return next(new InputError("Для старта турнира по круговой системе нужно как минимум 3 участника"));
+            }
+            if(tournament.tournamentSystem === TournamentSystems.swiss && tournament.playersIDs.length < 11) {
+                return next(new InputError("Для старта турнира по швейцарской системе нужно как минимум 11 участников"));
+            }
 
-        next();
+            next();
+        }catch(error) {
+            next(error);
+        }
+        
     }
 }
 

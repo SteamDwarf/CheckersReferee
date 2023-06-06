@@ -10,11 +10,16 @@ class TournamentValidateSystemMiddleware implements IMiddleware{
     public execute(request: Request, response:Response, next: NextFunction){
         const tournamentData = request.body;
         
-        if(tournamentData.tournamentSystem !== TournamentSystems.round && tournamentData.tournamentSystem !== TournamentSystems.swiss) {
-            return next(new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'"));
+        try {
+            if(tournamentData.tournamentSystem !== TournamentSystems.round && tournamentData.tournamentSystem !== TournamentSystems.swiss) {
+                return next(new InputError("Вы указали некорректную систему турнира. Выберите одну из предложенных: 'Круговая' или 'Швейцарская'"));
+            }
+    
+            next();
+        }catch(error) {
+            next(error);
         }
-
-        next();
+        
     }
 }
 

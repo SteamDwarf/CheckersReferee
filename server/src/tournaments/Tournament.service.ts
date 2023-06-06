@@ -38,6 +38,7 @@ class TournamentService extends BaseService {
 
     
     public lazyInject(container: Container) {
+
         this._playersService = container.get<PlayersService>(SERVICES.Player);
         this._gamesService = container.get<GameService>(SERVICES.Game);
 
@@ -106,10 +107,13 @@ class TournamentService extends BaseService {
         const playersStats  = await this._playerStatsService.createPlayersStats(players, id);
 
         const {games, toursCount} = await this.makeStartDraw(tournamentDocument, playersStats);
+        const gamesDocuments = await this._gamesService.createGames(games);
 
+        //await this._playerStatsService.updateAfterDraw(playersStats, )
+        await this._playerStatsService.updatePlayersStats(playersStats);
         await this._playersService.saveStatsToPlayers(players, playersStats);
     
-        tournamentDocument.start(toursCount, playersStats, games);
+        tournamentDocument.start(toursCount, playersStats, gamesDocuments);
 
         return await this.updateTournamentDocument(id, tournamentDocument);
         /* tournamentDocument.toursCount = toursCount;
@@ -135,10 +139,13 @@ class TournamentService extends BaseService {
 
         if(tournamentDocument.tournamentSystem === TournamentSystems.swiss) {
             const games = await this._swissDraw.makeDrawAfterTour(id, playersStats);
-            const gamesIDs = games.map(game => game.id.toString());
+            const gamesDocuments = await this._gamesService.createGames(games);
+            const gamesIDs = gamesDocuments.map(game => game.id.toString());
 
             //TODO сохранить playerStats
             //TODO создать поле в tournament указывающий номер текущего тура
+            
+            await this._playerStatsService.updatePlayersStats(playersStats);
             tournamentDocument.addGamesIDs(gamesIDs);
 
             tournamentDocument = await this.updateTournamentDocument(id, tournamentDocument);

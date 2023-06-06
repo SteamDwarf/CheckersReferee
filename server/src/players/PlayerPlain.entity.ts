@@ -28,7 +28,8 @@ class PlayerPlain implements IPlayer {
         this.sportsCategoryAbbr = sportsCategory.shortTitle;
         this.playerStatsIDs = [],
         this.currentAdamovichRank = playerData.currentAdamovichRank || sportsCategory.minAdamovichRank;
-        this.sportsOrganization = playerData.sportsOrganization
+        this.sportsOrganization = playerData.sportsOrganization || "",
+        this.previousAdamovichRank = this.currentAdamovichRank;
     }
 
     
