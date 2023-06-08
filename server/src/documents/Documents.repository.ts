@@ -4,6 +4,7 @@ import DocumentsDatabase from "../DB/DocumentsDatabase";
 import PlayerSertificatePlain from "./PlayerSertificatePlain.entity";
 import { DocumentCollections } from "../common/enums";
 import { DocumentsOptions } from "../common/types";
+import RankList from "./RankList.entity";
 
 @injectable()
 class DocumentsRepository{
@@ -22,6 +23,19 @@ class DocumentsRepository{
             documentTitle,
             options,
             sertificateData
+        )
+    }
+
+    public async createRankList(
+        rankListData: RankList,
+        documentTitle: string,
+        options: DocumentsOptions
+    ) {
+        return await this._db.createDocument(
+            DocumentCollections.RankList,
+            documentTitle,
+            options,
+            rankListData
         )
     }
 }

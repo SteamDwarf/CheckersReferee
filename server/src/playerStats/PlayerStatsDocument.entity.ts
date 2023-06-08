@@ -8,6 +8,7 @@ class PlayerStatsDocument {
     private readonly _tournamentID: string;
     private readonly _playerName: string;
     private readonly _birthday: string;
+    private readonly _region: string;
     private  _gorinRank: number;
     private readonly _startAdamovichRank: number;
     private  _lastAdamovichRank: number;
@@ -16,6 +17,7 @@ class PlayerStatsDocument {
     private _place: number;
     private _score: number;
     private readonly _sportsCategoryID: string;
+    private readonly _sportsCategoryAbbr: string;
     private readonly _requiredScore: number;
     private  _colorUsed: number;
     private  _lastColor: CheckersColor;
@@ -27,6 +29,7 @@ class PlayerStatsDocument {
         this._tournamentID = playerStats.tournamentID;
         this._playerName = playerStats.playerName;
         this._birthday = playerStats.birthday;
+        this._region = playerStats.region;
         this._gorinRank = playerStats.gorinRank;
         this._startAdamovichRank = playerStats.startAdamovichRank;
         this._lastAdamovichRank = playerStats.lastAdamovichRank;
@@ -35,6 +38,7 @@ class PlayerStatsDocument {
         this._place = playerStats.place;
         this._score = playerStats.score;
         this._sportsCategoryID = playerStats.sportsCategoryID;
+        this._sportsCategoryAbbr = playerStats.sportsCategoryAbbr;
         this._requiredScore = playerStats.requiredScore;
         this._colorUsed = playerStats.colorUsed;
         this._lastColor = playerStats.lastColor;
@@ -59,6 +63,10 @@ class PlayerStatsDocument {
 
     public get birthday(): string {
         return this._birthday;
+    }
+
+    public get region(): string {
+        return this._region;
     }
 
     public get gorinRank(): number {
@@ -114,6 +122,10 @@ class PlayerStatsDocument {
         return this._sportsCategoryID;
     }
 
+    public get sportsCategoryAbbr(): string {
+        return this._sportsCategoryAbbr;
+    }
+
     public get colorUsed(): number {
         return this._colorUsed;
     }
@@ -146,6 +158,7 @@ class PlayerStatsDocument {
             tournamentID: this.tournamentID,
             playerName: this.playerName,
             birthday: this.birthday,
+            region: this.region,
             gorinRank: this.gorinRank,
             startAdamovichRank: this.startAdamovichRank,
             lastAdamovichRank: this.lastAdamovichRank,
@@ -154,6 +167,7 @@ class PlayerStatsDocument {
             place: this.place,
             score: this.score,
             sportsCategoryID: this.sportsCategoryID,
+            sportsCategoryAbbr: this.sportsCategoryAbbr,
             requiredScore: this.requiredScore,
             colorUsed: this.colorUsed,
             lastColor: this.lastColor,

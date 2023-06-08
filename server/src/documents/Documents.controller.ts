@@ -13,7 +13,8 @@ class DocumentsController extends BaseController{
     ) {
         super();
         this.initRoutes([
-            new ControllerRoute("/player-certificate", "get", [], this.getPlayerSertificate)
+            new ControllerRoute("/player-certificate", "get", [], this.getPlayerSertificate),
+            new ControllerRoute("/rank-list", "get", [], this.getRankList)
         ]);
 
     }
@@ -25,8 +26,19 @@ class DocumentsController extends BaseController{
             throw new InputError("Вы не указали id статистики игрока.")
         }
 
-        const playerCertificatePath = await this._documentsService.getPlayerCertificate(playerStatsID);
-        response.json(playerCertificatePath)
+        const playerCertificateLink = await this._documentsService.getPlayerCertificate(playerStatsID);
+        response.json(playerCertificateLink)
+    }
+
+    public async getRankList(request: Request, response: Response) {
+        const tournamentID = request.query.tournamentID?.toString();
+
+        if(!tournamentID) {
+            throw new InputError("Вы не указали id турнира.")
+        }
+
+        const rankListLink = await this._documentsService.getRankList(tournamentID);
+        response.json(rankListLink);
     }
 }
 

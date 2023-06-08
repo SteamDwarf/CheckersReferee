@@ -115,7 +115,7 @@ class TournamentService extends BaseService {
         if(tournamentDocument.tournamentSystem === TournamentSystems.swiss) {
             const games = await this._swissDraw.makeDrawAfterTour(
                 id, 
-                this._playerStatsService.getSortedPlayersStats(playersStats)
+                this._playerStatsService.sortPlayersStatsByScore(playersStats)
             );
             const gamesDocuments = await this._gamesService.createGames(games);
             const gamesIDs = gamesDocuments.map(game => game.id.toString());
@@ -167,7 +167,7 @@ class TournamentService extends BaseService {
         if(tournament.tournamentSystem === TournamentSystems.swiss) {
             return this._swissDraw.makeStartDraw(
                 tournament.id.toString(), 
-                this._playerStatsService.getSortedPlayersStats(playersStats)
+                this._playerStatsService.sortPlayersStatsByAdamovich(playersStats)
             );
         } else  {
             return this._roundRobinDraw.makeStartDraw(tournament.id.toString(), playersStats);

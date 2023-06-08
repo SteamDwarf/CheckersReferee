@@ -13,6 +13,7 @@ import PlayerStatsRepository from "./PlayerStats.repository";
 import PlayerStatsDocument from "./PlayerStatsDocument.entity";
 import PlayerStatsPlain from "./PlayerStatsPlain.entity";
 import GameDocument from "../games/GameDocument.entity";
+import { IPlayerStatsSearchFilter } from "./playerStats.model";
 
 @injectable()
 class PlayerStatsService extends BaseService {
@@ -33,11 +34,26 @@ class PlayerStatsService extends BaseService {
         return playersStatsPlainDocuments.map(stats => new PlayerStatsDocument(stats));
     }
 
+    public async getPlayersStatsByFilter(tournamentID?: string, playerID?: string) {
+        const filter: IPlayerStatsSearchFilter = {};
+
+        tournamentID ? filter.tournamentID = tournamentID : null;
+        playerID ? filter.playerID = playerID : null;
+
+        const plainDocuments = await this._playerStatsRepository.getPlayersStatsByFilter(filter);
+        return plainDocuments.map(document => new PlayerStatsDocument(document));
+    }
+
     public async getPlayersStatsFromTournament(tournamentID: string) {
         const playersStatsPlainDocuments = await this._playerStatsRepository.getPlayersStatsFromTournament(tournamentID);
         //TODO может сделать проверку на наличие турнира
         return playersStatsPlainDocuments.map(stats => new PlayerStatsDocument(stats));
     }
+
+    /* public async getPlayersStatsFromPlayer(playerID: string) {
+        const plainDocuments = await this._playerStatsRepository.getPlayersStatsFromPlayer(playerID);
+        return plainDocuments.map(document => new PlayerStatsDocument(document));
+    } */
 
     public async getPlayerStatsByID (id: string) {
         const playerStatsPlainDocument = await this._playerStatsRepository.getPlayerStatsByID(id);
@@ -98,11 +114,19 @@ class PlayerStatsService extends BaseService {
         curScore: number
     ) {
         if(playerStats) {
+            const sportsCategory = await this._sportsCategoryService.getSportsCategoryByID(playerStats.sportsCategoryID);
+
+            if(!sportsCategory) throw new NotFoundError("По указанному id спортивная категория не найдена");
+
             playerStats.score = playerStats.score - prevScore + curScore;
-    
             
             if(competitorAdamovichRank && Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
-                playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(playerStats, competitorAdamovichRank, curScore);
+                playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(
+                                                playerStats, 
+                                                sportsCategory,
+                                                competitorAdamovichRank, 
+                                                curScore
+                                            );
             }
             
            return await this.updatePlayerStats(playerStats);
@@ -139,18 +163,25 @@ class PlayerStatsService extends BaseService {
         return await this._playerStatsRepository.deletePlayersStats();
     }
 
-    public getSortedPlayersStats(playersStats: PlayerStatsDocument[]) {
+    public sortPlayersStatsByScore(playersStats: PlayerStatsDocument[]) {
         return [...playersStats].sort(this._comparator.compareByScore.bind(this._comparator));
     }
 
+    public sortPlayersStatsByAdamovich(playersStats: PlayerStatsDocument[]) {
+        return [...playersStats].sort(this._comparator.compareByAdamovichRank.bind(this._comparator));
+    }
+
+
+
     private calculateAdamovichAfterGame(
-        playerStats: PlayerStatsDocument, 
+        playerStats: PlayerStatsDocument,
+        sportCategory: SportsCategoryDocument,
         competitorAdamovichRank: number,
         gameScore: number
     ){
-        const newRank = (20 * playerStats.startAdamovichRank + competitorAdamovichRank + 5000/15 * (gameScore - 1)) / 21;
+        const newRank = (20 * playerStats.lastAdamovichRank + competitorAdamovichRank + 5000/15 * (gameScore - 1)) / 21;
     
-        return newRank;
+        return this.clampAdamovichRank(sportCategory, newRank);
     }
     
     private calculateAdamovichAfterTournament (

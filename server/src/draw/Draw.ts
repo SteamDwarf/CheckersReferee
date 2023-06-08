@@ -20,6 +20,7 @@ class Draw {
             score: 0,
             gorinRank: 0,
             birthday: "",
+            region: "",
             tournamentID: "",
             startAdamovichRank: 0,
             lastAdamovichRank: 0,
@@ -28,6 +29,7 @@ class Draw {
             place: 0,
             requiredScore: 0,
             sportsCategoryID: "",
+            sportsCategoryAbbr: ""
         });
     }
 

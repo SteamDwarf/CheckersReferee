@@ -6,6 +6,7 @@ class PlayerStatsPlain {
     public readonly tournamentID: string;
     public readonly playerName: string;
     public readonly birthday: string;
+    public readonly region: string;
     public readonly gorinRank: number;
     public readonly startAdamovichRank: number;
     public readonly lastAdamovichRank: number;
@@ -14,6 +15,7 @@ class PlayerStatsPlain {
     public readonly place: number;
     public readonly score: number;
     public readonly sportsCategoryID: string;
+    public readonly sportsCategoryAbbr: string;
     public readonly requiredScore: number;
     public readonly colorUsed: number;
     public readonly lastColor: CheckersColor;
@@ -24,6 +26,7 @@ class PlayerStatsPlain {
         this.tournamentID = tournamentID;
         this.playerName = player.fullName;
         this.birthday = player.birthday;
+        this.region = player.region;
         this.gorinRank = 0;
         this.startAdamovichRank = player.currentAdamovichRank;
         this.lastAdamovichRank = player.currentAdamovichRank;
@@ -32,6 +35,7 @@ class PlayerStatsPlain {
         this.place = 0;
         this.score = 0;
         this.sportsCategoryID = player.sportsCategoryID;
+        this.sportsCategoryAbbr = player.sportsCategoryAbbr;
         this.requiredScore = 0;
         this.colorUsed = 0;
         this.lastColor = CheckersColor.black;

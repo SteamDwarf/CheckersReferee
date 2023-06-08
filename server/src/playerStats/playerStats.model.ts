@@ -6,6 +6,7 @@ export interface IPlayerStats {
     tournamentID: string,
     playerName: string,
     birthday: string,
+    region: string,
     gorinRank: number
     startAdamovichRank: number,
     lastAdamovichRank: number,
@@ -14,6 +15,7 @@ export interface IPlayerStats {
     place: number,
     score: number,
     sportsCategoryID: string,
+    sportsCategoryAbbr: string,
     requiredScore: number,
     colorUsed: number,
     lastColor: CheckersColor,
@@ -22,6 +24,11 @@ export interface IPlayerStats {
 
 export interface IPlayerStatsWithID extends IPlayerStats {
     _id: ObjectId
+}
+
+export interface IPlayerStatsSearchFilter {
+    tournamentID?: string, 
+    playerID?: string
 }
 
 export const playerStatsSchema = {
@@ -33,6 +40,7 @@ export const playerStatsSchema = {
                 "tournamentID", 
                 "playerName", 
                 "birthday",
+                "region",
                 "gorinRank", 
                 "startAdamovichRank",
                 "lastAdamovichRank",
@@ -41,6 +49,7 @@ export const playerStatsSchema = {
                 "place",
                 "score",
                 "sportsCategoryID",
+                "sportsCategoryAbbr",
                 "requiredScore",
                 "colorUsed",
                 "lastColor"
@@ -66,6 +75,10 @@ export const playerStatsSchema = {
                 "birthday": {
                     bsonType: "string",
                     description: "Поле birthday является обязательным и должно быть строкой"
+                },
+                "region": {
+                    bsonType: "string",
+                    description: "Поле region является обязательным и должно быть строкой"
                 },
                 "gorinRank": {
                     bsonType: "number",
@@ -110,6 +123,10 @@ export const playerStatsSchema = {
                 "sportsCategoryID": {
                     bsonType: "string",
                     description: "Поле sportCategoryID является обязательным и должно быть строкой"
+                },
+                "sportsCategoryAbbr": {
+                    bsonType: "string",
+                    description: "Поле sportsCategoryAbbr является обязательным и должно быть строкой"
                 },
                 "competitorsID": {
                     bsonType: "array",

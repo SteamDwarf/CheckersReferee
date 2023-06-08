@@ -7,6 +7,11 @@ import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import PlayerSertificatePlain from "./PlayerSertificatePlain.entity";
 import DocumentsRepository from "./Documents.repository";
 import PlayerSertificateOptions from "./documentOptions/PlayerSertificate.options";
+import RankList from "./RankList.entity";
+import PlayerService from "../players/Players.service";
+import RankListPlayer from "./RankListPlayer.entity";
+import RankListOptions from "./documentOptions/RankList.options";
+import PlayerStatsComparator from "../playerStats/PlayerStats.comparator";
 
 @injectable()
 class DocumentsService {
@@ -16,7 +21,6 @@ class DocumentsService {
         @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService,
         @inject(REPOSITORIES.Document) private readonly _documentsRepository: DocumentsRepository
     ) {
-
     }
 
     public async getPlayerCertificate(playerStatsID: string) {
@@ -43,6 +47,32 @@ class DocumentsService {
             sertificateData,
             sertificateData.documentTitle,
             PlayerSertificateOptions
+        )
+    }
+
+    public async getRankList(tournamentID: string) {
+        const tournament = await this._tournamentService.getTournamentByID(tournamentID);
+
+        if(!tournament) {
+            throw new NotFoundError("По указанному id турнир не найден");
+        }
+
+        //TODO брать статистику игроков, но добавив туда поле region
+        let players = await this._playersStatsService.getPlayersStatsFromTournament(tournamentID);
+
+        if(players.length === 0) {
+            throw new NotFoundError("В данном турнире нет участников");
+        }
+
+        players = this._playersStatsService.sortPlayersStatsByAdamovich(players);
+        
+        const playersRankLists = players.map((player, i) => new RankListPlayer(i + 1, player));
+        const rankListData = new RankList(tournament, playersRankLists);
+
+        return await this._documentsRepository.createRankList(
+            rankListData,
+            rankListData.documentTitle,
+            RankListOptions
         )
     }
 }

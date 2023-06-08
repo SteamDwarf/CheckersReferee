@@ -20,11 +20,17 @@ class PlayerStatsController extends BaseController{
 
     private async get(request: Request, response: Response) {
         const tournamentID = request.query.tournamentID?.toString();
+        const playerID = request.query.playerID?.toString();
+
         let playersStatsDocuments: PlayerStatsDocument[] = [];
 
-        if(tournamentID) {
+        /* if(tournamentID) {
             playersStatsDocuments = await this._playerStatsService.getPlayersStatsFromTournament(tournamentID);
-        }else {
+        } else if(playerID) {
+            playersStatsDocuments = await this._playerStatsService.getPlayersStatsFromPlayer(playerID); */
+        if(tournamentID || playerID) {
+            playersStatsDocuments = await this._playerStatsService.getPlayersStatsByFilter(tournamentID, playerID);
+        } else {
             playersStatsDocuments = await this._playerStatsService.getAllPlayersStats();
         }
 

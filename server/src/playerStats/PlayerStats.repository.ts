@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import BaseRepository from "../common/Base.repository";
 import { MAIN } from "../common/injectables.types";
 import DataBase from "../DB/DataBase";
-import { IPlayerStatsWithID } from "./playerStats.model";
+import { IPlayerStatsSearchFilter, IPlayerStatsWithID } from "./playerStats.model";
 import PlayerStatsPlain from "./PlayerStatsPlain.entity";
 
 @injectable()
@@ -17,9 +17,20 @@ class PlayerStatsRepository extends BaseRepository{
         return await this.db.findDocuments(this.db.collections.playerStats) as IPlayerStatsWithID[];
     }
 
+    public async getPlayersStatsByFilter(filter: IPlayerStatsSearchFilter) {
+        return await this.db.findDocumentsWithFilter(this.db.collections.playerStats, filter) as IPlayerStatsWithID[];
+    }
+
     public async getPlayersStatsFromTournament(tournamentID: string) {
         return await this.db.findDocumentsWithFilter(this.db.collections.playerStats, {tournamentID}) as IPlayerStatsWithID[] | [];
     }
+
+    /* public async getPlayersStatsFromPlayer(playerID: string) {
+        return await this.db.findDocumentsWithFilter(
+            this.db.collections.playerStats,
+            {playerID},
+        ) as IPlayerStatsWithID[]
+    } */
 
     public async getPlayerStatsByID(id: string) {
         return await this.db.findDocumentById(this.db.collections.playerStats, id) as IPlayerStatsWithID | undefined;

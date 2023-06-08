@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рейтинг-лист</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 210mm;
+        }
+
+        .title {
+            font-size: 12pt;
+            font-weight: normal;
+        }
+
+        .caps {
+            text-transform: uppercase;
+        }
+
+        .rank-table {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        .rank-table__header {
+            border: 1px solid black;
+            padding: 2px 4px;
+        }
+        .rank-table__cell {
+            border: 1px solid black;
+            padding: 2px 4px;
+        }
+
+        .adamovich {
+            width: 15%;
+        }
+
+        .number {
+            width: 5%;
+        }
+
+        .name {
+            width: 30%;
+        }
+
+        .region {
+            width: 25%;
+        }
+
+        .birth-year {
+            width: 15%;
+        }
+
+        .sports-category {
+            width: 10%;
+        }
+
+        /* .vertical {   
+            transform: rotate(-180deg);
+            writing-mode: vertical-lr;
+            white-space:nowrap;
+        } */
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title center"><span class="caps">РЕЙТИНГ-ЛИСТ ШАШИСТОВ КРЫМА</span> ({{sportsDescipline}}) после {{tournament.startDate}}</h1>
+        <table class="rank-table">
+            <tr class="rank-table__row">
+                <th class="rank-table__header adamovich">Ретинг Адамовича</th>
+                <th class="rank-table__header number">№</th>
+                <th class="rank-table__header name">Фамилия, имя</th>
+                <th class="rank-table__header region">Город, команда</th>
+                <th class="rank-table__header birth-year">Год рождения</th>
+                <th class="rank-table__header sports-category">Разряд, звание</th>
+            </tr>
+            {{#each players}}
+                <tr class="rank-table__row">
+                    <td width="100px" class="rank-table__cell center adamovich">{{this.currentAdamovichRank}}</td>
+                    <td class="rank-table__cell center number">{{this.index}}</td>
+                    <td class="rank-table__cell name">{{this.lastName}} {{this.firstName}}</td>
+                    <td class="rank-table__cell region">{{this.region}}</td>
+                    <td class="rank-table__cell center birth-year">{{this.birthYear}}</td>
+                    <td class="rank-table__cell bold center sports-category">{{this.sportsCategoryAbbr}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+</body>
+</html>

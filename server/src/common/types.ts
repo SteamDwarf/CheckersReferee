@@ -9,11 +9,12 @@ import { IPlayerStats } from "../playerStats/playerStats.model";
 import { IRankList } from "../documents/rankList/RankList.scheme";
 import { Collection, ObjectId, OptionalId } from "mongodb";
 import { IUserWithID } from "../auth/users.model";
+import RankList from "../documents/RankList.entity";
 
 export type RouterMethod = keyof Pick<Router, 'get' | 'post' | 'put' | 'delete'>;
 export type RequestHandlerAsync = (req: Request, resp: Response, next: NextFunction) => Promise<void>;
 export type RequestHandler = (req: Request, resp: Response, next: NextFunction) => void;
-export type DocumentsType = PlayerSertificatePlain;
+export type DocumentsType = PlayerSertificatePlain | RankList;
 export type DocumentsOptions = typeof PlayerSertificateOptions;
 
 //TODO убрать ненужное

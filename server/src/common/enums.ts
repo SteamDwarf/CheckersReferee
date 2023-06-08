@@ -7,7 +7,8 @@ export enum DocumentTemplates {
     RankList = "RankList.html"
 }
 export enum DocumentCollections{
-    PlayerSertificate = "sertificate"
+    PlayerSertificate = "sertificate",
+    RankList = "rank-list"
 }
 
 export const ValidationMessages = {
