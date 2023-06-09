@@ -6,7 +6,6 @@ import { ISportsCategory } from "../sportsCategory/sportsCategory.model";
 import { ITournament } from "../tournaments/tournaments.model";
 import { IGame } from "../games/games.model";
 import { IPlayerStats } from "../playerStats/playerStats.model";
-import { IRankList } from "../documents/rankList/RankList.scheme";
 import { Collection, ObjectId, OptionalId } from "mongodb";
 import { IUserWithID } from "../auth/users.model";
 import RankList from "../documents/RankList.entity";
@@ -22,8 +21,7 @@ export type DocumentTypes = IPlayer |
                             ISportsCategory | 
                             ITournament | 
                             IGame |
-                            IPlayerStats |
-                            IRankList
+                            IPlayerStats
 
 export type DBCollections = Collection | Collection<OptionalId<IUserWithID>>;
 
@@ -34,7 +32,6 @@ export interface IDBCollections {
     tournaments?: Collection,
     games?: Collection,
     playerStats?: Collection,
-    rankLists?: Collection,
 }
 
 export interface DocumentWithID {

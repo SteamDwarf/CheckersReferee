@@ -7,7 +7,6 @@ import { gamesSchema } from "../games/games.model";
 import { playerStatsSchema } from "../playerStats/playerStats.model";
 import { inject, injectable } from "inversify";
 import { MAIN } from "../common/injectables.types";
-import { rankListsSchema } from "../documents/rankList/RankList.scheme";
 import { DBCollections, DocumentTypes, DocumentWithID, IDBCollections } from "../common/types";
 import { CollectionNames } from "../common/enums";
 
@@ -27,7 +26,6 @@ class DataBase {
             tournaments: undefined,
             games: undefined,
             playerStats: undefined,
-            rankLists: undefined
         }
     }
 
@@ -124,7 +122,6 @@ class DataBase {
         this._collections.tournaments = this._database?.collection(CollectionNames.TOURNAMENTS);
         this._collections.games = this._database?.collection(CollectionNames.GAMES);
         this._collections.playerStats = this._database?.collection(CollectionNames.PLAYER_STATS);
-        this._collections.rankLists = this._database?.collection(CollectionNames.RANK_LISTS);
     }
 
     private async setCollectionsValidation(){
@@ -134,7 +131,6 @@ class DataBase {
         await this._database?.command({collMod: CollectionNames.TOURNAMENTS, validator: tournamentSchema.validator})
         await this._database?.command({collMod: CollectionNames.GAMES, validator: gamesSchema.validator})
         await this._database?.command({collMod: CollectionNames.PLAYER_STATS, validator: playerStatsSchema.validator})
-        await this._database?.command({collMod: CollectionNames.RANK_LISTS, validator: rankListsSchema.validator})
     }
 
     

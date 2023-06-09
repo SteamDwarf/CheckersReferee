@@ -17,6 +17,7 @@ class TournamentDocument {
     private readonly _referees: (string | undefined)[];
     private readonly _timeControl?: string | undefined;
     private  _toursCount?: number | undefined;
+    private  _currentTour: number;
     private readonly _tournamentSystem: TournamentSystems;
     private readonly _playersIDs: (string | undefined)[];
     private  _gamesIDs: (string | undefined)[][];
@@ -37,6 +38,7 @@ class TournamentDocument {
         this._referees = tournament.referees;
         this._timeControl = tournament.timeControl;
         this._toursCount = tournament.toursCount;
+        this._currentTour = tournament.currentTour;
         this._tournamentSystem = tournament.tournamentSystem;
         this._playersIDs = tournament.playersIDs;
         this._gamesIDs = tournament.gamesIDs;
@@ -99,6 +101,10 @@ class TournamentDocument {
         return this._toursCount;
     }
 
+    public get currentTour(): number | undefined {
+        return this._currentTour;
+    }
+
     public get tournamentSystem(): TournamentSystems {
         return this._tournamentSystem;
     }
@@ -131,6 +137,7 @@ class TournamentDocument {
             referees: this._referees,
             timeControl: this._timeControl,
             toursCount: this._toursCount,
+            currentTour: this._currentTour,
             tournamentSystem: this._tournamentSystem,
             playersIDs: this._playersIDs,
             gamesIDs: this._gamesIDs,
@@ -141,6 +148,7 @@ class TournamentDocument {
     public start(toursCount: number, playersStats: PlayerStatsDocument[], games: GameDocument[]) {
         this._isStarted = true;
         this._toursCount = toursCount;
+        this._currentTour = 1;
         this._playersStatsIDs = playersStats.map(stat => stat.id);
 
         if(this._tournamentSystem === TournamentSystems.round) {
@@ -157,6 +165,10 @@ class TournamentDocument {
 
     public addGamesIDs(gamesIDs: string[]) {
         this._gamesIDs.push(gamesIDs);
+    }
+
+    public nextTour() {
+        this._currentTour += 1;
     }
 
     private splitGames(games: GameDocument[], toursCount: number) {

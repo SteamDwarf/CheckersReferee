@@ -27,7 +27,8 @@ class DocumentsController extends BaseController{
         }
 
         const playerCertificateLink = await this._documentsService.getPlayerCertificate(playerStatsID);
-        response.json(playerCertificateLink)
+        response.sendFile(playerCertificateLink.filename);
+        //response.json(playerCertificateLink)
     }
 
     public async getRankList(request: Request, response: Response) {
@@ -38,7 +39,8 @@ class DocumentsController extends BaseController{
         }
 
         const rankListLink = await this._documentsService.getRankList(tournamentID);
-        response.json(rankListLink);
+        response.sendFile(rankListLink.filename);
+        //response.json(rankListLink);
     }
 }
 

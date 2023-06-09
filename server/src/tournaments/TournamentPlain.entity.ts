@@ -13,8 +13,9 @@ class TournamentPlain {
     public readonly mainReferee: string;
     public readonly mainSecretary: string;
     public readonly referees: (string | undefined)[];
-    public readonly timeControl?: string;
-    public readonly toursCount?: number;
+    public readonly timeControl: string;
+    public readonly toursCount: number;
+    public readonly currentTour: number;
     public readonly tournamentSystem: TournamentSystems;
     public readonly playersIDs: (string | undefined)[];
     public readonly gamesIDs: (string | undefined)[][];
@@ -33,6 +34,8 @@ class TournamentPlain {
         this.mainSecretary = tournamentData.mainSecretary;
         this.referees = tournamentData.referees || [];
         this.timeControl = tournamentData.timeControl || "";
+        this.toursCount = 0;
+        this.currentTour = 0;
         this.tournamentSystem = tournamentData.tournamentSystem;
         this.playersIDs = tournamentData.playersIDs || [];
         this.gamesIDs = [];

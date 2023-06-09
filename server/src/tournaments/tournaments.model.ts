@@ -18,7 +18,8 @@ export interface ITournament {
     mainSecretary: string,
     referees: (string | undefined)[],
     timeControl?: string,
-    toursCount?: number,
+    toursCount: number,
+    currentTour: number,
     tournamentSystem: TournamentSystems,
     playersIDs: (string | undefined)[],
     gamesIDs: (string | undefined)[][],
@@ -40,6 +41,8 @@ export const tournamentSchema = {
                 "city",
                 "isStarted", 
                 "isFinished", 
+                "toursCount",
+                "currentTour",
                 "mainReferee", 
                 "mainSecretary",
                 "referees",
@@ -104,7 +107,11 @@ export const tournamentSchema = {
                 },
                 "toursCount": {
                     bsonType: "number",
-                    description: "Поле toursCount должно быть числом"
+                    description: "Поле toursCount является обязательным и должно быть числом"
+                },
+                "currentTour": {
+                    bsonType: "number",
+                    description: "Поле currentTour является обязательным и должно быть числом"
                 },
                 "tournamentSystem": {
                     bsonType: "string",

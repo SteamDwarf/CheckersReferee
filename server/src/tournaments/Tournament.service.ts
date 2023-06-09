@@ -16,6 +16,7 @@ import TournamentPlain from "./TournamentPlain.entity";
 import TournamentRepository from "./Tournament.repository";
 import TournamentDocument from "./TournamentDocument.entity";
 import TournamentUpdateDTO from "./dtos/TournamentUpdate.dto";
+import { InputError } from "../errors/Input.error";
 
 @injectable()
 class TournamentService extends BaseService {
@@ -113,6 +114,10 @@ class TournamentService extends BaseService {
         if(!tournamentDocument) throw new NotFoundError("По указанному id турнир не найден")
 
         if(tournamentDocument.tournamentSystem === TournamentSystems.swiss) {
+            if(tournamentDocument.currentTour === tournamentDocument.toursCount) {
+                throw new InputError("Отыграны все туры. Завершите турнир");
+            }
+
             const games = await this._swissDraw.makeDrawAfterTour(
                 id, 
                 this._playerStatsService.sortPlayersStatsByScore(playersStats)
@@ -120,10 +125,9 @@ class TournamentService extends BaseService {
             const gamesDocuments = await this._gamesService.createGames(games);
             const gamesIDs = gamesDocuments.map(game => game.id.toString());
 
-            //TODO создать поле в tournament указывающий номер текущего тура
-            
             await this._playerStatsService.updatePlayersStats(playersStats);
             tournamentDocument.addGamesIDs(gamesIDs);
+            tournamentDocument.nextTour();
 
             tournamentDocument = await this.updateTournamentDocument(id, tournamentDocument);
         } 

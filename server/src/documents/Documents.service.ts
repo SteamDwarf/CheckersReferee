@@ -8,10 +8,8 @@ import PlayerSertificatePlain from "./PlayerSertificatePlain.entity";
 import DocumentsRepository from "./Documents.repository";
 import PlayerSertificateOptions from "./documentOptions/PlayerSertificate.options";
 import RankList from "./RankList.entity";
-import PlayerService from "../players/Players.service";
 import RankListPlayer from "./RankListPlayer.entity";
 import RankListOptions from "./documentOptions/RankList.options";
-import PlayerStatsComparator from "../playerStats/PlayerStats.comparator";
 
 @injectable()
 class DocumentsService {
@@ -57,7 +55,6 @@ class DocumentsService {
             throw new NotFoundError("По указанному id турнир не найден");
         }
 
-        //TODO брать статистику игроков, но добавив туда поле region
         let players = await this._playersStatsService.getPlayersStatsFromTournament(tournamentID);
 
         if(players.length === 0) {

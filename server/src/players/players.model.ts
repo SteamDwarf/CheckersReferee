@@ -4,8 +4,6 @@ export enum Gender {
     male = "Мужской",
     female = "Женский"
 }
-//TODO сделать невозможность добавлять новые поля
-//TODO разобраться текцщим и предыдущим рейтингом
 export interface IPlayer {
     firstName: string,                  //Имя
     middleName: string,                 //Отчество

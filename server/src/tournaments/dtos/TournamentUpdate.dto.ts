@@ -56,6 +56,9 @@ class TournamentUpdateDTO {
     @IsEmpty({message: ValidationMessages.IsEmpty})
     toursCount?: number;
 
+    @IsEmpty({message: ValidationMessages.IsEmpty})
+    currentTour?: number;
+
     @IsOptional()
     @IsIn(Object.values(TournamentSystems), {message: ValidationMessages.IsIn(Object.values(TournamentSystems))})
     tournamentSystem?: TournamentSystems;
