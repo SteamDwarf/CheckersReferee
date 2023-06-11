@@ -5,8 +5,37 @@ export enum TournamentSystems {
     swiss = "Швейцарская"
 }
 
+export enum SportsDesciplines {
+    RussianCheckers = "русские шашки",
+    RussianCheckers_FastGame = "русские шашки - быстрая игра",
+    RussianCheckers_FastGame_TeamCompetition = "русские шашки - командные соревнования",
+    RussianCheckers_LightningGame = "русские шашки - молниеносная игра",
+    RussianCheckers_LightningGame_TeamCompetition = "русские шашки - молниеносная игра - командные соревнования",
+    StandingCheckers = "стоклеточные шашки",
+    StandingCheckers_FastGame = "стоклеточные шашки - быстрая игра",
+    StandingCheckers_FastGame_TeamCompetition = "стоклеточные шашки - быстрая игра - командные соревнования",
+    StandingCheckers_TeamCompetition = "стоклеточные шашки - командные соревнования",
+    StandingCheckers_LightningGame = "стоклеточные шашки - молниеносная игра",
+    StandingCheckers_LightningGame_TeamCompetition = "стоклеточные шашки - молниеносная игра - командные соревнования",
+    CorrespondenceCheckers = "игра по переписке",
+    Giveaway = "обратная игра в шашки (поддавки)",
+    CheckersComposition = "шашечная композиция"
+}
+
+
+//TODO добавить помещение
+//TODO добавить количество зрителей
+//TODO оценка служебных помещений состояния и оснащения служебных помещений
+//TODO оценка качества проведения соревнований
+//TODO оценка размещения, питания, транспортного обслуживания, организации встреч и проводов спортивных делегаций, шефская работа и т.п.:
+//TODO оценка встречи спортсменов
+//TODO оценка соблюдения мер по обеспечению безопасности
 export interface ITournament {
+    //TODO добавил
+    cp: string,
     title: string,
+    //TODO добавил
+    sportsDescipline: SportsDesciplines,
     startDate?: string,
     endDate?: string,
     country: string,
@@ -17,13 +46,17 @@ export interface ITournament {
     mainReferee: string,
     mainSecretary: string,
     referees: (string | undefined)[],
+    //TODO добавил
+    coaches: (string | undefined)[],
     timeControl?: string,
     toursCount: number,
     currentTour: number,
     tournamentSystem: TournamentSystems,
     playersIDs: (string | undefined)[],
     gamesIDs: (string | undefined)[][],
-    playersStatsIDs: (string | undefined)[]
+    playersStatsIDs: (string | undefined)[],
+    //TODO добавил
+    sportsFacility?: string
 }
 
 export interface ITournamentWithId extends ITournament{
@@ -36,7 +69,9 @@ export const tournamentSchema = {
         $jsonSchema: {
             bsonType: "object",
             required: [
+                "cp",
                 "title",
+                "sportsDescipline",
                 "country",
                 "city",
                 "isStarted", 
@@ -46,6 +81,7 @@ export const tournamentSchema = {
                 "mainReferee", 
                 "mainSecretary",
                 "referees",
+                "coaches",
                 "playersIDs", 
                 "gamesIDs",
                 "playersStatsIDs",
@@ -56,6 +92,14 @@ export const tournamentSchema = {
                 "_id": {
                     bsonType: "objectId",
                     description: "Поле _id быть ObjectId"
+                },
+                "cp": {
+                    bsonType: "string",
+                    description: "Поле cp является обязательным и должно быть строкой"
+                },
+                "sportsDescipline": {
+                    bsonType: "string",
+                    description: "Поле sportsDescipline является обязательным и должно быть строкой"
                 },
                 "title": {
                     bsonType: "string",
@@ -101,6 +145,10 @@ export const tournamentSchema = {
                     bsonType: "array",
                     description: "Поле referees является обязательным должно быть массивом"
                 },
+                "coaches": {
+                    bsonType: "array",
+                    description: "Поле coaches является обязательным должно быть массивом"
+                },
                 "timeControl": {
                     bsonType: "string",
                     description: "Поле timeControl должно быть строкой"
@@ -128,6 +176,10 @@ export const tournamentSchema = {
                 "playersStatsIDs": {
                     bsonType: "array",
                     description: "Поле playersStatsIDs является обязательным и должно быть массивом"
+                },
+                "sportsFacility": {
+                    bsonType: "string",
+                    description: "Поле sportsFacility должно быть строкой"
                 }
             }
         }

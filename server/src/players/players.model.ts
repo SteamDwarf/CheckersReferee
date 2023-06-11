@@ -4,6 +4,8 @@ export enum Gender {
     male = "Мужской",
     female = "Женский"
 }
+
+//TODO добавить спортивную школу
 export interface IPlayer {
     firstName: string,                  //Имя
     middleName: string,                 //Отчество

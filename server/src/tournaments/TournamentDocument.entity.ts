@@ -1,10 +1,12 @@
 import GameDocument from "../games/GameDocument.entity";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
-import { ITournamentWithId, TournamentSystems } from "./tournaments.model";
+import { ITournamentWithId, SportsDesciplines, TournamentSystems } from "./tournaments.model";
 
 class TournamentDocument {
     private readonly _id: string;
+    private readonly _cp: string;
     private readonly _title: string;
+    private readonly _sportsDescipline: SportsDesciplines;
     private readonly _startDate?: string | undefined;
     private readonly _endDate?: string | undefined;
     private readonly _country: string;
@@ -15,6 +17,7 @@ class TournamentDocument {
     private readonly _mainReferee: string;
     private readonly _mainSecretary: string;
     private readonly _referees: (string | undefined)[];
+    private readonly _coaches: (string | undefined)[];
     private readonly _timeControl?: string | undefined;
     private  _toursCount?: number | undefined;
     private  _currentTour: number;
@@ -22,10 +25,14 @@ class TournamentDocument {
     private readonly _playersIDs: (string | undefined)[];
     private  _gamesIDs: (string | undefined)[][];
     private  _playersStatsIDs: (string | undefined)[];
+    private  _sportsFacility?: string
+
 
     constructor(tournament: ITournamentWithId) {
         this._id = tournament._id.toString();
+        this._cp = tournament.cp;
         this._title = tournament.title;
+        this._sportsDescipline = tournament.sportsDescipline;
         this._startDate = tournament.startDate;
         this._endDate = tournament.endDate;
         this._country = tournament.country;
@@ -36,6 +43,7 @@ class TournamentDocument {
         this._mainReferee = tournament.mainReferee;
         this._mainSecretary = tournament.mainSecretary;
         this._referees = tournament.referees;
+        this._coaches = tournament.coaches;
         this._timeControl = tournament.timeControl;
         this._toursCount = tournament.toursCount;
         this._currentTour = tournament.currentTour;
@@ -43,14 +51,23 @@ class TournamentDocument {
         this._playersIDs = tournament.playersIDs;
         this._gamesIDs = tournament.gamesIDs;
         this._playersStatsIDs = tournament.playersStatsIDs;
+        this._sportsFacility = tournament.sportsFacility;
     }
 
     public get id(): string {
         return this._id;
     }
 
+    public get cp(): string {
+        return this._cp;
+    }
+
     public get title(): string {
         return this._title;
+    }
+
+    public get sportsDescipline(): string {
+        return this._sportsDescipline;
     }
 
     public get startDate(): string | undefined {
@@ -93,6 +110,10 @@ class TournamentDocument {
         return [...this._referees];
     }
 
+    public get coaches(): (string | undefined)[] {
+        return [...this._coaches];
+    }
+
     public get timeControl(): string | undefined {
         return this._timeControl;
     }
@@ -121,10 +142,16 @@ class TournamentDocument {
         return [...this._playersStatsIDs];
     }
 
+    public get sportsFacility(): string | undefined{
+        return this._sportsFacility;
+    }
+
     public get data() {
         return {
             _id: this._id,
+            cp: this._cp,
             title: this._title,
+            sportsDescipline: this._sportsDescipline,
             startDate: this._startDate,
             endDate: this._endDate,
             country: this._country,
@@ -135,6 +162,7 @@ class TournamentDocument {
             mainReferee: this._mainReferee,
             mainSecretary: this._mainSecretary,
             referees: this._referees,
+            coaches: this._coaches,
             timeControl: this._timeControl,
             toursCount: this._toursCount,
             currentTour: this._currentTour,
@@ -142,6 +170,7 @@ class TournamentDocument {
             playersIDs: this._playersIDs,
             gamesIDs: this._gamesIDs,
             playersStatsIDs: this._playersStatsIDs,
+            sportsFacility: this._sportsFacility
         }
     }
 

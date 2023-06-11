@@ -1,5 +1,5 @@
 import { IsArray, IsBoolean, IsEmpty, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { TournamentSystems } from "../tournaments.model";
+import { SportsDesciplines, TournamentSystems } from "../tournaments.model";
 import { ValidationMessages } from "../../common/enums";
 
 class TournamentUpdateDTO {
@@ -8,7 +8,15 @@ class TournamentUpdateDTO {
 
     @IsOptional()
     @IsString({message: ValidationMessages.IsString})
+    cp?: string;
+
+    @IsOptional()
+    @IsString({message: ValidationMessages.IsString})
     title?: string;
+
+    @IsOptional()
+    @IsIn(Object.values(SportsDesciplines), {message: ValidationMessages.IsIn(Object.values(SportsDesciplines))})
+    sportsDescipline?: SportsDesciplines;
 
     @IsOptional()
     @IsString({message: ValidationMessages.IsString})
@@ -50,6 +58,10 @@ class TournamentUpdateDTO {
     referees?: (string | undefined)[];
 
     @IsOptional()
+    @IsArray({message: ValidationMessages.IsArray})
+    coaches?: (string | undefined)[];
+
+    @IsOptional()
     @IsString({message: ValidationMessages.IsString})
     timeControl?: string;
 
@@ -73,6 +85,10 @@ class TournamentUpdateDTO {
     
     @IsEmpty({message: ValidationMessages.IsEmpty})
     playersStatsIDs?: (string | undefined)[]; */
+
+    @IsOptional()
+    @IsString({message: ValidationMessages.IsString})
+    sportsFacility?: string
 }
 
 export default TournamentUpdateDTO;
