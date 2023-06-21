@@ -6,7 +6,6 @@ import AuthRepository from "./Auth.repository";
 import UserDocument from "./UserDocument.entity";
 import UserAuthDTO from "./dtos/UserAuth.dto";
 
-//TODO убрать у всех сервисов бд
 @injectable()
 class AuthService extends BaseService{
     constructor(

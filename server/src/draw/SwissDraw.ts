@@ -10,17 +10,15 @@ class SwissDraw extends Draw {
         super(utils);
     }
 
-    //TODO проверить правильно ли сортируются игроки
     public async makeStartDraw(tournamentID: string, sortedPlayersStats: PlayerStatsDocument[]) {
         //const sortedPlayersStats = this.playerStatsService.getSortedPlayersStats(playersStats);
         const playersData = sortedPlayersStats.length % 2 === 0 ? 
                             [...sortedPlayersStats] : 
                             [...sortedPlayersStats, this.fakePlayer];
         
+        const toursCount = this.getToursCount(sortedPlayersStats.length);
         const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
         const games: GamePlain[] = [];
-        //TODO при нечётном количестве в данном диапазоне игроков программа напоминает судье, что необходимо добавить 1 тур дополнительно
-        const toursCount = this.getToursCount(sortedPlayersStats.length);
 
         for(let i = 0; i < splitedPlayers.length; i++) {
             const group = splitedPlayers[i];
@@ -80,7 +78,10 @@ class SwissDraw extends Draw {
     }
 
     private getToursCount (playersCount: number) {
-        if(playersCount >= 11 && playersCount <= 20) return 7;
+        if(playersCount >= 11 && playersCount <= 20) {
+            if(playersCount % 2 === 0) return 7;
+            else return 8;
+        }
         if(playersCount >= 21 && playersCount <= 30) return 8;
         if(playersCount >= 31 && playersCount <= 40) return 9;
         if(playersCount >= 41 && playersCount <= 50) return 10;
