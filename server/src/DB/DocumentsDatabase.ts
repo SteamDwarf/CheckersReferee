@@ -15,12 +15,14 @@ class DocumentsDatabase {
     ) {
     }
 
-    public async findDocument(documentTitle: string) {
-        const documentsTitles = await readdir(path.resolve(this._documentsPath, documentTitle), "utf-8");
-        const isExist = documentsTitles.includes(documentTitle);
+    public async findDocument(collectionName: DocumentCollections, documentTitle: string) {
+        const documentsTitles = await readdir(path.resolve(this._documentsPath, collectionName, "document-files"), "utf-8");
+        const isExist = documentsTitles.includes(`${documentTitle}.pdf`);
 
         if(isExist) {
-            return path.resolve(this._documentsPath, documentTitle);
+            return {
+                filename: path.resolve(this._documentsPath, collectionName, "document-files", `${documentTitle}.pdf`)
+            };
         }
 
         return null;

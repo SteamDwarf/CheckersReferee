@@ -7,10 +7,9 @@ class RankList {
     public readonly tournamentStartDate: string;
     public readonly players: RankListPlayer[];
 
-    constructor(tournament: TournamentDocument, players: RankListPlayer[]) {
-        this.documentTitle = `Рейтинг-лист_${tournament.id}`;
-        //TODO добавить поле в турнир
-        this.sportsDescipline = "руские шашки";
+    constructor(documentTitle: string, tournament: TournamentDocument, players: RankListPlayer[]) {
+        this.documentTitle = documentTitle;
+        this.sportsDescipline = tournament.sportsDescipline;
         this.tournamentStartDate = tournament.startDate || "";
         this.players = players;
     }

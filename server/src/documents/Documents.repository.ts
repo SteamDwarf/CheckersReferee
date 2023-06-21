@@ -26,6 +26,10 @@ class DocumentsRepository{
         )
     }
 
+    public async findeRankList(documentTitle: string,) {
+        return await this._db.findDocument(DocumentCollections.RankList, documentTitle);
+    }
+
     public async createRankList(
         rankListData: RankList,
         documentTitle: string,

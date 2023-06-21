@@ -16,9 +16,10 @@ class TournamentFinishTourMiddleware implements IMiddlewareAsync {
 
     public async execute(request: Request, response:Response, next: NextFunction) {
         const {id} = request.params;
-        const tournament = await this._tournamentService.getTournamentByID(id);
 
         try {
+            const tournament = await this._tournamentService.getTournamentByID(id);
+
             if(!tournament) return next(new NotFoundError("По указанному id турнир не найден"));
             if(!tournament.isStarted) return next(new NotFoundError("Данный турнир еще не стартовал"));
             if(tournament.isFinished) return next(new NotFoundError("Данный турнир уже завершился"));

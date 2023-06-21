@@ -16,10 +16,11 @@ class TournamentFinishMiddleware implements IMiddlewareAsync {
 
     public async execute(request: Request, response:Response, next: NextFunction) {
         const {id} = request.params;
-        const tournament = await this._tournamentService.getTournamentByID(id);
 
         //TODO в асинхронных middleware пока решается проблема так
         try {
+            const tournament = await this._tournamentService.getTournamentByID(id);
+
             if(!tournament) return next(new NotFoundError("По указанному id турнир не найден"));
             if(tournament.isFinished) return next(new InputError("Данный турнир уже завершен"));
             if(tournament.tournamentSystem !== TournamentSystems.round && tournament.tournamentSystem !== TournamentSystems.swiss) {

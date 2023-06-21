@@ -10,6 +10,7 @@ import PlayerSertificateOptions from "./documentOptions/PlayerSertificate.option
 import RankList from "./RankList.entity";
 import RankListPlayer from "./RankListPlayer.entity";
 import RankListOptions from "./documentOptions/RankList.options";
+import TournamentDocument from "../tournaments/TournamentDocument.entity";
 
 @injectable()
 class DocumentsService {
@@ -48,14 +49,8 @@ class DocumentsService {
         )
     }
 
-    public async getRankList(tournamentID: string) {
-        const tournament = await this._tournamentService.getTournamentByID(tournamentID);
-
-        if(!tournament) {
-            throw new NotFoundError("По указанному id турнир не найден");
-        }
-
-        let players = await this._playersStatsService.getPlayersStatsFromTournament(tournamentID);
+    public async createRankListDocument(documentTitle: string, tournament: TournamentDocument) {
+        let players = await this._playersStatsService.getPlayersStatsFromTournament(tournament.id);
 
         if(players.length === 0) {
             throw new NotFoundError("В данном турнире нет участников");
@@ -64,13 +59,33 @@ class DocumentsService {
         players = this._playersStatsService.sortPlayersStatsByAdamovich(players);
         
         const playersRankLists = players.map((player, i) => new RankListPlayer(i + 1, player));
-        const rankListData = new RankList(tournament, playersRankLists);
+        const rankListData = new RankList(documentTitle, tournament, playersRankLists);
+        
 
         return await this._documentsRepository.createRankList(
             rankListData,
             rankListData.documentTitle,
             RankListOptions
         )
+    }
+
+    public async getRankList(tournamentID: string, recreate: boolean) {
+        const tournament = await this._tournamentService.getTournamentByID(tournamentID);
+
+        if(!tournament) {
+            throw new NotFoundError("По указанному id турнир не найден");
+        }
+
+        const documentTitle = this.getRankListTitle(tournament.id);
+        const findedRankList = await this._documentsRepository.findeRankList(documentTitle);
+
+        if(recreate || !findedRankList) return this.createRankListDocument(documentTitle, tournament);
+
+        return findedRankList;
+    }
+
+    private getRankListTitle(tournamentID: string) {
+        return `Рейтинг-лист_${tournamentID}`;
     }
 }
 

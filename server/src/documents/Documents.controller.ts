@@ -32,13 +32,15 @@ class DocumentsController extends BaseController{
     }
 
     public async getRankList(request: Request, response: Response) {
+        const recreate = request.query.recreate ? true : false;
+        console.log(request.query.recreate?.toString());
         const tournamentID = request.query.tournamentID?.toString();
 
         if(!tournamentID) {
             throw new InputError("Вы не указали id турнира.")
         }
 
-        const rankListLink = await this._documentsService.getRankList(tournamentID);
+        const rankListLink = await this._documentsService.getRankList(tournamentID, recreate);
         response.sendFile(rankListLink.filename);
         //response.json(rankListLink);
     }
