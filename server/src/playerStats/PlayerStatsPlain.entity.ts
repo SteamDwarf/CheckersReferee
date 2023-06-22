@@ -6,6 +6,7 @@ class PlayerStatsPlain {
     public readonly tournamentID: string;
     public readonly playerName: string;
     public readonly birthday: string;
+    public readonly age: number;
     public readonly region: string;
     public readonly gorinRank: number;
     public readonly startAdamovichRank: number;
@@ -26,6 +27,7 @@ class PlayerStatsPlain {
         this.tournamentID = tournamentID;
         this.playerName = player.fullName;
         this.birthday = player.birthday;
+        this.age = player.age;
         this.region = player.region;
         this.gorinRank = 0;
         this.startAdamovichRank = player.currentAdamovichRank;

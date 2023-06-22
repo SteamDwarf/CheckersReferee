@@ -80,7 +80,10 @@ class SwissDraw extends Draw {
     }
 
     private getToursCount (playersCount: number) {
-        if(playersCount >= 11 && playersCount <= 20) return 7;
+        if(playersCount >= 11 && playersCount <= 20) {
+            if(playersCount % 2 === 0) return 7;
+            return 8;
+        }
         if(playersCount >= 21 && playersCount <= 30) return 8;
         if(playersCount >= 31 && playersCount <= 40) return 9;
         if(playersCount >= 41 && playersCount <= 50) return 10;

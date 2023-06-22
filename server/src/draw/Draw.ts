@@ -20,6 +20,7 @@ class Draw {
             score: 0,
             gorinRank: 0,
             birthday: "",
+            age: 18,
             region: "",
             tournamentID: "",
             startAdamovichRank: 0,

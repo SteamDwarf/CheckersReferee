@@ -12,7 +12,6 @@ class ValidateMiddleware implements IMiddleware {
     }
 
     public async execute(request: Request, response: Response, next: NextFunction) {
-        console.log("validate");
         const inst = plainToInstance(this._classToValidate, request.body);
         const errors = await validate(inst);
 

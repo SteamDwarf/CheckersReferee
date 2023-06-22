@@ -1,19 +1,19 @@
 import { inject, injectable } from "inversify";
 import DataBase from "../DB/DataBase";
 import BaseService from "../common/Base.service";
-import { ISportsCategory } from "../sportsCategory/sportsCategory.model";
-import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import Utils from "../utils/Utils";
 import PlayerStatsComparator from "./PlayerStats.comparator";
 import { MAIN, REPOSITORIES, SERVICES } from "../common/injectables.types";
 import PlayerDocument from "../players/PlayerDocument.entity";
-import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
 import { NotFoundError } from "../errors/NotFound.error";
 import PlayerStatsRepository from "./PlayerStats.repository";
 import PlayerStatsDocument from "./PlayerStatsDocument.entity";
 import PlayerStatsPlain from "./PlayerStatsPlain.entity";
 import GameDocument from "../games/GameDocument.entity";
 import { IPlayerStatsSearchFilter } from "./playerStats.model";
+import SportsCategoryService from "../sportsCategory/SportsCategory.service";
+import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
+import { ISportsCategory } from "../sportsCategory/sportsCategory.model";
 
 @injectable()
 class PlayerStatsService extends BaseService {
@@ -67,6 +67,7 @@ class PlayerStatsService extends BaseService {
 
 
     public async createPlayerStats(player: PlayerDocument, tournamentID: string) {
+        console.log(player.age);
         const playerStatsPlain = new PlayerStatsPlain(player, tournamentID);
         const playerStatsPlainDocument = await this._playerStatsRepository.createPlayerStats(playerStatsPlain);
         
@@ -192,7 +193,7 @@ class PlayerStatsService extends BaseService {
     {
         let playedGames = 0;
     
-        const constCoeff = this.getConstCoefficient(playerStats.birthday, sportsCategory);
+        const constCoeff = this.getConstCoefficient(playerStats.age, sportsCategory);
         const sumCompetitorsRank = playersStats.reduce((sum, curPlayerStats) => {
             if(playerStats.playerID !== curPlayerStats.playerID && 
                 Math.abs(playerStats.startAdamovichRank - curPlayerStats.startAdamovichRank) < 400
@@ -240,9 +241,7 @@ class PlayerStatsService extends BaseService {
         return this._utils.clamp(newRank, sportCategory.minAdamovichRank, sportCategory.maxAdamovichRank);
     }
     
-    private getConstCoefficient (birthdayString: string, sportsCategory: ISportsCategory){
-        const age = this.countAge(birthdayString);
-    
+    private getConstCoefficient (age: number, sportsCategory: ISportsCategory){    
         if(sportsCategory.shortTitle == "БР" && age < 17) {
             return 5000/10;
         }
@@ -251,7 +250,7 @@ class PlayerStatsService extends BaseService {
     }
     
     //TODO age перенести в PlayerStats
-    private countAge (birthdayString: string){
+    /* private countAge (birthdayString: string){
         const today = new Date();
         const birthdayDate = new Date(birthdayString);
         const monthDiff = today.getMonth() - birthdayDate.getMonth();
@@ -263,7 +262,7 @@ class PlayerStatsService extends BaseService {
         }
     
         return age;
-    }
+    } */
 }
 
 export default PlayerStatsService;

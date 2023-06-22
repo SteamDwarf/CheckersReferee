@@ -39,9 +39,9 @@ class App {
         this._app.listen(this._port, () => {
             console.log(`Сервер запущен по адресу ${this._uri}:${this._port}`);
             
-            if(successCallback) successCallback();
-
             this._db.connectToDatabase();
+            
+            if(successCallback) successCallback();
         });
     }
 

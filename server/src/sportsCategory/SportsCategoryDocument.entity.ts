@@ -6,6 +6,9 @@ class SportsCategoryDocument {
     private readonly _shortTitle: string;
     private readonly _minAdamovichRank: number;
     private readonly _maxAdamovichRank: number;
+    private readonly _categoryCoefficient: number;
+    private readonly _requiredTournamentCoefficient?: number;
+    
 
     constructor(sportsCategory: ISportsCategoryWithID) {
         this._id = sportsCategory._id.toString();
@@ -13,6 +16,8 @@ class SportsCategoryDocument {
         this._shortTitle = sportsCategory.shortTitle;
         this._minAdamovichRank = sportsCategory.minAdamovichRank;
         this._maxAdamovichRank = sportsCategory.maxAdamovichRank;
+        this._categoryCoefficient = sportsCategory.categoryCoefficient;
+        this._requiredTournamentCoefficient = sportsCategory.requiredTournamentCoefficient;
     }
 
     public get id() {
@@ -32,13 +37,22 @@ class SportsCategoryDocument {
         return this._maxAdamovichRank;
     }
 
+    public get categoryCoefficient(): number {
+        return this._categoryCoefficient;
+    }
+    public get requiredTournamentCoefficient(): number | undefined {
+        return this._requiredTournamentCoefficient;
+    }
+
     public get data() {
         return {
             _id: this._id,
             title: this._title,
             shortTitle: this._shortTitle,
             minAdamovichRank: this._minAdamovichRank,
-            maxAdamovichRank: this._maxAdamovichRank
+            maxAdamovichRank: this._maxAdamovichRank,
+            categoryCoefficient: this._categoryCoefficient,
+            requiredTournamentCoefficient: this._requiredTournamentCoefficient
         }
     }
 }

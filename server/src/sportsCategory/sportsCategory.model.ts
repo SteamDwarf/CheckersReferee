@@ -3,7 +3,9 @@ export interface ISportsCategory {
     title: string,
     shortTitle: string,
     minAdamovichRank: number,
-    maxAdamovichRank: number
+    maxAdamovichRank: number,
+    categoryCoefficient: number,
+    requiredTournamentCoefficient?: number
 }
 
 export interface ISportsCategoryWithID extends ISportsCategory {
@@ -15,7 +17,13 @@ export const sportsCategorySchema = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["title", "shortTitle", "minAdamovichRank", "maxAdamovichRank"],
+            required: [
+                "title", 
+                "shortTitle", 
+                "minAdamovichRank",
+                "maxAdamovichRank",
+                "categoryCoefficient"
+            ],
             additionalProperties: false,
             properties: {
                 "_id": {
@@ -37,7 +45,15 @@ export const sportsCategorySchema = {
                 "maxAdamovichRank": {
                     bsonType: "number",
                     description: "Поле maxAdamovichRank является обязательным и должно быть числом"
-                }
+                },
+                "categoryCoefficient": {
+                    bsonType: "number",
+                    description: "Поле categoryCoefficient является обязательным и должно быть числом"
+                },
+                "requiredTournamentCoefficient": {
+                    bsonType: "number",
+                    description: "Поле requiredTournamentCoefficient должно быть числом"
+                },
             },
         }
     }

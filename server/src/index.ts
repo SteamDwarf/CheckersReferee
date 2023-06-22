@@ -59,3 +59,16 @@ app.start();
 tournamentService.lazyInject(container);
 
 
+/* function countAge (birthdayString: string){
+    const today = new Date();
+    const birthdayDate = new Date(birthdayString);
+    const monthDiff = today.getMonth() - birthdayDate.getMonth();
+    
+    let age = today.getFullYear() - birthdayDate.getFullYear();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdayDate.getDate())) {
+        age--;
+    }
+
+    return age;
+} */
