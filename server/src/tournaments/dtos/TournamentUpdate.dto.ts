@@ -19,6 +19,10 @@ class TournamentUpdateDTO {
     sportsDescipline?: SportsDesciplines;
 
     @IsOptional()
+    @IsArray({message: ValidationMessages.IsArray})
+    groups?: (string | undefined)[];
+
+    @IsOptional()
     @IsString({message: ValidationMessages.IsString})
     startDate?: string;
 
@@ -40,7 +44,7 @@ class TournamentUpdateDTO {
 
     //TODO после тестов расскомментировать
     /* @IsEmpty({message: ValidationMessages.IsEmpty})
-    isSterted?: boolean;
+    isStarted?: boolean;
 
     @IsEmpty({message: ValidationMessages.IsEmpty})
     isFinished?: boolean; */

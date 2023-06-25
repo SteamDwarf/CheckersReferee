@@ -5,6 +5,7 @@ class TournamentPlain {
     public readonly cp: string;
     public readonly title: string;
     public readonly sportsDescipline: SportsDesciplines;
+    public readonly groups: (string | undefined)[];
     public readonly startDate?: string;
     public readonly endDate?: string;
     public readonly country: string;
@@ -30,6 +31,7 @@ class TournamentPlain {
         this.cp = tournamentData.cp;
         this.title = tournamentData.title;
         this.sportsDescipline = tournamentData.sportsDescipline;
+        this.groups = tournamentData.groups || [];
         this.startDate = tournamentData.startDate || "";
         this.endDate = tournamentData.endDate || "";
         this.country = tournamentData.country;

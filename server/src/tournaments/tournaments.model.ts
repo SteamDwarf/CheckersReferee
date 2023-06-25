@@ -19,7 +19,8 @@ export enum SportsDesciplines {
     StandingCheckers_LightningGame_TeamCompetition = "стоклеточные шашки - молниеносная игра - командные соревнования",
     CorrespondenceCheckers = "игра по переписке",
     Giveaway = "обратная игра в шашки (поддавки)",
-    CheckersComposition = "шашечная композиция"
+    CheckersComposition = "шашечная композиция",
+    Renju = "рэндзю"
 }
 
 
@@ -36,6 +37,8 @@ export interface ITournament {
     title: string,
     //TODO добавил
     sportsDescipline: SportsDesciplines,
+    //TODO добавил
+    groups: (string | undefined)[],
     startDate?: string,
     endDate?: string,
     country: string,
@@ -72,6 +75,7 @@ export const tournamentSchema = {
                 "cp",
                 "title",
                 "sportsDescipline",
+                "groups",
                 "country",
                 "city",
                 "isStarted", 
@@ -100,6 +104,10 @@ export const tournamentSchema = {
                 "sportsDescipline": {
                     bsonType: "string",
                     description: "Поле sportsDescipline является обязательным и должно быть строкой"
+                },
+                "groups": {
+                    bsonType: "array",
+                    description: "Поле groups является обязательным и должно быть массивом"
                 },
                 "title": {
                     bsonType: "string",

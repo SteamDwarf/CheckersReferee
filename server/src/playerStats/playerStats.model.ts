@@ -15,8 +15,14 @@ export interface IPlayerStats {
     lastAdamovichTimeStamp: number,
     place: number,
     score: number,
+    //TODO добавил
+    normScore: number,
+    //TODO добавил
+    tournamentCoefficient: number,
     sportsCategoryID: string,
     sportsCategoryAbbr: string,
+    newSportsCategoryID?: string,
+    newSportsCategoryAbbr?: string,
     requiredScore: number,
     colorUsed: number,
     lastColor: CheckersColor,
@@ -50,6 +56,8 @@ export const playerStatsSchema = {
                 "lastAdamovichTimeStamp",
                 "place",
                 "score",
+                "tournamentCoefficient",
+                "normScore",
                 "sportsCategoryID",
                 "sportsCategoryAbbr",
                 "requiredScore",
@@ -114,6 +122,14 @@ export const playerStatsSchema = {
                     bsonType: "number",
                     description: "Поле score является обязательным и должно быть числом"
                 },
+                "normScore": {
+                    bsonType: "number",
+                    description: "Поле normScore является обязательным и должно быть числом"
+                },
+                "tournamentCoefficient": {
+                    bsonType: "number",
+                    description: "Поле tournamentCoefficient является обязательным и должно быть числом"
+                },
                 "colorUsed": {
                     bsonType: "number",
                     description: "Поле colorUsed является обязательным и должно быть числом"
@@ -133,6 +149,14 @@ export const playerStatsSchema = {
                 "sportsCategoryAbbr": {
                     bsonType: "string",
                     description: "Поле sportsCategoryAbbr является обязательным и должно быть строкой"
+                },
+                "newSportsCategoryID": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryID должно быть строкой"
+                },
+                "newSportsCategoryAbbr": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryAbbr должно быть строкой"
                 },
                 "competitorsID": {
                     bsonType: "array",

@@ -7,6 +7,7 @@ class TournamentDocument {
     private readonly _cp: string;
     private readonly _title: string;
     private readonly _sportsDescipline: SportsDesciplines;
+    private readonly _groups: (string | undefined)[];
     private readonly _startDate?: string | undefined;
     private readonly _endDate?: string | undefined;
     private readonly _country: string;
@@ -33,6 +34,7 @@ class TournamentDocument {
         this._cp = tournament.cp;
         this._title = tournament.title;
         this._sportsDescipline = tournament.sportsDescipline;
+        this._groups = tournament.groups;
         this._startDate = tournament.startDate;
         this._endDate = tournament.endDate;
         this._country = tournament.country;
@@ -68,6 +70,10 @@ class TournamentDocument {
 
     public get sportsDescipline(): string {
         return this._sportsDescipline;
+    }
+
+    public get groups(): (string | undefined)[] {
+        return [...this._groups];
     }
 
     public get startDate(): string | undefined {
@@ -152,6 +158,7 @@ class TournamentDocument {
             cp: this._cp,
             title: this._title,
             sportsDescipline: this._sportsDescipline,
+            groups: this.groups,
             startDate: this._startDate,
             endDate: this._endDate,
             country: this._country,

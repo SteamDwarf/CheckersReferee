@@ -17,8 +17,12 @@ class PlayerStatsDocument {
     private  _lastAdamovichTimeStamp: number;
     private _place: number;
     private _score: number;
+    private _normScore: number;
+    private _tournamentCoefficient: number;
     private readonly _sportsCategoryID: string;
     private readonly _sportsCategoryAbbr: string;
+    private readonly _newSportsCategoryID: string;
+    private readonly _newSportsCategoryAbbr: string;
     private readonly _requiredScore: number;
     private  _colorUsed: number;
     private  _lastColor: CheckersColor;
@@ -39,8 +43,12 @@ class PlayerStatsDocument {
         this._lastAdamovichTimeStamp = playerStats.lastAdamovichTimeStamp;
         this._place = playerStats.place;
         this._score = playerStats.score;
+        this._normScore = playerStats.normScore;
+        this._tournamentCoefficient = playerStats.tournamentCoefficient;
         this._sportsCategoryID = playerStats.sportsCategoryID;
         this._sportsCategoryAbbr = playerStats.sportsCategoryAbbr;
+        this._newSportsCategoryID = playerStats.newSportsCategoryID || "";
+        this._newSportsCategoryAbbr = playerStats.newSportsCategoryAbbr || "";
         this._requiredScore = playerStats.requiredScore;
         this._colorUsed = playerStats.colorUsed;
         this._lastColor = playerStats.lastColor;
@@ -123,12 +131,27 @@ class PlayerStatsDocument {
         this._score = newScore;
     }
 
+    public get normScore(): number {
+        return this._normScore;
+    }
+
+    public get tournamentCoefficient(): number {
+        return this._tournamentCoefficient;
+    }
+
     public get sportsCategoryID(): string {
         return this._sportsCategoryID;
     }
 
     public get sportsCategoryAbbr(): string {
         return this._sportsCategoryAbbr;
+    }
+
+    public get newSportsCategoryID(): string {
+        return this._newSportsCategoryID;
+    }
+    public get newSportsCategoryAbbr(): string {
+        return this._newSportsCategoryAbbr;
     }
 
     public get colorUsed(): number {
@@ -172,8 +195,12 @@ class PlayerStatsDocument {
             lastAdamovichTimeStamp: this.lastAdamovichTimeStamp,
             place: this.place,
             score: this.score,
+            normScore: this._normScore,
+            tournamentCoefficient: this._tournamentCoefficient,
             sportsCategoryID: this.sportsCategoryID,
             sportsCategoryAbbr: this.sportsCategoryAbbr,
+            newSportsCategoryID: this.newSportsCategoryID,
+            newSportsCategoryAbbr: this.newSportsCategoryAbbr,
             requiredScore: this.requiredScore,
             colorUsed: this.colorUsed,
             lastColor: this.lastColor,

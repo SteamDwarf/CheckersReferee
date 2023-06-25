@@ -15,8 +15,12 @@ class PlayerStatsPlain {
     public readonly lastAdamovichTimeStamp: number;
     public readonly place: number;
     public readonly score: number;
+    public readonly normScore: number;
+    public readonly tournamentCoefficient: number;
     public readonly sportsCategoryID: string;
     public readonly sportsCategoryAbbr: string;
+    public readonly newSportsCategoryID: string;
+    public readonly newSportsCategoryAbbr: string;
     public readonly requiredScore: number;
     public readonly colorUsed: number;
     public readonly lastColor: CheckersColor;
@@ -36,8 +40,12 @@ class PlayerStatsPlain {
         this.lastAdamovichTimeStamp = Date.now();
         this.place = 0;
         this.score = 0;
+        this.normScore = 0;
+        this.tournamentCoefficient = 0;
         this.sportsCategoryID = player.sportsCategoryID;
         this.sportsCategoryAbbr = player.sportsCategoryAbbr;
+        this.newSportsCategoryID = "";
+        this.newSportsCategoryAbbr = "";
         this.requiredScore = 0;
         this.colorUsed = 0;
         this.lastColor = CheckersColor.black;

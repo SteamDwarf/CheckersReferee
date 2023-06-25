@@ -18,6 +18,8 @@ class Draw {
             lastColor: CheckersColor.black,
             competitorsID: [""],
             score: 0,
+            normScore: 0,
+            tournamentCoefficient: 0,
             gorinRank: 0,
             birthday: "",
             age: 18,

@@ -11,6 +11,9 @@ class TournamentCreateDTO {
     @IsIn(Object.values(SportsDesciplines), {message: ValidationMessages.IsIn(Object.values(SportsDesciplines))})
     sportsDescipline: SportsDesciplines;
 
+    @IsOptional()
+    @IsArray({message: ValidationMessages.IsArray})
+    groups?: (string | undefined)[];
 
     @IsNotEmpty({message: ValidationMessages.IsNotEmpty})
     @IsString({message: ValidationMessages.IsString})

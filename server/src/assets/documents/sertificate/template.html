@@ -89,14 +89,14 @@
             <div class="main__text">
                 Дана в том, что {{fullName}} 
                 с {{tournamentStartDate}} по {{tournamentEndDate}} принимал(а) участие в турнире 
-                {{tournamentTitle}} КП № 288-1, 
+                {{tournamentTitle}} КП № {{cp}}, 
                 группа: {{#each groups}}{{this}} {{/each}},
-                проведённом в {{tournamentRegion}} по {{tournamentSystem}} системе в {{toursCount}} туров 
+                проведённом в {{city}} по {{tournamentSystem}} системе в {{toursCount}} туров 
                 при количестве участников {{playersCount}} 
                 и выполнил(а)  норматив {{sportCategory}}, 
                 набрав {{score}} очка при норме – {{normScore}}, 
-                турнирный коэффициент участника – {{playerCoefficient}}, 
-                при необходимом турнирном коэффициенте – {{tournamentCoefficient}}.
+                турнирный коэффициент участника – {{tournamentCoefficient}}, 
+                при необходимом турнирном коэффициенте – {{requiredTournamentCoefficient}}.
             </div>
         </main>
         <footer class="footer">
