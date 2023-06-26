@@ -52,7 +52,7 @@ class App {
         this._app.use(cors());
 
         this._app.get('/', (request, response) => {
-            response.sendFile(path.resolve('../client/index.html'));
+            response.sendFile(path.resolve(__dirname, '../../client/index.html'));
         })
         
         this._app.use('/api/auth', this._authController.router);
