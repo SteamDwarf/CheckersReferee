@@ -48,11 +48,11 @@ class App {
     private useRoutes() {
         this._app.use(express.urlencoded({extended: false}));
         this._app.use(express.json());
-        this._app.use(express.static(path.resolve(__dirname, '../../client')))
+        this._app.use(express.static(path.resolve(__dirname, '../../client/build/')))
         this._app.use(cors());
 
         this._app.get('/', (request, response) => {
-            response.sendFile(path.resolve(__dirname, '../../client/index.html'));
+            response.sendFile(path.resolve(__dirname, '../../client/build/index.html'));
         })
         
         this._app.use('/api/auth', this._authController.router);
