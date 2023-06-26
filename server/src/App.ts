@@ -48,7 +48,7 @@ class App {
     private useRoutes() {
         this._app.use(express.urlencoded({extended: false}));
         this._app.use(express.json());
-        this._app.use(express.static(path.resolve('../client')))
+        this._app.use(express.static(path.resolve(__dirname, '../../client')))
         this._app.use(cors());
 
         this._app.get('/', (request, response) => {
