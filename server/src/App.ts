@@ -63,32 +63,14 @@ class App {
         this._app.use('/api/player-stats', this._playerStatsController.router);
         this._app.use('/api/documents', this._documentsController.router);
 
-        this.redirectToHome([
-            '/Tournament/:id', 
-            '/Tournament/:id/TournamentGames', 
-            '/Tournament/:id/TournamentGamesResults', 
-            '/TournamentGames',
-            '/TournamentGamesResults',
-            '/all-players',
-            '/all-players/:id',
-            '/create-tournament',
-            '/registration-player',
-        ])
+        this._app.get('/*', function (req, res) {
+            res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+        });
 
         this._app.use(this._errorHandler.handleNotFoundError.bind(this._errorHandler));
         this._app.use(this._errorHandler.handleError.bind(this._errorHandler));
     }
 
-    private redirectToHome(from: string[]) {
-        from.forEach(path => this.redirect(path, '/'));
-    }
-
-    private redirect(from: string, to: string) {
-        this._app.all(from, (request: Request, response: Response) => response.redirect(to));
-    }
-    
-
-    
 }
 
 export default App;
