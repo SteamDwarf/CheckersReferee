@@ -12,13 +12,12 @@ import { CollectionNames } from "../common/enums";
 
 @injectable()
 class DataBase {
-    private readonly _client;
+    private _client: MongoClient;
     private readonly _collections: IDBCollections;
 
     private _database: Db | undefined;
 
     constructor(@inject(MAIN.DatabaseURI) private readonly _URI: string) {
-        this._client = new MongoClient(_URI);
         this._collections = {
             players: undefined,
             sportsCategories: undefined,
@@ -27,19 +26,21 @@ class DataBase {
             games: undefined,
             playerStats: undefined,
         }
+        this.authenticate();
     }
 
     get collections() {
         return {...this._collections}
     }
 
+
     public async connectToDatabase(callback?: () => void) {
         try {
-            await this._client.connect()
-    
+            await this._client.connect();
+
             console.log(`Успешно установлено подключение к базе данных ${this._URI}`);
             this._database = this._client.db("checkers_referee");
-    
+            
             this.setCollections();
     
             await this.setCollectionsValidation();
@@ -106,14 +107,14 @@ class DataBase {
         return documents;
     }
 
-    /* public async lookup(
-        parentCollection: Collection | undefined, 
-        childCollection: Collection | undefined,
-        localField: string,
-        foreignField: string
-    ) {
+    private authenticate() {
+        const username = encodeURIComponent(process.env.MONGO_USERNAME || "");
+        const password = encodeURIComponent(process.env.MONGO_PASSWORD || "");
+        const authMechanism = "DEFAULT";
+        const connectURI = `mongodb://${username}:${password}@${this._URI}/?authMechanism=${authMechanism}`;
 
-    } */
+        this._client = new MongoClient(connectURI);
+    }
 
     private setCollections() {
         this._collections.users = this._database?.collection(CollectionNames.USERS);

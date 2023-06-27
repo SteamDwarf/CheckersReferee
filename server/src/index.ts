@@ -23,7 +23,7 @@ dotenv.config({path: `${__dirname}/../.env`});
 
 const PORT = process.env.PORT || '5000';
 const URI = process.env.URI || 'http://localhost';
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017";
+const MONGO_URI = process.env.MONGO_URI || "127.0.0.1:27017";
 const DOCUMENTS_PATH = path.resolve(__dirname, "assets/documents");
 
 const appBindings = new ContainerModule((bind: interfaces.Bind) => {
