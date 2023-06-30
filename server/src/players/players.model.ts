@@ -5,6 +5,12 @@ export enum Gender {
     female = "Женский"
 }
 
+export enum SportsCategoryStatus {
+    green = "green",    //Выполнена норма текущего разряда
+    gray = "gray",      //Выполнена норма предыдущего разряда
+    red = "red"         //Не выполнена норма предыдущего разряда
+}
+
 //TODO добавить спортивную школу
 export interface IPlayer {
     firstName: string,                  //Имя
@@ -13,9 +19,13 @@ export interface IPlayer {
     gender: Gender                      //Пол
     birthday: string,                   //Дата рождения
     region: string,                     //Место проживания
-    sportsCategoryID: string,           //ID спортивного разряда
     playerStatsIDs: string[],           //Массив ID документов ститистики игрока в турнирах
+    sportsCategoryID: string,           //ID спортивного разряда
     sportsCategoryAbbr: string,         //Краткое название разряда
+    //TODO добавить в playerStats 3 поля ниже
+    newSportsCategoryID: string,
+    newSportsCategoryAbbr: string,
+    newSportsCategoryStatus: SportsCategoryStatus,
     sportsOrganization?: string,         //Спортивная организация
     currentAdamovichRank: number,       //Текущий рейтинг Адамовича
     previousAdamovichRank?: number      //Предыдущий рейтинг Адамовича
@@ -38,6 +48,9 @@ export const playersSchema = {
                 "region", 
                 "sportsCategoryID", 
                 "sportsCategoryAbbr",
+                "newSportsCategoryID",
+                "newSportsCategoryAbbr",
+                "newSportsCategoryStatus",
                 "currentAdamovichRank",
                 "playerStatsIDs"
             ],
@@ -86,6 +99,18 @@ export const playersSchema = {
                 "sportsCategoryAbbr": {
                     bsonType: "string",
                     description: "Поле sportsCategoryAbbr (спортивный разряд краткая форма) является обязательным и должно быть строкой"
+                },
+                "newSportsCategoryID": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryID (новый спортивный разряд ) является обязательным и должно быть строкой"
+                },
+                "newSportsCategoryAbbr": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryAbbr (новый спортивный разряд краткая форма ) является обязательным и должно быть строкой"
+                },
+                "newSportsCategoryStatus": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryStatus (статус нового спортивного разряда ) является обязательным и должно быть строкой"
                 },
                 "sportsOrganization": {
                     bsonType: "string",

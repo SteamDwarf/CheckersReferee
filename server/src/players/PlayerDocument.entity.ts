@@ -1,4 +1,4 @@
-import { Gender, IPlayerWithId } from "./players.model";
+import { Gender, IPlayerWithId, SportsCategoryStatus } from "./players.model";
 
 class PlayerDocument {
     private readonly _id: string;
@@ -8,9 +8,12 @@ class PlayerDocument {
     private readonly _gender: Gender;
     private readonly _birthday: string;
     private readonly _region: string;
-    private readonly _sportsCategoryID: string;
     private readonly _playerStatsIDs: string[];
+    private readonly _sportsCategoryID: string;
     private readonly _sportsCategoryAbbr: string;
+    private readonly _newSportsCategoryID: string;
+    private readonly _newSportsCategoryAbbr: string;
+    private readonly _newSportsCategoryStatus: SportsCategoryStatus;
     private readonly _sportsOrganization?: string;
     private  _currentAdamovichRank: number;
     private  _previousAdamovichRank?: number;
@@ -25,6 +28,9 @@ class PlayerDocument {
         this._region = playerData.region;
         this._sportsCategoryID = playerData.sportsCategoryID;
         this._sportsCategoryAbbr = playerData.sportsCategoryAbbr;
+        this._newSportsCategoryID = playerData.newSportsCategoryID;
+        this._newSportsCategoryAbbr = playerData.newSportsCategoryAbbr;
+        this._newSportsCategoryStatus = playerData.newSportsCategoryStatus;
         this._playerStatsIDs = playerData.playerStatsIDs,
         this._currentAdamovichRank = playerData.currentAdamovichRank;
         this._sportsOrganization = playerData.sportsOrganization;
@@ -60,6 +66,17 @@ class PlayerDocument {
     }
     public get sportsCategoryAbbr() : string {
         return this._sportsCategoryAbbr;
+    }
+
+    public get newSportsCategoryID() : string {
+        return this._newSportsCategoryID;
+    }
+    public get newSportsCategoryAbbr() : string {
+        return this._newSportsCategoryAbbr;
+    }
+
+    public get newSportsCategoryStatus(): SportsCategoryStatus {
+        return this._newSportsCategoryStatus;
     }
     
     public get sportsOrganization() : string | undefined {
@@ -101,9 +118,12 @@ class PlayerDocument {
             gender: this._gender,
             birthday: this._birthday,
             region: this._region,
-            sportsCategoryID: this._sportsCategoryID,
             playerStatsIDs: this._playerStatsIDs,
+            sportsCategoryID: this._sportsCategoryID,
             sportsCategoryAbbr: this._sportsCategoryAbbr,
+            newSportsCategoryID: this._newSportsCategoryID,
+            newSportsCategoryAbbr: this._newSportsCategoryAbbr,
+            newSportsCategoryStatus: this._newSportsCategoryStatus,
             sportsOrganization: this._sportsOrganization,
             currentAdamovichRank: this._currentAdamovichRank,
             previousAdamovichRank: this._previousAdamovichRank

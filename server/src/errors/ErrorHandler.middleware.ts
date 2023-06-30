@@ -3,6 +3,7 @@ import { ServerError } from "./Server.error";
 import { DataBaseError } from "./DataBase.error";
 import { InternalServerError } from "./InternalServer.error";
 import { injectable } from "inversify";
+import { MongoServerError } from "mongodb";
 
 @injectable()
 class ErrorHandler {
@@ -23,6 +24,7 @@ class ErrorHandler {
     private defineError(error: ServerError) {
         if(!error.status) {
             if(error.message === "Document failed validation") {
+                console.log((error as MongoServerError)?.errInfo?.details?.schemaRulesNotSatisfied[0]?.propertiesNotSatisfied);
                 return new DataBaseError(error);
             }
     

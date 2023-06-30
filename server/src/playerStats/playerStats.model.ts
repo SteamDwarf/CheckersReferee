@@ -1,6 +1,7 @@
 import { CheckersColor } from "../common/enums"
 import { ObjectId } from "mongodb"
 
+//TODO добавить поле спортивной организации
 export interface IPlayerStats {
     playerID: string,
     tournamentID: string,
