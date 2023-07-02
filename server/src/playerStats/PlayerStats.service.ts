@@ -143,8 +143,9 @@ class PlayerStatsService extends BaseService {
             if(!sportCategory) throw new NotFoundError("В статистике игрока некверно указано id спортивного разряда");
 
             const playerGames = games.filter(game => game.player1StatsID === playersStats[i].id || game.player2StatsID === playersStats[i].id);
-            
-            playersStats[i].lastAdamovichRank = this.calculateAdamovichAfterTournament(playersStats[i], sportCategory, playersStats);
+            const competitors = playersStats.filter(player => playersStats[i].competitorsID.includes(player.id));
+
+            playersStats[i].lastAdamovichRank = this.calculateAdamovichAfterTournament(playersStats[i], sportCategory, competitors);
             playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
         }
     

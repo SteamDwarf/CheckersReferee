@@ -58,7 +58,7 @@ class GamesController extends BaseController {
     }
     private async delete(request: Request, response: Response) {
         const result = await this._gamesService.deleteAllGames();
-
+        console.log(result);
         response.json(result);
     }
 }

@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEmpty, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsEmpty, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { SportsDesciplines, TournamentSystems } from "../tournaments.model";
 import { ValidationMessages } from "../../common/enums";
 
@@ -72,7 +72,10 @@ class TournamentUpdateDTO {
     @IsEmpty({message: ValidationMessages.IsEmpty})
     toursCount?: number;
 
-    @IsEmpty({message: ValidationMessages.IsEmpty})
+    //TODO расскомментировать
+    //@IsEmpty({message: ValidationMessages.IsEmpty})
+    @IsOptional()
+    @IsNumber({}, {message: ValidationMessages.IsNumber})
     currentTour?: number;
 
     @IsOptional()

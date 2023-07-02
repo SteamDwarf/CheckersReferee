@@ -100,6 +100,8 @@ class PlayerService extends BaseService {
             const playerStat = playerStats.find(stat => stat.playerID === player.id);
             player.addPlayerStats(playerStat?.id);
 
+            /* console.log("Update player");
+            console.log(player); */
             const updatedPlayer = await this.updatePlayerDocument(player.id, player);
             updatedPlayers.push(updatedPlayer);
         }
