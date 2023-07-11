@@ -3,7 +3,9 @@ import { SportsDesciplines, TournamentSystems } from "../tournaments.model";
 import { ValidationMessages } from "../../common/enums";
 
 class TournamentUpdateDTO {
-    @IsEmpty({message: ValidationMessages.IsEmpty})
+    //@IsEmpty({message: ValidationMessages.IsEmpty})
+    @IsOptional()
+    @IsString({message: ValidationMessages.IsString})
     _id?: string;
 
     @IsOptional()
@@ -69,7 +71,9 @@ class TournamentUpdateDTO {
     @IsString({message: ValidationMessages.IsString})
     timeControl?: string;
 
-    @IsEmpty({message: ValidationMessages.IsEmpty})
+    //@IsEmpty({message: ValidationMessages.IsEmpty})
+    @IsOptional()
+    @IsNumber({}, {message: ValidationMessages.IsNumber})
     toursCount?: number;
 
     //TODO расскомментировать

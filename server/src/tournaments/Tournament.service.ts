@@ -77,7 +77,8 @@ class TournamentService extends BaseService {
     
         if(!documentForUpdate) throw new NotFoundError("По указанному id турнир не найден");
 
-        const tournamentPlainDocument = await this._tournamentRepository.updateTournament(id, newData);
+        const {_id: _, ...tournamentData} = newData;
+        const tournamentPlainDocument = await this._tournamentRepository.updateTournament(id, tournamentData);
         return new TournamentDocument(tournamentPlainDocument);
     }
 

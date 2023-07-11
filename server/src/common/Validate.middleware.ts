@@ -16,7 +16,7 @@ class ValidateMiddleware implements IMiddleware {
         const errors = await validate(inst);
 
         if(errors.length > 0) {
-            return next(new ValidationError("Неверно указаны поля данных игрока", errors));
+            return next(new ValidationError("Неверно указаны поля", errors));
         }
 
         next();
