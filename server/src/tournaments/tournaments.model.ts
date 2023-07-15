@@ -32,12 +32,9 @@ export enum SportsDesciplines {
 //TODO оценка встречи спортсменов
 //TODO оценка соблюдения мер по обеспечению безопасности
 export interface ITournament {
-    //TODO добавил
     cp: string,
     title: string,
-    //TODO добавил
     sportsDescipline: SportsDesciplines,
-    //TODO добавил
     groups: (string | undefined)[],
     startDate?: string,
     endDate?: string,
@@ -49,7 +46,7 @@ export interface ITournament {
     mainReferee: string,
     mainSecretary: string,
     referees: (string | undefined)[],
-    //TODO добавил
+    //TODO может надо будет указывать только количество
     coaches: (string | undefined)[],
     timeControl?: string,
     toursCount: number,
@@ -58,7 +55,6 @@ export interface ITournament {
     playersIDs: (string | undefined)[],
     gamesIDs: (string | undefined)[][],
     playersStatsIDs: (string | undefined)[],
-    //TODO добавил
     sportsFacility?: string
 }
 

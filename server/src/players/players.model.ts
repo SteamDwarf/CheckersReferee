@@ -11,10 +11,10 @@ export enum SportsCategoryStatus {
     red = "red"         //Не выполнена норма предыдущего разряда
 }
 
-//TODO добавить спортивную школу
+//TODO добавить город и полное название разряда
 export interface IPlayer {
     firstName: string,                  //Имя
-    middleName: string,                 //Отчество
+    middleName?: string,                 //Отчество
     lastName: string,                   //Фамилия
     gender: Gender                      //Пол
     birthday: string,                   //Дата рождения
@@ -41,7 +41,6 @@ export const playersSchema = {
             bsonType: "object",
             required: [
                 "firstName", 
-                "middleName", 
                 "lastName",
                 "gender",
                 "birthday", 
@@ -66,7 +65,7 @@ export const playersSchema = {
                 },
                 "middleName": {
                     bsonType: "string",
-                    description: "Поле middleName (отчество) является обязательным и должно быть строкой"
+                    description: "Поле middleName (отчество) должно быть строкой"
                 },
                 "lastName": {
                     bsonType: "string",

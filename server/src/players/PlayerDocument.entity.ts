@@ -21,7 +21,7 @@ class PlayerDocument {
     constructor(playerData: IPlayerWithId) {
         this._id = playerData._id.toString();
         this._firstName = playerData.firstName;
-        this._middleName = playerData.middleName;
+        this._middleName = playerData.middleName || '';
         this._lastName = playerData.lastName;
         this._gender = playerData.gender;
         this._birthday = playerData.birthday;
@@ -43,7 +43,7 @@ class PlayerDocument {
     public get firstName() : string {
         return this._firstName;
     }
-    public get middleName() : string {
+    public get middleName() : string  {
         return this._middleName;
     }
     public get lastName() : string {

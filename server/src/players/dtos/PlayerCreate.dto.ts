@@ -7,9 +7,9 @@ class PlayerCreateDTO {
     @IsString({message: ValidationMessages.IsString})
     firstName: string;
 
-    @IsNotEmpty({message: ValidationMessages.IsNotEmpty})
+    @IsOptional()
     @IsString({message: ValidationMessages.IsString})
-    middleName: string;
+    middleName?: string;
 
     @IsNotEmpty({message: ValidationMessages.IsNotEmpty})
     @IsString({message: ValidationMessages.IsString})

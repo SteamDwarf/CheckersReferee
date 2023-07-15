@@ -4,7 +4,7 @@ import { Gender, IPlayer, SportsCategoryStatus } from "./players.model";
 
 class PlayerPlain implements IPlayer {
     public readonly firstName: string;
-    public readonly middleName: string;
+    public readonly middleName?: string;
     public readonly lastName: string;
     public readonly gender: Gender;
     public readonly birthday: string;
