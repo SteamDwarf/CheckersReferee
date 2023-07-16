@@ -3,7 +3,9 @@ import { ValidationMessages } from "../../common/enums";
 import { Gender } from "../players.model";
 
 class PlayerUpdateDTO {
-    @IsEmpty({message:ValidationMessages.IsEmpty})
+    //@IsEmpty({message:ValidationMessages.IsEmpty})
+    @IsOptional()
+    @IsString({message: ValidationMessages.IsString})
     _id?: string;
 
     @IsOptional()
@@ -51,7 +53,10 @@ class PlayerUpdateDTO {
     @Min(255, {message: ValidationMessages.Min(255)})
     currentAdamovichRank?: number;
 
-    @IsEmpty({message: ValidationMessages.IsEmpty})
+    //@IsEmpty({message: ValidationMessages.IsEmpty})
+    @IsOptional()
+    @IsNumber({}, {message: ValidationMessages.IsNumber})
+    @Min(255, {message: ValidationMessages.Min(255)})
     previousAdamovichRank?: number;
 }
 

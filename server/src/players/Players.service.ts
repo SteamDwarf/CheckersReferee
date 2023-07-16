@@ -71,7 +71,9 @@ class PlayerService extends BaseService {
         return players;
     }
 
-    public async updatePlayer (id: string, playerData: PlayerUpdateDTO){
+    public async updatePlayer (id: string, newData: PlayerUpdateDTO){
+        const {_id: _, ...playerData} = newData;
+
         const sportsCategoryID = playerData.sportsCategoryID
 
         if(sportsCategoryID) {
