@@ -183,7 +183,8 @@ class PlayerStatsService extends BaseService {
     ){
         const newRank = (20 * playerStats.lastAdamovichRank + competitorAdamovichRank + 5000/15 * (gameScore - 1)) / 21;
     
-        return this.clampAdamovichRank(sportCategory, newRank);
+        return newRank;
+        //return this.clampAdamovichRank(sportCategory, newRank);
     }
     
     private calculateAdamovichAfterTournament (
@@ -208,7 +209,8 @@ class PlayerStatsService extends BaseService {
     
         const newRank = (20 * playerStats.startAdamovichRank + sumCompetitorsRank + constCoeff * (playerStats.score - playedGames)) / (20 + playedGames);
     
-        return this.clampAdamovichRank(sportsCategory, newRank);
+        return newRank;
+        //return this.clampAdamovichRank(sportsCategory, newRank);
     }
     
     private calculateGorinRank(playerID: string, games: GameDocument[], playersStats: PlayerStatsDocument[]){

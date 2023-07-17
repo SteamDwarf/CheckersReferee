@@ -10,6 +10,7 @@ class PlayerStatsDocument {
     private readonly _birthday: string;
     private readonly _age: number;
     private readonly _region: string;
+    private readonly _sportsOrganization?: string;
     private  _gorinRank: number;
     private readonly _startAdamovichRank: number;
     private  _lastAdamovichRank: number;
@@ -36,6 +37,7 @@ class PlayerStatsDocument {
         this._birthday = playerStats.birthday;
         this._age = playerStats.age;
         this._region = playerStats.region;
+        this._sportsOrganization = playerStats.sportsOrganization;
         this._gorinRank = playerStats.gorinRank;
         this._startAdamovichRank = playerStats.startAdamovichRank;
         this._lastAdamovichRank = playerStats.lastAdamovichRank;
@@ -80,6 +82,10 @@ class PlayerStatsDocument {
 
     public get region(): string {
         return this._region;
+    }
+
+    public get sportsOrganization(): string | undefined {
+        return this._sportsOrganization;
     }
 
     public get gorinRank(): number {
@@ -188,6 +194,7 @@ class PlayerStatsDocument {
             birthday: this.birthday,
             age: this.age,
             region: this.region,
+            sportsOrganization: this.sportsOrganization || '',
             gorinRank: this.gorinRank,
             startAdamovichRank: this.startAdamovichRank,
             lastAdamovichRank: this.lastAdamovichRank,

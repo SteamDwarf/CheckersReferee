@@ -9,6 +9,7 @@ export interface IPlayerStats {
     birthday: string,
     age: number,
     region: string,
+    sportsOrganization?: string,
     gorinRank: number
     startAdamovichRank: number,
     lastAdamovichRank: number,
@@ -94,6 +95,10 @@ export const playerStatsSchema = {
                 "region": {
                     bsonType: "string",
                     description: "Поле region является обязательным и должно быть строкой"
+                },
+                "sportsOrganization": {
+                    bsonType: "string",
+                    description: "Поле sportsOrganization должно быть строкой"
                 },
                 "gorinRank": {
                     bsonType: "number",

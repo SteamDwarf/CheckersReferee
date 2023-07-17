@@ -8,6 +8,7 @@ class PlayerStatsPlain {
     public readonly birthday: string;
     public readonly age: number;
     public readonly region: string;
+    public readonly sportsOrganization?: string;
     public readonly gorinRank: number;
     public readonly startAdamovichRank: number;
     public readonly lastAdamovichRank: number;
@@ -33,6 +34,7 @@ class PlayerStatsPlain {
         this.birthday = player.birthday;
         this.age = player.age;
         this.region = player.region;
+        this.sportsOrganization = player.sportsOrganization || '';
         this.gorinRank = 0;
         this.startAdamovichRank = player.currentAdamovichRank;
         this.lastAdamovichRank = player.currentAdamovichRank;
