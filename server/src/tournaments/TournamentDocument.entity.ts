@@ -207,6 +207,14 @@ class TournamentDocument {
         this._currentTour += 1;
     }
 
+    public restart() {
+        this._currentTour = 1;
+        this._isStarted = true;
+        this._isFinished = false;
+        this._gamesIDs = [];
+        this._playersStatsIDs = [];
+    }
+
     private splitGames(games: GameDocument[], toursCount: number) {
         const gamesInTour = games.length / toursCount;
         const tours: GameDocument[][] = [];

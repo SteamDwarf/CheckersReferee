@@ -50,6 +50,10 @@ class TournamentController extends BaseController {
             new ControllerRoute('/finish-tour/:id','put', 
                 [this._tournamentFinishTourMiddleware],
                 this.finishTour
+            ),
+            new ControllerRoute('/restart/:id','put', 
+                [],
+                this.restart
             )
         ]);
     }
@@ -107,6 +111,13 @@ class TournamentController extends BaseController {
         const {id} = request.params;
         const tournament = await this._tournamentService.finishTour(id);
 
+        response.json(tournament.data);
+    }
+
+    private async restart(request: Request, response: Response) {
+        const {id} = request.params;
+        const tournament = await this._tournamentService.restart(id);
+        
         response.json(tournament.data);
     }
 }

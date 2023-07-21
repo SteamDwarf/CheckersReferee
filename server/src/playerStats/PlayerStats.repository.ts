@@ -36,9 +36,14 @@ class PlayerStatsRepository extends BaseRepository{
         return await this.db.findDocumentById(this.db.collections.playerStats, id) as IPlayerStatsWithID | undefined;
     }
 
-    public async deletePlayersStats() {
-        return await this.db.deleteDocuments(this.db.collections.playerStats);
+    public async deletePlayersStats(IDs: (string | undefined)[]) {
+        return await this.db.deleteDocuments(this.db.collections.playerStats, IDs);
     }
+
+    public async deleteAllPlayersStats() {
+        return await this.db.deleteAllDocuments(this.db.collections.playerStats);
+    }
+
 
     public async createPlayerStats(playerStats: PlayerStatsPlain) {
         return await this.db.createDocument(this.db.collections.playerStats, playerStats) as IPlayerStatsWithID;

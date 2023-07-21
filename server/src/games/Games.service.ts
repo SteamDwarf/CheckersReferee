@@ -83,6 +83,10 @@ class GamesService extends BaseService {
         return null;
     }
 
+    public async deleteGames(IDs: string[]) {
+        return await this._gamesRepository.deleteGames(IDs);
+    }
+
     public async deleteAllGames() {
         return await this._gamesRepository.deleteAllGames();
     }

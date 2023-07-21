@@ -86,7 +86,24 @@ class DataBase {
         return collection?.deleteOne({_id: new ObjectId(id)});
     }
 
-    public deleteDocuments (collection: Collection | undefined){
+    public async deleteDocuments (collection: Collection | undefined, IDs: (string | undefined)[]){
+        const results = [];
+
+        for(let i = 0; i < IDs.length; i++) {
+            const id = IDs[i];
+            
+            if(id) {
+                const deleteResult = await this.deleteDocument(collection, id);
+
+                results.push(deleteResult);
+            }
+
+        }
+
+        return results;
+    }
+
+    public deleteAllDocuments (collection: Collection | undefined){
         return collection?.deleteMany({});
     }
 

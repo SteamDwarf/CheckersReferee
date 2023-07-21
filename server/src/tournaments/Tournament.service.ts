@@ -114,11 +114,11 @@ class TournamentService extends BaseService {
 
         if(!tournamentDocument) throw new NotFoundError("По указанному id турнир не найден")
 
-        if(tournamentDocument.tournamentSystem === TournamentSystems.swiss) {
-            if(tournamentDocument.currentTour === tournamentDocument.toursCount) {
-                throw new InputError("Отыграны все туры. Завершите турнир");
-            }
+        if(tournamentDocument.currentTour === tournamentDocument.toursCount) {
+            throw new InputError("Отыграны все туры. Завершите турнир");
+        }
 
+        if(tournamentDocument.tournamentSystem === TournamentSystems.swiss) {
             const games = await this._swissDraw.makeDrawAfterTour(
                 id, 
                 this._playerStatsService.sortPlayersStatsByScore(playersStats)
@@ -128,10 +128,10 @@ class TournamentService extends BaseService {
 
             await this._playerStatsService.updatePlayersStats(playersStats);
             tournamentDocument.addGamesIDs(gamesIDs);
-            tournamentDocument.nextTour();
-
-            tournamentDocument = await this.updateTournamentDocument(id, tournamentDocument);
         } 
+
+        tournamentDocument.nextTour();
+        tournamentDocument = await this.updateTournamentDocument(id, tournamentDocument);
 
         return tournamentDocument;
     }
@@ -150,6 +150,30 @@ class TournamentService extends BaseService {
         tournamentDocument.finish();
     
         return await this.updateTournamentDocument(id, tournamentDocument);
+    }
+
+    public async restart(id: string) {
+        let tournamentDocument = await this.getTournamentByID(id);
+    
+        if(!tournamentDocument) throw new NotFoundError("По указанному id турнир не найден");
+
+        const tournamentGamesIDs = tournamentDocument.gamesIDs.join(" ").split(/[ ,]/g);
+        /* console.log(tournamentDocument.gamesIDs);
+        console.log(tournamentDocument.gamesIDs.join(" "));
+        console.log(tournamentDocument.gamesIDs.join(" ").split(/[ ,]/g));
+        console.log(tournamentGamesIDs); */
+        await this._playerStatsService.deletePlayersStats(tournamentDocument.playersStatsIDs);
+        //console.log(tournamentDocument.playersStatsIDs);
+        await this._gamesService.deleteGames(tournamentGamesIDs);
+        //this._playerStatsService.deletePlayersStats()
+        //const tournamentPlayersStats = this._playerStatsService.getPlayersStatsFromTournament(id);
+        
+        tournamentDocument.restart();
+        //console.log(id);
+        await this.updateTournamentDocument(id, tournamentDocument);
+        tournamentDocument = await this.startTournament(id);
+
+        return tournamentDocument;
     }
 
     private async findPlayers(playersIDs: string[]) {

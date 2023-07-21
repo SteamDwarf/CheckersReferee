@@ -46,6 +46,11 @@ class Draw {
 
     protected async makeGame(tournamentID: string, player1: PlayerStatsDocument, player2: PlayerStatsDocument) {
         const checkersColor = this.getCheckersColor(player1, player2);
+
+        /* if(checkersColor && checkersColor[0] === CheckersColor.black) {
+            
+        } */
+
         const game = new GamePlain(tournamentID, player1, player2, checkersColor);
 
         return game;

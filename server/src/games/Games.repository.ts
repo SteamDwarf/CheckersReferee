@@ -30,8 +30,12 @@ class GamesRepository extends BaseRepository{
         return await this.db.findDocumentsById(this.db.collections.games, ids) as IGameWithId[]
     }
 
+    public async deleteGames(IDs: string[]) {
+        return await this.db.deleteDocuments(this.db.collections.games, IDs);
+    }
+
     public async deleteAllGames() {
-        return await this.db.deleteDocuments(this.db.collections.games);
+        return await this.db.deleteAllDocuments(this.db.collections.games);
     }
 
     public async updateGame(gameData: GameUpdateDTO, id: string) {

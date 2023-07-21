@@ -120,21 +120,19 @@ class PlayerStatsService extends BaseService {
         player1Stats?.changeScore(player2Stats, oldGameData.player1Score, newGameData.player1Score)
         player2Stats?.changeScore(player1Stats, oldGameData.player2Score, newGameData.player2Score)
 
+        this.updateGorinRank(tournamentPlayersStats, tournamentGames);
+
         if(player1Stats && player2Stats) {
             const player1AdamovichRank = this.chooseAdamovichRank(oldGameData, player1Stats);
             const player2AdamovichRank = this.chooseAdamovichRank(oldGameData, player2Stats);
 
-            await this.updateCoefficients(
-                tournamentPlayersStats,
-                tournamentGames,
+            await this.updateAdamovichRank(
                 player1Stats, 
                 player1AdamovichRank, 
                 player2AdamovichRank, 
                 newGameData.player1Score
             );
-            await this.updateCoefficients(
-                tournamentPlayersStats,
-                tournamentGames,
+            await this.updateAdamovichRank(
                 player2Stats, 
                 player2AdamovichRank, 
                 player1AdamovichRank, 
@@ -145,9 +143,7 @@ class PlayerStatsService extends BaseService {
         await this.updatePlayersStats(tournamentPlayersStats);
     }
 
-    public async updateCoefficients(
-        playersStats: PlayerStatsDocument[],
-        games: GameDocument[],
+    public async updateAdamovichRank(
         playerStats: PlayerStatsDocument,
         playerAdamovichRank: number,
         competitorAdamovichRank: number,
@@ -162,19 +158,9 @@ class PlayerStatsService extends BaseService {
                                         );
         }
         
-
-        for(let i = 0; i < playersStats.length; i++) {
-            const playerGames = games.filter(game => {
-                return (game.player1StatsID === playersStats[i].id || game.player2StatsID === playersStats[i].id) 
-                        && (game.player1Score !== 0 || game.player2Score !== 0)
-            });
-
-
-            playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
-        }
     }
 
-    /* private async updateGorinRank(playersStats: PlayerStatsDocument[], games: GameDocument[]) {
+    private async updateGorinRank(playersStats: PlayerStatsDocument[], games: GameDocument[]) {
         for(let i = 0; i < playersStats.length; i++) {
             const playerGames = games.filter(game => {
                 return (game.player1StatsID === playersStats[i].id || game.player2StatsID === playersStats[i].id) 
@@ -185,14 +171,14 @@ class PlayerStatsService extends BaseService {
             playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
         }
 
-        return await this.updatePlayersStats(playersStats);
-    } */
+        //return await this.updatePlayersStats(playersStats);
+    }
     
 
     public async updateAfterTournament (playersStats: PlayerStatsDocument[],  games: GameDocument[]) {
         const updatedPlayersStats = [];
 
-        for(let i = 0; i < playersStats.length; i++) {
+        /* for(let i = 0; i < playersStats.length; i++) {
             //const sportCategory = await this._sportsCategoryService.getSportsCategoryByID(playersStats[i].sportsCategoryID);
 
             //if(!sportCategory) throw new NotFoundError("В статистике игрока некверно указано id спортивного разряда");
@@ -202,7 +188,7 @@ class PlayerStatsService extends BaseService {
 
             //playersStats[i].lastAdamovichRank = this.calculateAdamovichAfterTournament(playersStats[i], sportCategory, competitors);
             playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
-        }
+        } */
     
         playersStats.sort(this._comparator.compareByScore.bind(this._comparator));
 
@@ -217,8 +203,12 @@ class PlayerStatsService extends BaseService {
         return updatedPlayersStats;
     }
 
-    public async deletePlayersStats (){
-        return await this._playerStatsRepository.deletePlayersStats();
+    public async deletePlayersStats(IDs: (string | undefined)[]) {
+        return await this._playerStatsRepository.deletePlayersStats(IDs);
+    }
+
+    public async deleteAllPlayersStats (){
+        return await this._playerStatsRepository.deleteAllPlayersStats();
     }
 
     public sortPlayersStatsByScore(playersStats: PlayerStatsDocument[]) {
@@ -279,14 +269,14 @@ class PlayerStatsService extends BaseService {
     
             if(competitorStats) {
                 if(playerScore === 2) {
-                    winedScore += competitorStats.normScore;
+                    winedScore += competitorStats.score;
                 } else if(playerScore === 1) {
-                    drawScore += competitorStats.normScore;
+                    drawScore += competitorStats.score;
                 } else {
-                    looseScore += competitorStats.normScore;
+                    looseScore += competitorStats.score;
                 }
 
-                console.log(competitorStats.normScore);
+                //console.log(competitorStats.score);
             }
         });
         gorinCoefficient = winedScore * 4 + drawScore * 2 + looseScore;

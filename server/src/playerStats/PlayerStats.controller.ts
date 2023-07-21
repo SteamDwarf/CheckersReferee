@@ -47,7 +47,7 @@ class PlayerStatsController extends BaseController{
     }
 
     private async delete(request: Request, response: Response) {
-        const deleteResult = await this._playerStatsService.deletePlayersStats();
+        const deleteResult = await this._playerStatsService.deleteAllPlayersStats();
 
         response.json(deleteResult);
     }
