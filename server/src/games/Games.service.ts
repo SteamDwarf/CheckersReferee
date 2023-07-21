@@ -91,20 +91,13 @@ class GamesService extends BaseService {
         const oldGameData = await this.getGameByID(id);
         if(!oldGameData) throw new NotFoundError("По указанному id игра не найдена");
 
-        const player1Stats = await this._playerStatsService.getPlayerStatsByID(oldGameData.player1StatsID);
-        const player2Stats = await this._playerStatsService.getPlayerStatsByID(oldGameData.player2StatsID);
-        
-        if(player1Stats) {
-            await this._playerStatsService.updateAfterGame(player1Stats, player2Stats?.startAdamovichRank, oldGameData.player1Score, newData.player1Score);
-        }
-        if(player2Stats) {
-            await this._playerStatsService.updateAfterGame(player2Stats, player1Stats?.startAdamovichRank, oldGameData.player2Score, newData.player2Score);
-        }
-        
         const gamePlainDocument = await this._gamesRepository.updateGame(newData, id);
-        const gameDocument = new GameDocument(gamePlainDocument);
+        const newGameData = new GameDocument(gamePlainDocument);
+        const tournamentGames = await this.getGamesFromTournament(newGameData.tournamentID);
 
-        return gameDocument;
+        await this._playerStatsService.updatePlayersStatsAfterGame(tournamentGames, oldGameData, newGameData);
+
+        return newGameData;
     }
 }
 

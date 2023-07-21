@@ -108,48 +108,104 @@ class PlayerStatsService extends BaseService {
         return playersStatsDocuments;
     }
 
-    public async updateAfterGame(
-        playerStats: PlayerStatsDocument | undefined, 
-        competitorAdamovichRank: number | undefined, 
-        prevScore: number, 
+    public async updatePlayersStatsAfterGame(
+        tournamentGames: GameDocument[],
+        oldGameData: GameDocument,
+        newGameData: GameDocument
+    ) {
+        const tournamentPlayersStats = await this.getPlayersStatsFromTournament(oldGameData.tournamentID);
+        const player1Stats = tournamentPlayersStats.find(stat => stat.id === oldGameData.player1StatsID);
+        const player2Stats = tournamentPlayersStats.find(stat => stat.id === oldGameData.player2StatsID);
+        
+        player1Stats?.changeScore(player2Stats, oldGameData.player1Score, newGameData.player1Score)
+        player2Stats?.changeScore(player1Stats, oldGameData.player2Score, newGameData.player2Score)
+
+        if(player1Stats && player2Stats) {
+            const player1AdamovichRank = this.chooseAdamovichRank(oldGameData, player1Stats);
+            const player2AdamovichRank = this.chooseAdamovichRank(oldGameData, player2Stats);
+
+            await this.updateCoefficients(
+                tournamentPlayersStats,
+                tournamentGames,
+                player1Stats, 
+                player1AdamovichRank, 
+                player2AdamovichRank, 
+                newGameData.player1Score
+            );
+            await this.updateCoefficients(
+                tournamentPlayersStats,
+                tournamentGames,
+                player2Stats, 
+                player2AdamovichRank, 
+                player1AdamovichRank, 
+                newGameData.player2Score
+            );
+        } 
+
+        await this.updatePlayersStats(tournamentPlayersStats);
+    }
+
+    public async updateCoefficients(
+        playersStats: PlayerStatsDocument[],
+        games: GameDocument[],
+        playerStats: PlayerStatsDocument,
+        playerAdamovichRank: number,
+        competitorAdamovichRank: number,
         curScore: number
     ) {
-        if(playerStats) {
-            const sportsCategory = await this._sportsCategoryService.getSportsCategoryByID(playerStats.sportsCategoryID);
 
-            if(!sportsCategory) throw new NotFoundError("По указанному id спортивная категория не найдена");
+        if(Math.abs(playerAdamovichRank - competitorAdamovichRank) < 400) {
+            playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(
+                                            playerAdamovichRank, 
+                                            competitorAdamovichRank, 
+                                            curScore
+                                        );
+        }
+        
 
-            playerStats.score = playerStats.score - prevScore + curScore;
-            
-            if(competitorAdamovichRank && Math.abs(playerStats.startAdamovichRank - competitorAdamovichRank) < 400) {
-                playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(
-                                                playerStats, 
-                                                sportsCategory,
-                                                competitorAdamovichRank, 
-                                                curScore
-                                            );
-            }
-            
-           return await this.updatePlayerStats(playerStats);
+        for(let i = 0; i < playersStats.length; i++) {
+            const playerGames = games.filter(game => {
+                return (game.player1StatsID === playersStats[i].id || game.player2StatsID === playersStats[i].id) 
+                        && (game.player1Score !== 0 || game.player2Score !== 0)
+            });
+
+
+            playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
         }
     }
+
+    /* private async updateGorinRank(playersStats: PlayerStatsDocument[], games: GameDocument[]) {
+        for(let i = 0; i < playersStats.length; i++) {
+            const playerGames = games.filter(game => {
+                return (game.player1StatsID === playersStats[i].id || game.player2StatsID === playersStats[i].id) 
+                        && (game.player1Score !== 0 || game.player2Score !== 0)
+            });
+
+
+            playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
+        }
+
+        return await this.updatePlayersStats(playersStats);
+    } */
+    
 
     public async updateAfterTournament (playersStats: PlayerStatsDocument[],  games: GameDocument[]) {
         const updatedPlayersStats = [];
 
         for(let i = 0; i < playersStats.length; i++) {
-            const sportCategory = await this._sportsCategoryService.getSportsCategoryByID(playersStats[i].sportsCategoryID);
+            //const sportCategory = await this._sportsCategoryService.getSportsCategoryByID(playersStats[i].sportsCategoryID);
 
-            if(!sportCategory) throw new NotFoundError("В статистике игрока некверно указано id спортивного разряда");
+            //if(!sportCategory) throw new NotFoundError("В статистике игрока некверно указано id спортивного разряда");
 
             const playerGames = games.filter(game => game.player1StatsID === playersStats[i].id || game.player2StatsID === playersStats[i].id);
-            const competitors = playersStats.filter(player => playersStats[i].competitorsID.includes(player.id));
+            //const competitors = playersStats.filter(player => playersStats[i].competitorsID.includes(player.id));
 
-            playersStats[i].lastAdamovichRank = this.calculateAdamovichAfterTournament(playersStats[i], sportCategory, competitors);
+            //playersStats[i].lastAdamovichRank = this.calculateAdamovichAfterTournament(playersStats[i], sportCategory, competitors);
             playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
         }
     
         playersStats.sort(this._comparator.compareByScore.bind(this._comparator));
+
         for(let i = 0; i < playersStats.length; i++) {
             const stat = playersStats[i];
             stat.place = i + 1;
@@ -176,15 +232,12 @@ class PlayerStatsService extends BaseService {
 
 
     private calculateAdamovichAfterGame(
-        playerStats: PlayerStatsDocument,
-        sportCategory: SportsCategoryDocument,
+        playerAdamovichRank: number,
         competitorAdamovichRank: number,
         gameScore: number
     ){
-        const newRank = (20 * playerStats.lastAdamovichRank + competitorAdamovichRank + 5000/15 * (gameScore - 1)) / 21;
-    
+        const newRank = (20 * playerAdamovichRank + competitorAdamovichRank + 5000/15 * (gameScore - 1)) / 21;
         return newRank;
-        //return this.clampAdamovichRank(sportCategory, newRank);
     }
     
     private calculateAdamovichAfterTournament (
@@ -226,12 +279,14 @@ class PlayerStatsService extends BaseService {
     
             if(competitorStats) {
                 if(playerScore === 2) {
-                    winedScore += competitorStats.score;
+                    winedScore += competitorStats.normScore;
                 } else if(playerScore === 1) {
-                    drawScore += competitorStats.score;
+                    drawScore += competitorStats.normScore;
                 } else {
-                    looseScore += competitorStats.score;
+                    looseScore += competitorStats.normScore;
                 }
+
+                console.log(competitorStats.normScore);
             }
         });
         gorinCoefficient = winedScore * 4 + drawScore * 2 + looseScore;
@@ -251,7 +306,40 @@ class PlayerStatsService extends BaseService {
     
         return 5000/15;
     }
+
+    /**
+     * Данная функция, в зависимости от того меняется результат уже проведенной партии или еще нет,
+     * возвращает нужный рейтинг Адамовича. И если партия уже была сыграна, то меняет текущий рейтинг
+     * на предыдущий
+     * @param oldGameData - старые данные партии
+     * @param playerStats - данные статистики игрока
+     * @returns рейтинг Адамовича
+     */
     
+    private chooseAdamovichRank(oldGameData: GameDocument, playerStats: PlayerStatsDocument) {
+        if(oldGameData.player1Score === 0 && oldGameData.player2Score === 0) {
+            return playerStats.lastAdamovichRank;
+        } else {
+            playerStats.lastAdamovichRank = playerStats.startAdamovichRank;
+            return playerStats.lastAdamovichRank;
+        }
+    }
+
+    /* private async changeScore(
+        playerStats: PlayerStatsDocument | undefined,
+        competitor: PlayerStatsDocument | undefined,
+        prevScore: number,
+        curScore: number
+    ) {
+        if(playerStats) {
+            playerStats.score = playerStats.score - prevScore + curScore;
+
+            if(competitor) {
+                playerStats.normScore =  playerStats.normScore - prevScore + curScore;
+            }
+        }
+    } */
+
     //TODO age перенести в PlayerStats
     /* private countAge (birthdayString: string){
         const today = new Date();

@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { CheckersColor } from "../common/enums";
 import { IPlayerStatsWithID } from "./playerStats.model";
+import GameDocument from "../games/GameDocument.entity";
 
 class PlayerStatsDocument {
     private readonly _id: string;
@@ -12,9 +13,9 @@ class PlayerStatsDocument {
     private readonly _region: string;
     private readonly _sportsOrganization?: string;
     private  _gorinRank: number;
-    private readonly _startAdamovichRank: number;
+    private  _startAdamovichRank: number;
     private  _lastAdamovichRank: number;
-    private readonly _startAdamovichTimeStamp: number;
+    private  _startAdamovichTimeStamp: number;
     private  _lastAdamovichTimeStamp: number;
     private _place: number;
     private _score: number;
@@ -106,8 +107,12 @@ class PlayerStatsDocument {
 
     public set lastAdamovichRank(newRank: number) {
         if(newRank >= 255) {
+            this._startAdamovichRank = this._lastAdamovichRank;
+            this._startAdamovichTimeStamp = Date.now();
+
             this._lastAdamovichRank = newRank;
             this._lastAdamovichTimeStamp = Date.now();
+            
         }
     }
 
@@ -133,13 +138,17 @@ class PlayerStatsDocument {
         return this._score;
     }
 
-    public set score(newScore: number) {
+    /* public set score(newScore: number) {
         this._score = newScore;
-    }
+    } */
 
     public get normScore(): number {
         return this._normScore;
     }
+
+    /* public set normScore(newScore: number) {
+        this._normScore = newScore;
+    } */
 
     public get tournamentCoefficient(): number {
         return this._tournamentCoefficient;
@@ -225,6 +234,35 @@ class PlayerStatsDocument {
 
     public popCompetitor() {
         return this._competitorsID.pop();
+    }
+
+    public changeScore(
+        competitor: PlayerStatsDocument | undefined,
+        prevScore: number,
+        curScore: number
+    ) {
+        this._score = this._score - prevScore + curScore;
+
+        if(competitor) {
+            this._normScore =  this._normScore - prevScore + curScore;
+        }
+    }
+
+    /**
+     * Данная функция, в зависимости от того меняется результат уже проведенной партии или еще нет,
+     * возвращает нужный рейтинг Адамовича. И если партия уже была сыграна, то меняет текущий рейтинг
+     * на предыдущий
+     * @param oldGameData - старые данные партии
+     * @param playerStats - данные статистики игрока
+     * @returns рейтинг Адамовича
+     */
+    public chooseAdamovichRank(oldGameData: GameDocument) {
+        if(oldGameData.player1Score === 0 && oldGameData.player2Score === 0) {
+            return this._lastAdamovichRank;
+        } else {
+            this._lastAdamovichRank = this._startAdamovichRank;
+            return this._lastAdamovichRank;
+        }
     }
 }
 
