@@ -27,10 +27,10 @@ class SwissDraw extends Draw {
                 const player2 = group[1][j];
                 const game = await this.makeGame(tournamentID, player1, player2);
             
-                player1.lastColor = game.player1CheckersColor;
+               // player1.lastColor = game.player1CheckersColor;
                 player1.addCompetitor(player2.id);
 
-                player2.lastColor = game.player2CheckersColor;
+                //player2.lastColor = game.player2CheckersColor;
                 player2.addCompetitor(player1.id);
 
                 console.log(player1.playerName, player1.lastColor, player1.colorUsed);
@@ -64,8 +64,8 @@ class SwissDraw extends Draw {
 
             games.push(game);
 
-            pair[0].lastColor = game.player1CheckersColor;
-            pair[1].lastColor = game.player2CheckersColor;
+            //pair[0].lastColor = game.player1CheckersColor;
+            //pair[1].lastColor = game.player2CheckersColor;
 
             console.log(pair[0].playerName, pair[0].lastColor, pair[0].colorUsed);
             console.log(pair[1].playerName, pair[1].lastColor, pair[1].colorUsed);

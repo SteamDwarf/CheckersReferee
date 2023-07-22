@@ -45,15 +45,24 @@ class Draw {
     }
 
     protected async makeGame(tournamentID: string, player1: PlayerStatsDocument, player2: PlayerStatsDocument) {
-        const checkersColor = this.getCheckersColor(player1, player2);
+        let checkersColor = this.getCheckersColor(player1, player2);
 
-        /* if(checkersColor && checkersColor[0] === CheckersColor.black) {
-            
-        } */
+        if(checkersColor && player1 && player2) {
+            if(checkersColor[0] === CheckersColor.black) {
+                checkersColor = [CheckersColor.white, CheckersColor.black];
+                player1.lastColor = checkersColor[1];
+                player2.lastColor = checkersColor[0];
+    
+                return new GamePlain(tournamentID, player2, player1, checkersColor);
+                
+            } 
 
-        const game = new GamePlain(tournamentID, player1, player2, checkersColor);
-
-        return game;
+            player1.lastColor = checkersColor[1];
+            player2.lastColor = checkersColor[0];
+            return new GamePlain(tournamentID, player1, player2, checkersColor);
+        }
+        
+        return new GamePlain(tournamentID, player1, player2, checkersColor);
     }
     
     /**
