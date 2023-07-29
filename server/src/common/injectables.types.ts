@@ -6,7 +6,8 @@ export const MAIN = {
     Database: Symbol.for("Database"),
     DocumentsDatabase: Symbol.for("DocumentsDatabase"),
     App: Symbol.for("App"),
-    Utils: Symbol.for("Utils")
+    Utils: Symbol.for("Utils"),
+    Calculations: Symbol.for("Calculations")
 }
 
 export const REPOSITORIES = {

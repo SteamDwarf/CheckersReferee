@@ -1,5 +1,6 @@
 import { CheckersColor } from "../common/enums"
 import { ObjectId } from "mongodb"
+import { SportsCategoryStatus } from "../players/players.model"
 
 //TODO добавить поле спортивной организации
 export interface IPlayerStats {
@@ -25,6 +26,7 @@ export interface IPlayerStats {
     sportsCategoryAbbr: string,
     newSportsCategoryID?: string,
     newSportsCategoryAbbr?: string,
+    newSportsCategoryStatus?: SportsCategoryStatus,
     requiredScore: number,
     colorUsed: number,
     lastColor: CheckersColor,
@@ -163,6 +165,10 @@ export const playerStatsSchema = {
                 "newSportsCategoryAbbr": {
                     bsonType: "string",
                     description: "Поле newSportsCategoryAbbr должно быть строкой"
+                },
+                "newSportsCategoryStatus": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryStatus должно быть строкой"
                 },
                 "competitorsID": {
                     bsonType: "array",

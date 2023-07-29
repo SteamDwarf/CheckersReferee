@@ -14,6 +14,8 @@ import { IPlayerStatsSearchFilter } from "./playerStats.model";
 import SportsCategoryService from "../sportsCategory/SportsCategory.service";
 import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
 import { ISportsCategory } from "../sportsCategory/sportsCategory.model";
+import { SportCategoriesAbbr } from "../common/enums";
+import Calculations from "../utils/Calculations.service";
 
 @injectable()
 class PlayerStatsService extends BaseService {
@@ -21,6 +23,7 @@ class PlayerStatsService extends BaseService {
 
     constructor(
         @inject(MAIN.Utils) private readonly _utils: Utils,
+        @inject(MAIN.Calculations) private readonly _calculations: Calculations,
         @inject(SERVICES.SportsCategory) private readonly _sportsCategoryService: SportsCategoryService,
         @inject(REPOSITORIES.PlayerStats) private readonly _playerStatsRepository: PlayerStatsRepository
     ) {
@@ -151,7 +154,7 @@ class PlayerStatsService extends BaseService {
     ) {
 
         if(Math.abs(playerAdamovichRank - competitorAdamovichRank) < 400) {
-            playerStats.lastAdamovichRank = this.calculateAdamovichAfterGame(
+            playerStats.lastAdamovichRank = this._calculations.calculateAdamovichAfterGame(
                                             playerAdamovichRank, 
                                             competitorAdamovichRank, 
                                             curScore
@@ -168,32 +171,27 @@ class PlayerStatsService extends BaseService {
             });
 
 
-            playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
+            playersStats[i].gorinRank = this._calculations.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
         }
-
-        //return await this.updatePlayersStats(playersStats);
     }
     
 
     public async updateAfterTournament (playersStats: PlayerStatsDocument[],  games: GameDocument[]) {
         const updatedPlayersStats = [];
 
-        /* for(let i = 0; i < playersStats.length; i++) {
-            //const sportCategory = await this._sportsCategoryService.getSportsCategoryByID(playersStats[i].sportsCategoryID);
-
-            //if(!sportCategory) throw new NotFoundError("В статистике игрока некверно указано id спортивного разряда");
-
-            const playerGames = games.filter(game => game.player1StatsID === playersStats[i].id || game.player2StatsID === playersStats[i].id);
-            //const competitors = playersStats.filter(player => playersStats[i].competitorsID.includes(player.id));
-
-            //playersStats[i].lastAdamovichRank = this.calculateAdamovichAfterTournament(playersStats[i], sportCategory, competitors);
-            playersStats[i].gorinRank = this.calculateGorinRank(playersStats[i].id, playerGames, playersStats);
-        } */
-    
         playersStats.sort(this._comparator.compareByScore.bind(this._comparator));
 
         for(let i = 0; i < playersStats.length; i++) {
             const stat = playersStats[i];
+            
+            //TODO только если сыграно 7 полноценных партий
+            if(stat.competitorsID.length >= 7) {
+                console.log("old============\n", stat);
+                await this._calculations.calculateSportsCategory(stat, playersStats, stat.competitorsID.length);
+                console.log("new=============\n", stat);
+            }
+
+
             stat.place = i + 1;
 
             const updatedStats = await this.updatePlayerStats(stat);
@@ -219,84 +217,6 @@ class PlayerStatsService extends BaseService {
         return [...playersStats].sort(this._comparator.compareByAdamovichRank.bind(this._comparator));
     }
 
-
-
-    private calculateAdamovichAfterGame(
-        playerAdamovichRank: number,
-        competitorAdamovichRank: number,
-        gameScore: number
-    ){
-        const newRank = (20 * playerAdamovichRank + competitorAdamovichRank + 5000/15 * (gameScore - 1)) / 21;
-        return newRank;
-    }
-    
-    private calculateAdamovichAfterTournament (
-        playerStats: PlayerStatsDocument, 
-        sportsCategory: SportsCategoryDocument, 
-        playersStats: PlayerStatsDocument[]
-    )
-    {
-        let playedGames = 0;
-    
-        const constCoeff = this.getConstCoefficient(playerStats.age, sportsCategory);
-        const sumCompetitorsRank = playersStats.reduce((sum, curPlayerStats) => {
-            if(playerStats.playerID !== curPlayerStats.playerID && 
-                Math.abs(playerStats.startAdamovichRank - curPlayerStats.startAdamovichRank) < 400
-            ) {
-                playedGames += 1;
-                return sum += curPlayerStats.startAdamovichRank;
-            }
-    
-            return sum;
-        }, 0);
-    
-        const newRank = (20 * playerStats.startAdamovichRank + sumCompetitorsRank + constCoeff * (playerStats.score - playedGames)) / (20 + playedGames);
-    
-        return newRank;
-        //return this.clampAdamovichRank(sportsCategory, newRank);
-    }
-    
-    private calculateGorinRank(playerID: string, games: GameDocument[], playersStats: PlayerStatsDocument[]){
-        let winedScore = 0;
-        let drawScore = 0;
-        let looseScore = 0;
-        let gorinCoefficient = 0;
-    
-        games.map(game => {
-            const competitorID = game.player1StatsID === playerID ? game.player2StatsID : game.player1StatsID;
-            const competitorStats = playersStats.find(stat => stat.id === competitorID);
-            const playerScore = game.player1StatsID === playerID ? game.player1Score : game.player2Score;
-    
-            if(competitorStats) {
-                if(playerScore === 2) {
-                    winedScore += competitorStats.score;
-                } else if(playerScore === 1) {
-                    drawScore += competitorStats.score;
-                } else {
-                    looseScore += competitorStats.score;
-                }
-
-                //console.log(competitorStats.score);
-            }
-        });
-        gorinCoefficient = winedScore * 4 + drawScore * 2 + looseScore;
-    
-        return gorinCoefficient;
-    }
-    
-    
-    private clampAdamovichRank (sportCategory: SportsCategoryDocument, newRank: number) {
-        return this._utils.clamp(newRank, sportCategory.minAdamovichRank, sportCategory.maxAdamovichRank);
-    }
-    
-    private getConstCoefficient (age: number, sportsCategory: ISportsCategory){    
-        if(sportsCategory.shortTitle == "БР" && age < 17) {
-            return 5000/10;
-        }
-    
-        return 5000/15;
-    }
-
     /**
      * Данная функция, в зависимости от того меняется результат уже проведенной партии или еще нет,
      * возвращает нужный рейтинг Адамовича. И если партия уже была сыграна, то меняет текущий рейтинг
@@ -305,7 +225,6 @@ class PlayerStatsService extends BaseService {
      * @param playerStats - данные статистики игрока
      * @returns рейтинг Адамовича
      */
-    
     private chooseAdamovichRank(oldGameData: GameDocument, playerStats: PlayerStatsDocument) {
         if(oldGameData.player1Score === 0 && oldGameData.player2Score === 0) {
             return playerStats.lastAdamovichRank;
@@ -315,35 +234,7 @@ class PlayerStatsService extends BaseService {
         }
     }
 
-    /* private async changeScore(
-        playerStats: PlayerStatsDocument | undefined,
-        competitor: PlayerStatsDocument | undefined,
-        prevScore: number,
-        curScore: number
-    ) {
-        if(playerStats) {
-            playerStats.score = playerStats.score - prevScore + curScore;
 
-            if(competitor) {
-                playerStats.normScore =  playerStats.normScore - prevScore + curScore;
-            }
-        }
-    } */
-
-    //TODO age перенести в PlayerStats
-    /* private countAge (birthdayString: string){
-        const today = new Date();
-        const birthdayDate = new Date(birthdayString);
-        const monthDiff = today.getMonth() - birthdayDate.getMonth();
-    
-        let age = today.getFullYear() - birthdayDate.getFullYear();
-    
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdayDate.getDate())) {
-            age--;
-        }
-    
-        return age;
-    } */
 }
 
 export default PlayerStatsService;

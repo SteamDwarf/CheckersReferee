@@ -33,13 +33,13 @@ class App {
         this._app = express();
     }
 
-    public start(successCallback?: () => void) {
+    public async start(successCallback?: () => void) {
         this.useRoutes();
 
-        this._app.listen(this._port, () => {
+        this._app.listen(this._port, async() => {
             console.log(`Сервер запущен по адресу ${this._uri}:${this._port}`);
             
-            this._db.connectToDatabase();
+            await this._db.connectToDatabase();
             
             if(successCallback) successCallback();
         });

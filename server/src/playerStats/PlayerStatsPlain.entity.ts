@@ -1,5 +1,6 @@
 import { CheckersColor } from "../common/enums";
 import PlayerDocument from "../players/PlayerDocument.entity";
+import { SportsCategoryStatus } from "../players/players.model";
 
 class PlayerStatsPlain {
     public readonly playerID: string;
@@ -22,6 +23,7 @@ class PlayerStatsPlain {
     public readonly sportsCategoryAbbr: string;
     public readonly newSportsCategoryID: string;
     public readonly newSportsCategoryAbbr: string;
+    public readonly newSportsCategoryStatus: SportsCategoryStatus;
     public readonly requiredScore: number;
     public readonly colorUsed: number;
     public readonly lastColor: CheckersColor;
@@ -48,6 +50,7 @@ class PlayerStatsPlain {
         this.sportsCategoryAbbr = player.sportsCategoryAbbr;
         this.newSportsCategoryID = "";
         this.newSportsCategoryAbbr = "";
+        this.newSportsCategoryStatus = player.newSportsCategoryStatus;
         this.requiredScore = 0;
         this.colorUsed = 0;
         this.lastColor = CheckersColor.black;

@@ -32,3 +32,28 @@ export enum CollectionNames {
     RANK_LISTS = "rankLists"
 }
 
+export enum SportCategories {
+    GR = "Гроссмейстер России",
+    MS = "Мастер спорта",
+    CMS = "Кандидат в мастера спорта",
+    I = "I разряд",
+    II = "II разряд",
+    III = "III разряд",
+    Iy = "I юношеский разряд",
+    IIy = "II юношеский разряд",
+    IIIy = "III юношеский разряд",
+    UD = "Без разряда"
+}
+
+export enum SportCategoriesAbbr {
+    GR = "ГР",
+    MS = "МС",
+    CMS = "КМС",
+    I = "I",
+    II = "II",
+    III = "III",
+    Iy = "I юн.",
+    IIy = "II юн.",
+    IIIy = "III юн.",
+    UD = "БР"
+}

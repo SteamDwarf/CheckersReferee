@@ -157,19 +157,17 @@ class TournamentService extends BaseService {
     
         if(!tournamentDocument) throw new NotFoundError("По указанному id турнир не найден");
 
-        const tournamentGamesIDs = tournamentDocument.gamesIDs.join(" ").split(/[ ,]/g);
-        /* console.log(tournamentDocument.gamesIDs);
-        console.log(tournamentDocument.gamesIDs.join(" "));
-        console.log(tournamentDocument.gamesIDs.join(" ").split(/[ ,]/g));
-        console.log(tournamentGamesIDs); */
-        await this._playerStatsService.deletePlayersStats(tournamentDocument.playersStatsIDs);
-        //console.log(tournamentDocument.playersStatsIDs);
-        await this._gamesService.deleteGames(tournamentGamesIDs);
-        //this._playerStatsService.deletePlayersStats()
-        //const tournamentPlayersStats = this._playerStatsService.getPlayersStatsFromTournament(id);
+        const games = await this._gamesService.getGamesFromTournament(id);
+        const gamesIDs = games.map(game => game.id);
+
+        const playerStats = await this._playerStatsService.getPlayersStatsFromTournament(id);
+        const playerStatsIDs = playerStats.map(stat => stat.id);
+
+        
+        await this._playerStatsService.deletePlayersStats(playerStatsIDs);
+        await this._gamesService.deleteGames(gamesIDs);
         
         tournamentDocument.restart();
-        //console.log(id);
         await this.updateTournamentDocument(id, tournamentDocument);
         tournamentDocument = await this.startTournament(id);
 

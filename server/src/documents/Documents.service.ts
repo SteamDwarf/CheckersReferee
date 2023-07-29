@@ -35,7 +35,7 @@ class DocumentsService {
             throw new NotFoundError("По указанному id турнир не найден");
         }
 
-        const sportCategory = await this._sportsCategoryService.getSportsCategoryByID(playerStats.sportsCategoryID);
+        const sportCategory = await this._sportsCategoryService.getSportCategoryByID(playerStats.sportsCategoryID);
 
         if(!sportCategory) {
             throw new NotFoundError("По указанному id спортивная категория не найдена");

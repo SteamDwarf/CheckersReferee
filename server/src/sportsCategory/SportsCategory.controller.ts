@@ -24,7 +24,7 @@ class SportsCategoryController extends BaseController {
     
     public async getById (request: Request, response: Response) {
         const {id} = request.params;
-        const category = await this._sportsCategoryService.getSportsCategoryByID(id);
+        const category = await this._sportsCategoryService.getSportCategoryByID(id);
     
         response.json(category ? category.data : null);
     }

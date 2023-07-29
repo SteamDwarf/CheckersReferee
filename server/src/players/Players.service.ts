@@ -24,7 +24,7 @@ class PlayerService extends BaseService {
     }
     
     public async createPlayer(playerData: PlayerCreateDTO) {
-        const sportCategory = await this._sportsCategoryService.getSportsCategoryByID(playerData.sportsCategoryID);
+        const sportCategory = await this._sportsCategoryService.getSportCategoryByID(playerData.sportsCategoryID);
 
         if(!sportCategory) throw new NotFoundError("По указанному id спортивный разряд не найден");
         
@@ -77,7 +77,7 @@ class PlayerService extends BaseService {
         const sportsCategoryID = playerData.sportsCategoryID
 
         if(sportsCategoryID) {
-            const sportsCategory = await this._sportsCategoryService.getSportsCategoryByID(sportsCategoryID);
+            const sportsCategory = await this._sportsCategoryService.getSportCategoryByID(sportsCategoryID);
 
             if(!sportsCategory) throw new NotFoundError("По указанному id спортивная категория не найдена");
 

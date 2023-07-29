@@ -56,7 +56,7 @@ class DataBase {
         return collection?.find({}).toArray();
     }
     public findDocumentsWithFilter (collection: Collection | undefined, filter: object){
-        return collection?.find(filter).toArray();
+        return collection?.find(filter).toArray() || [];
     }
 
     public findDocumentsById (collection: Collection | undefined, ids: string[]){

@@ -18,6 +18,9 @@ import DocumentsDatabase from "./DB/DocumentsDatabase";
 import path from "path";
 import documentsBindings from "./documents/Documents.bindings";
 import TournamentService from "./tournaments/Tournament.service";
+import SportsCategoryService from "./sportsCategory/SportsCategory.service";
+import PlayerStatsService from "./playerStats/PlayerStats.service";
+import Calculations from "./utils/Calculations.service";
 
 dotenv.config({path: `${__dirname}/../.env`});
 
@@ -36,6 +39,7 @@ const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<DocumentsDatabase>(MAIN.DocumentsDatabase).to(DocumentsDatabase).inSingletonScope();
     bind<App>(MAIN.App).to(App);
     bind<Utils>(MAIN.Utils).to(Utils);
+    bind<Calculations>(MAIN.Calculations).to(Calculations);
     bind<ErrorHandler>(MIDDLEWARES.Error).to(ErrorHandler);
 });
 
@@ -54,8 +58,12 @@ container.load(
 
 const app = container.get<App>(MAIN.App);
 const tournamentService = container.get<TournamentService>(SERVICES.Tournament);
+const playerStatsService = container.get<PlayerStatsService>(SERVICES.PlayerStats);
+//const sportsCategoriesService = container.get<SportsCategoryService>(SERVICES.SportsCategory);
 
-app.start();
+app.start(() => {
+    //sportsCategoriesService.getSportsCategoryScore("6499ee12080f2d400936656d", "6499ee12080f2d4009366573").then(d => console.log(d));
+});
 tournamentService.lazyInject(container);
 
 

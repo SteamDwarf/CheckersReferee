@@ -2,6 +2,8 @@ import { ObjectId } from "mongodb";
 import { CheckersColor } from "../common/enums";
 import { IPlayerStatsWithID } from "./playerStats.model";
 import GameDocument from "../games/GameDocument.entity";
+import { SportsCategoryStatus } from "../players/players.model";
+import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
 
 class PlayerStatsDocument {
     private readonly _id: string;
@@ -23,8 +25,9 @@ class PlayerStatsDocument {
     private _tournamentCoefficient: number;
     private readonly _sportsCategoryID: string;
     private readonly _sportsCategoryAbbr: string;
-    private readonly _newSportsCategoryID: string;
-    private readonly _newSportsCategoryAbbr: string;
+    private _newSportsCategoryID: string;
+    private _newSportsCategoryAbbr: string;
+    private _newSportsCategoryStatus: SportsCategoryStatus;
     private readonly _requiredScore: number;
     private  _colorUsed: number;
     private  _lastColor: CheckersColor;
@@ -52,6 +55,7 @@ class PlayerStatsDocument {
         this._sportsCategoryAbbr = playerStats.sportsCategoryAbbr;
         this._newSportsCategoryID = playerStats.newSportsCategoryID || "";
         this._newSportsCategoryAbbr = playerStats.newSportsCategoryAbbr || "";
+        this._newSportsCategoryStatus = playerStats.newSportsCategoryStatus || SportsCategoryStatus.gray;
         this._requiredScore = playerStats.requiredScore;
         this._colorUsed = playerStats.colorUsed;
         this._lastColor = playerStats.lastColor;
@@ -169,6 +173,14 @@ class PlayerStatsDocument {
         return this._newSportsCategoryAbbr;
     }
 
+    public get newSportsCategoryStatus(): SportsCategoryStatus {
+        return this._newSportsCategoryStatus;
+    }
+
+    public set newSportsCategoryStatus(status: SportsCategoryStatus) {
+        this._newSportsCategoryStatus = status;
+    }
+
     public get colorUsed(): number {
         return this._colorUsed;
     }
@@ -217,6 +229,7 @@ class PlayerStatsDocument {
             sportsCategoryAbbr: this.sportsCategoryAbbr,
             newSportsCategoryID: this.newSportsCategoryID,
             newSportsCategoryAbbr: this.newSportsCategoryAbbr,
+            newSportsCategoryStatus: this._newSportsCategoryStatus,
             requiredScore: this.requiredScore,
             colorUsed: this.colorUsed,
             lastColor: this.lastColor,
@@ -245,6 +258,22 @@ class PlayerStatsDocument {
 
         if(competitor) {
             this._normScore =  this._normScore - prevScore + curScore;
+        }
+    }
+
+    public setNewSportCategory(
+        oldSportCategory: SportsCategoryDocument, 
+        newSportCategory: SportsCategoryDocument
+    ){
+        this._newSportsCategoryID = newSportCategory.id;
+        this._newSportsCategoryAbbr = newSportCategory.shortTitle;
+
+        if(oldSportCategory.index > newSportCategory.index) {
+            this._newSportsCategoryStatus = SportsCategoryStatus.red;
+        } else if(oldSportCategory.index < newSportCategory.index) {
+            this._newSportsCategoryStatus = SportsCategoryStatus.green;
+        } else {
+            this._newSportsCategoryStatus = SportsCategoryStatus.gray;
         }
     }
 

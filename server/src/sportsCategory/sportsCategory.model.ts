@@ -5,7 +5,8 @@ export interface ISportsCategory {
     minAdamovichRank: number,
     maxAdamovichRank: number,
     categoryCoefficient: number,
-    requiredTournamentCoefficient?: number
+    requiredTournamentCoefficient?: number,
+    index: number
 }
 
 export interface ISportsCategoryWithID extends ISportsCategory {
@@ -22,7 +23,8 @@ export const sportsCategorySchema = {
                 "shortTitle", 
                 "minAdamovichRank",
                 "maxAdamovichRank",
-                "categoryCoefficient"
+                "categoryCoefficient",
+                "index"
             ],
             additionalProperties: false,
             properties: {
@@ -53,6 +55,10 @@ export const sportsCategorySchema = {
                 "requiredTournamentCoefficient": {
                     bsonType: "number",
                     description: "Поле requiredTournamentCoefficient должно быть числом"
+                },
+                "index": {
+                    bsonType: "number",
+                    description: "Поле index является обязательным и должно быть числом"
                 },
             },
         }
