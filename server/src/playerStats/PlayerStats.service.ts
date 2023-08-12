@@ -68,9 +68,12 @@ class PlayerStatsService extends BaseService {
         return null;
     }
 
+    public async getPlayersStatsByIDs(IDs: (string | undefined)[]) {
+        return this._playerStatsRepository.getPlayersStatsByIDs(IDs);
+    }
+
 
     public async createPlayerStats(player: PlayerDocument, tournamentID: string) {
-        console.log(player.age);
         const playerStatsPlain = new PlayerStatsPlain(player, tournamentID);
         const playerStatsPlainDocument = await this._playerStatsRepository.createPlayerStats(playerStatsPlain);
         
@@ -183,12 +186,36 @@ class PlayerStatsService extends BaseService {
 
         for(let i = 0; i < playersStats.length; i++) {
             const stat = playersStats[i];
+            const currentCategory = await this._sportsCategoryService.getSportCategoryByID(stat.sportsCategoryID);
+            if(!currentCategory) throw new NotFoundError("По указанному id не найден спортивный разряд");
+
+            //const competitors = await this.getPlayersStatsByIDs(stat.competitorsID);
+            const competitors = [];
+
+            for(let i = 0; i < stat.competitorsID.length; i++) {
+                const competitorID = stat.competitorsID[i];
+                const competitor = playersStats.find(s => s.id === competitorID);
+
+                if(!competitor) continue;
+
+                const competitorCategory = await this._sportsCategoryService.getSportCategoryByID(competitor.sportsCategoryID);
+                if(!competitorCategory) throw new NotFoundError("По указанному id не найден спортивный разряд");
+
+
+                if(Math.abs(competitorCategory.index - currentCategory.index) <= 3) {
+                    competitors.push(competitor);
+                }
+            }
             
-            //TODO только если сыграно 7 полноценных партий
-            if(stat.competitorsID.length >= 7) {
-                console.log("old============\n", stat);
-                await this._calculations.calculateSportsCategory(stat, playersStats, stat.competitorsID.length);
-                console.log("new=============\n", stat);
+            //console.log("competitors", competitors.length);
+
+            if(competitors.length >= 7) {
+                const newCategory = await this._calculations.calculateSportCategory(stat, currentCategory, playersStats);
+
+                //console.log("old============\n", stat);
+                stat.setNewSportCategory(currentCategory, newCategory);
+                //console.log("category counted", stat.playerName);
+                //console.log("new=============\n", stat);
             }
 
 

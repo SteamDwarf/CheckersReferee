@@ -118,7 +118,28 @@ class PlayerService extends BaseService {
             const player = await this.getPlayerByID(playerStats.playerID);
     
             if(player) {
+                const newSportCategory = await this._sportsCategoryService.getSportCategoryByID(
+                    playerStats.newSportsCategoryID
+                );
+                const oldSportCategory = await this._sportsCategoryService.getSportCategoryByID(
+                    player.newSportsCategoryID
+                );
+    
                 player.currentAdamovichRank = playerStats.lastAdamovichRank;
+
+                if(oldSportCategory && newSportCategory){
+                    const categoryTimestamp = new Date(player.newSportsCategoryTimestamp).getMonth(); 
+                    
+                    if(newSportCategory.index > oldSportCategory.index || 
+                       Math.abs(new Date().getMonth() - categoryTimestamp) > 4
+                    ) {
+                        player.setNewSportCategory(
+                            newSportCategory, 
+                            playerStats.newSportsCategoryStatus,
+                            playerStats.newSportsCategoryTimestamp
+                        )
+                    }
+                }
     
                 const updatedPlayer = await this.updatePlayerDocument(player.id.toString(), player);
         

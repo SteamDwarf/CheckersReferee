@@ -59,9 +59,9 @@ class DataBase {
         return collection?.find(filter).toArray() || [];
     }
 
-    public findDocumentsById (collection: Collection | undefined, ids: string[]){
+    public findDocumentsById (collection: Collection | undefined, ids: (string | undefined)[]){
         const objectIDs = ids.map(id => new ObjectId(id));
-        return collection?.find({_id: {$in: objectIDs}}).toArray();
+        return collection?.find({_id: {$in: objectIDs}}).toArray() || [];
     }
 
     public findDocument (collection: DBCollections | undefined, filter: object) {

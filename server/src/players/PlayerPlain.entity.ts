@@ -2,7 +2,7 @@ import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.ent
 import PlayerCreateDTO from "./dtos/PlayerCreate.dto";
 import { Gender, IPlayer, SportsCategoryStatus } from "./players.model";
 
-class PlayerPlain implements IPlayer {
+class PlayerPlain {
     public readonly firstName: string;
     public readonly middleName?: string;
     public readonly lastName: string;
@@ -15,6 +15,7 @@ class PlayerPlain implements IPlayer {
     public readonly newSportsCategoryID: string;
     public readonly newSportsCategoryAbbr: string;
     public readonly newSportsCategoryStatus: SportsCategoryStatus;
+    public readonly newSportsCategoryTimestamp: string;
     public readonly sportsOrganization?: string;
     public readonly currentAdamovichRank: number;
     public readonly previousAdamovichRank?: number;
@@ -31,6 +32,7 @@ class PlayerPlain implements IPlayer {
         this.newSportsCategoryID = sportsCategory.id.toString();
         this.newSportsCategoryAbbr = sportsCategory.shortTitle;
         this.newSportsCategoryStatus = SportsCategoryStatus.gray;
+        this.newSportsCategoryTimestamp = "";
         this.playerStatsIDs = [],
         this.currentAdamovichRank = playerData.currentAdamovichRank || sportsCategory.minAdamovichRank;
         this.sportsOrganization = playerData.sportsOrganization || "",

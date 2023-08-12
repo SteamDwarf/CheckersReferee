@@ -4,6 +4,7 @@ import { MAIN } from "../common/injectables.types";
 import DataBase from "../DB/DataBase";
 import { IPlayerStatsSearchFilter, IPlayerStatsWithID } from "./playerStats.model";
 import PlayerStatsPlain from "./PlayerStatsPlain.entity";
+import PlayerStatsDocument from "./PlayerStatsDocument.entity";
 
 @injectable()
 class PlayerStatsRepository extends BaseRepository{
@@ -34,6 +35,21 @@ class PlayerStatsRepository extends BaseRepository{
 
     public async getPlayerStatsByID(id: string) {
         return await this.db.findDocumentById(this.db.collections.playerStats, id) as IPlayerStatsWithID | undefined;
+    }
+
+    public async getPlayersStatsByIDs(IDs: (string | undefined)[]) {
+        const statsPlain = await this.db.findDocumentsById(this.db.collections.playerStats, IDs) as (IPlayerStatsWithID | undefined)[];
+        const statsDocuments = [];
+
+        for(let i = 0; i < statsPlain.length; i++) {
+            const stat = statsPlain[i];
+
+            if(stat){
+                statsDocuments.push(new PlayerStatsDocument(stat));
+            }
+        }
+
+        return statsDocuments;
     }
 
     public async deletePlayersStats(IDs: (string | undefined)[]) {

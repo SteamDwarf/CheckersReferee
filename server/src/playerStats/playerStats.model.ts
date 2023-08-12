@@ -27,6 +27,7 @@ export interface IPlayerStats {
     newSportsCategoryID?: string,
     newSportsCategoryAbbr?: string,
     newSportsCategoryStatus?: SportsCategoryStatus,
+    newSportsCategoryTimestamp?: string,
     requiredScore: number,
     colorUsed: number,
     lastColor: CheckersColor,
@@ -169,6 +170,10 @@ export const playerStatsSchema = {
                 "newSportsCategoryStatus": {
                     bsonType: "string",
                     description: "Поле newSportsCategoryStatus должно быть строкой"
+                },
+                "newSportsCategoryTimestamp": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryTimestamp должно быть строкой"
                 },
                 "competitorsID": {
                     bsonType: "array",

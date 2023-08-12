@@ -39,13 +39,10 @@ class SportsCategoryService extends BaseService {
         return await this.getSportCategoryByID(id); */
     }
 
-    public async getPrevCategory(currentCategoryID: string) {
-        const sportCategory = await this._sportsCategoryRepository.getSportCategoryByID(currentCategoryID);
-        if(!sportCategory) return;
-
+    public async getPrevCategory(currentCategoryIndex: number) {
         const sportCategories = await this._sportsCategoryRepository.getSportCategories();
 
-        return sportCategories.find(category => category.index === sportCategory?.index - 1);
+        return sportCategories.find(category => category.index === currentCategoryIndex - 1);
 
     }
 

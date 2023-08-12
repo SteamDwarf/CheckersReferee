@@ -12,6 +12,7 @@ export enum SportsCategoryStatus {
 }
 
 //TODO добавить город и полное название разряда
+//TODO добавить индекс разряда и время получения нового разряда
 export interface IPlayer {
     firstName: string,                  //Имя
     middleName?: string,                 //Отчество
@@ -26,6 +27,7 @@ export interface IPlayer {
     newSportsCategoryID: string,
     newSportsCategoryAbbr: string,
     newSportsCategoryStatus: SportsCategoryStatus,
+    newSportsCategoryTimestamp?: string,
     sportsOrganization?: string,         //Спортивная организация
     currentAdamovichRank: number,       //Текущий рейтинг Адамовича
     previousAdamovichRank?: number      //Предыдущий рейтинг Адамовича
@@ -110,6 +112,10 @@ export const playersSchema = {
                 "newSportsCategoryStatus": {
                     bsonType: "string",
                     description: "Поле newSportsCategoryStatus (статус нового спортивного разряда ) является обязательным и должно быть строкой"
+                },
+                "newSportsCategoryTimestamp": {
+                    bsonType: "string",
+                    description: "Поле newSportsCategoryTimestamp должно быть строкой"
                 },
                 "sportsOrganization": {
                     bsonType: "string",

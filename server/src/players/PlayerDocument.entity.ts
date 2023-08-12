@@ -1,3 +1,4 @@
+import SportsCategoryDocument from "../sportsCategory/SportsCategoryDocument.entity";
 import { Gender, IPlayerWithId, SportsCategoryStatus } from "./players.model";
 
 class PlayerDocument {
@@ -11,9 +12,10 @@ class PlayerDocument {
     private readonly _playerStatsIDs: string[];
     private readonly _sportsCategoryID: string;
     private readonly _sportsCategoryAbbr: string;
-    private readonly _newSportsCategoryID: string;
-    private readonly _newSportsCategoryAbbr: string;
-    private readonly _newSportsCategoryStatus: SportsCategoryStatus;
+    private  _newSportsCategoryID: string;
+    private  _newSportsCategoryAbbr: string;
+    private  _newSportsCategoryStatus: SportsCategoryStatus;
+    private  _newSportsCategoryTimestamp: string;
     private readonly _sportsOrganization?: string;
     private  _currentAdamovichRank: number;
     private  _previousAdamovichRank?: number;
@@ -31,6 +33,7 @@ class PlayerDocument {
         this._newSportsCategoryID = playerData.newSportsCategoryID;
         this._newSportsCategoryAbbr = playerData.newSportsCategoryAbbr;
         this._newSportsCategoryStatus = playerData.newSportsCategoryStatus;
+        this._newSportsCategoryTimestamp = playerData.newSportsCategoryTimestamp || "";
         this._playerStatsIDs = playerData.playerStatsIDs,
         this._currentAdamovichRank = playerData.currentAdamovichRank;
         this._sportsOrganization = playerData.sportsOrganization;
@@ -77,6 +80,9 @@ class PlayerDocument {
 
     public get newSportsCategoryStatus(): SportsCategoryStatus {
         return this._newSportsCategoryStatus;
+    }
+    public get newSportsCategoryTimestamp(): string {
+        return this._newSportsCategoryTimestamp;
     }
     
     public get sportsOrganization() : string | undefined {
@@ -134,6 +140,17 @@ class PlayerDocument {
         if(playerStatsID) {
             this._playerStatsIDs.push(playerStatsID);
         }
+    }
+
+    public setNewSportCategory( 
+        newSportCategory: SportsCategoryDocument,
+        newSportsCategoryStatus: SportsCategoryStatus,
+        newSportsCategoryTimestamp: string
+    ){
+        this._newSportsCategoryID = newSportCategory.id;
+        this._newSportsCategoryAbbr = newSportCategory.shortTitle;
+        this._newSportsCategoryStatus = newSportsCategoryStatus;
+        this._newSportsCategoryTimestamp = newSportsCategoryTimestamp;
     }
 }
 

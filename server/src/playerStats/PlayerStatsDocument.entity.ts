@@ -28,6 +28,7 @@ class PlayerStatsDocument {
     private _newSportsCategoryID: string;
     private _newSportsCategoryAbbr: string;
     private _newSportsCategoryStatus: SportsCategoryStatus;
+    private _newSportsCategoryTimestamp: string;
     private readonly _requiredScore: number;
     private  _colorUsed: number;
     private  _lastColor: CheckersColor;
@@ -56,6 +57,7 @@ class PlayerStatsDocument {
         this._newSportsCategoryID = playerStats.newSportsCategoryID || "";
         this._newSportsCategoryAbbr = playerStats.newSportsCategoryAbbr || "";
         this._newSportsCategoryStatus = playerStats.newSportsCategoryStatus || SportsCategoryStatus.gray;
+        this._newSportsCategoryTimestamp = playerStats.newSportsCategoryTimestamp || "";
         this._requiredScore = playerStats.requiredScore;
         this._colorUsed = playerStats.colorUsed;
         this._lastColor = playerStats.lastColor;
@@ -176,9 +178,12 @@ class PlayerStatsDocument {
     public get newSportsCategoryStatus(): SportsCategoryStatus {
         return this._newSportsCategoryStatus;
     }
-
+    
     public set newSportsCategoryStatus(status: SportsCategoryStatus) {
         this._newSportsCategoryStatus = status;
+    }
+    public get newSportsCategoryTimestamp(): string {
+        return this._newSportsCategoryTimestamp;
     }
 
     public get colorUsed(): number {
@@ -230,6 +235,7 @@ class PlayerStatsDocument {
             newSportsCategoryID: this.newSportsCategoryID,
             newSportsCategoryAbbr: this.newSportsCategoryAbbr,
             newSportsCategoryStatus: this._newSportsCategoryStatus,
+            newSportsCategoryTimestamp: this._newSportsCategoryTimestamp,
             requiredScore: this.requiredScore,
             colorUsed: this.colorUsed,
             lastColor: this.lastColor,
@@ -267,6 +273,7 @@ class PlayerStatsDocument {
     ){
         this._newSportsCategoryID = newSportCategory.id;
         this._newSportsCategoryAbbr = newSportCategory.shortTitle;
+        this._newSportsCategoryTimestamp = Date.now().toString();
 
         if(oldSportCategory.index > newSportCategory.index) {
             this._newSportsCategoryStatus = SportsCategoryStatus.red;

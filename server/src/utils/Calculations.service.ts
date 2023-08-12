@@ -96,91 +96,105 @@ class Calculations extends BaseService {
     }
 
 
-    public async calculateSportsCategory(
+    public async calculateSportCategory(
         playerStats: PlayerStatsDocument, 
-        playersStats: PlayerStatsDocument[],
-        toursCount: number
+        currentCategory: SportsCategoryDocument,
+        competitors: PlayerStatsDocument[]
+        //toursCount: number
     ) {
-        console.log("Calculate category======================");
-        const currentCategory = await this._sportsCategoryService.getSportCategoryByID(playerStats.sportsCategoryID);
-        if(!currentCategory) throw new NotFoundError("По указанному id не найден спортивный разряд");
-        let newCategory = currentCategory;
+        //console.log("Calculate category======================");
+        //const currentCategory = await this._sportsCategoryService.getSportCategoryByID(playerStats.sportsCategoryID);
+        //if(!currentCategory) throw new NotFoundError("По указанному id не найден спортивный разряд");
+        let category = currentCategory;
         console.log(currentCategory.title);
 
         if(currentCategory.shortTitle === SportCategoriesAbbr.GR || 
             currentCategory.shortTitle === SportCategoriesAbbr.MS
-        ) return;
+        ) {
+            return currentCategory;
+        }
 
-        const competitors = playerStats.competitorsID.map(id => {
+        /* const competitors = playerStats.competitorsID.map(id => {
             return playersStats.find(stat => stat.id === id);
-        })
+        }); */
+
+
+
+        //TODO отфильтровать по соперникам
+
+        const toursCount = competitors.length;
+        //console.log("toursCount", toursCount);
         const categoryCoefficient = await this.calculateCategoryCoefficient(competitors);
-        console.log("categoryCoefficient", categoryCoefficient);
+        //console.log("categoryCoefficient", categoryCoefficient);
         const tournamentCoeffficient = categoryCoefficient / toursCount;
         const requiredTournamentCoefficient = currentCategory.requiredTournamentCoefficient || 0;
-        console.log("tournamentCoefficient", tournamentCoeffficient);
+        //console.log("tournamentCoefficient", tournamentCoeffficient);
 
         if(currentCategory.shortTitle === SportCategoriesAbbr.UD ||
             requiredTournamentCoefficient < tournamentCoeffficient
         ) {
             const nearestCategory = await this._sportsCategoryService.getNearestCategory(tournamentCoeffficient);
             if(!nearestCategory) throw new NotFoundError("По указанному id не найден спортивный разряд");
-            newCategory = nearestCategory;
-            console.log("nearestCategory", newCategory);
+            category = nearestCategory;
+            //console.log("nearestCategory", category);
         }
         
-        await this.changeSportCategory(
+        return await this.getNewCategory(
             playerStats,
-            currentCategory,
-            newCategory,
+            //currentCategory,
+            //newCategory,
+            category,
             tournamentCoeffficient,
             competitors,
         );
     }
 
-    private async changeSportCategory(
+    private async getNewCategory(
         playerStats: PlayerStatsDocument,
-        currentCategory: SportsCategoryDocument, 
-        newCategory: SportsCategoryDocument, 
+        //currentCategory: SportsCategoryDocument, 
+        category: SportsCategoryDocument, 
         tournamentCoefficient: number,
         competitors: (PlayerStatsDocument | undefined)[],
-    ) {
-        console.log("\nchangeSportCategory", newCategory.title);
-        console.log("name", playerStats.playerName);
+    ): Promise<SportsCategoryDocument> {
+        //console.log("\nchangeSportCategory", category.title);
+        //console.log("name", playerStats.playerName);
 
-        if(newCategory.shortTitle === SportCategoriesAbbr.UD) {
+        //console.log("category tfc", category.requiredTournamentCoefficient);
+        //console.log("tfc", tournamentCoefficient);
+        if(category.shortTitle === SportCategoriesAbbr.UD) {
             //playerStats.newSportsCategoryStatus = SportsCategoryStatus.red;
-            playerStats.setNewSportCategory(currentCategory, newCategory);
-            console.log("this is undischarged");
-            return;
+            //playerStats.setNewSportCategory(currentCategory, newCategory);
+            //console.log("this is undischarged");
+            return category;
         }
-        console.log("category tfc", newCategory.requiredTournamentCoefficient);
-        console.log("tfc", tournamentCoefficient);
+        
         //TODO если не совпадают турнирные коэф находим подходящий
         //console.log("compare tfcs", currentCategory?.requiredTournamentCoefficient && 
         //tournamentCoefficient <= currentCategory?.requiredTournamentCoefficient);
-        if(newCategory?.requiredTournamentCoefficient && 
-            tournamentCoefficient <= newCategory?.requiredTournamentCoefficient
-        ) {
+        
             //console.log("all compared");
-            const norm = await this.calculateCategoryNorm(newCategory, competitors);
-            console.log("norm", norm);
-            if(playerStats.normScore >= norm) {
-                console.log("normScore", playerStats.normScore);
-                console.log("playerStats.normScore >= norm", playerStats.normScore >= norm);
-                //playerStats.newSportsCategoryStatus = SportsCategoryStatus.green;
-                playerStats.setNewSportCategory(currentCategory, newCategory);
-               /*  console.log(playerStats);
-                console.log("\n"); */
-                console.log("\n");
-            } else {
-                console.log("playerStats.score < norm");
-                const prevCategory = await this._sportsCategoryService.getPrevCategory(newCategory.id);
-                if(!prevCategory) return;
+        const norm = await this.calculateCategoryNorm(category, competitors);
+        //console.log("norm", norm);
+        if(playerStats.normScore >= norm) {
+           // console.log("normScore", playerStats.normScore);
+            //console.log("playerStats.normScore >= norm", playerStats.normScore >= norm);
+            //playerStats.newSportsCategoryStatus = SportsCategoryStatus.green;
+            //playerStats.setNewSportCategory(currentCategory, newCategory);
+            /*  console.log(playerStats);
+            console.log("\n"); */
+            console.log("\n");
+            return category;
+        } else {
+            //console.log("playerStats.score < norm");
+            const prevCategory = await this._sportsCategoryService.getPrevCategory(category.index);
+            //console.log("prevCategory", prevCategory);
+            if(!prevCategory) return category;
 
-                await this.changeSportCategory(playerStats, currentCategory, prevCategory, tournamentCoefficient, competitors);
-            }
+            return await this.getNewCategory(playerStats, prevCategory, tournamentCoefficient, competitors);
+            //await this.changeSportCategory(playerStats, currentCategory, prevCategory, tournamentCoefficient, competitors);
         }
+
+        //return category;
     }
 
     private async calculateCategoryCoefficient(competitors: (PlayerStatsDocument | undefined)[]) {
@@ -203,29 +217,29 @@ class Calculations extends BaseService {
     }
 
     private async calculateCategoryNorm(
-        playerSportCategory: SportsCategoryDocument, 
+        playerCategory: SportsCategoryDocument, 
         competitors: (PlayerStatsDocument | undefined)[]
     ) {
         const norm = await competitors.reduce(async (sum, competitor) => {
-            return this.summinCategoryScore(sum, competitor, playerSportCategory);
+            return this.summinCategoryScore(sum, competitor, playerCategory);
         }, Promise.resolve(0));
-        console.log("raw norm", norm);
+        //console.log("raw norm", norm);
         return this.round(norm) * 2;
     }
 
     private async summinCategoryScore(
         sum: Promise<number>, 
         competitor: PlayerStatsDocument | undefined,
-        playerSportCategory: SportsCategoryDocument
+        playerCategory: SportsCategoryDocument
     ) {
         if(!competitor) return sum;
 
         const score = await this._sportsCategoryService.getSportsCategoryScore(
-            playerSportCategory,
+            playerCategory,
             competitor?.sportsCategoryID
         );
         const sumScore = await sum;
-        console.log("sumScore", sumScore);
+        //console.log("sumScore", sumScore);
 
         return Promise.resolve(sumScore + score);
     }

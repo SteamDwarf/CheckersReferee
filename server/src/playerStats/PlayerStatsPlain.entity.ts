@@ -24,6 +24,7 @@ class PlayerStatsPlain {
     public readonly newSportsCategoryID: string;
     public readonly newSportsCategoryAbbr: string;
     public readonly newSportsCategoryStatus: SportsCategoryStatus;
+    public readonly newSportsCategoryTimestamp: string;
     public readonly requiredScore: number;
     public readonly colorUsed: number;
     public readonly lastColor: CheckersColor;
@@ -51,6 +52,7 @@ class PlayerStatsPlain {
         this.newSportsCategoryID = "";
         this.newSportsCategoryAbbr = "";
         this.newSportsCategoryStatus = player.newSportsCategoryStatus;
+        this.newSportsCategoryTimestamp = player.newSportsCategoryTimestamp;
         this.requiredScore = 0;
         this.colorUsed = 0;
         this.lastColor = CheckersColor.black;
