@@ -4,19 +4,21 @@ import Utils from "../utils/Utils";
 import Draw from "./Draw";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 import GamePlain from "../games/GamePlain.entity";
+import TournamentDocument from "../tournaments/TournamentDocument.entity";
+import { InputError } from "../errors/Input.error";
 
 class SwissDraw extends Draw {
     constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
         super(utils);
     }
 
-    public async makeStartDraw(tournamentID: string, sortedPlayersStats: PlayerStatsDocument[]) {
+    public async makeStartDraw(tournament: TournamentDocument, sortedPlayersStats: PlayerStatsDocument[]) {
         //const sortedPlayersStats = this.playerStatsService.getSortedPlayersStats(playersStats);
         const playersData = sortedPlayersStats.length % 2 === 0 ? 
                             [...sortedPlayersStats] : 
                             [...sortedPlayersStats, this.fakePlayer];
         
-        const toursCount = this.getToursCount(sortedPlayersStats.length);
+        const toursCount = tournament.toursCount || this.getToursCount(sortedPlayersStats.length);
         const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
         const games: GamePlain[] = [];
 
@@ -25,7 +27,7 @@ class SwissDraw extends Draw {
             for(let j = 0; j < group[0].length; j++) {
                 const player1 = group[0][j];
                 const player2 = group[1][j];
-                const game = await this.makeGame(tournamentID, player1, player2);
+                const game = await this.makeGame(tournament.id, player1, player2);
             
                // player1.lastColor = game.player1CheckersColor;
                 player1.addCompetitor(player2.id);
@@ -172,12 +174,17 @@ class SwissDraw extends Draw {
         const unPairedPlayers = [];
         const subGroup1 = group[0];
         const subGroup2 = group[1];
+
         let unpairedPlayer: undefined | PlayerStatsDocument = undefined;
+        let count = 0;
     
     
         while(subGroup1.length > 0) {
             const player1: PlayerStatsDocument | undefined = unpairedPlayer ? unpairedPlayer : subGroup1.shift();
             if(!player1) continue;
+
+            count++;
+            if(count > 10) throw new InputError("Не удалось подобрать соперников!");
     
             const player2 = this.findCompetitor(player1, group);
             if(!player2) {

@@ -193,11 +193,11 @@ class TournamentService extends BaseService {
     private async makeStartDraw(tournament: TournamentDocument, playersStats: PlayerStatsDocument[]) {
         if(tournament.tournamentSystem === TournamentSystems.swiss) {
             return this._swissDraw.makeStartDraw(
-                tournament.id.toString(), 
+                tournament, 
                 this._playerStatsService.sortPlayersStatsByAdamovich(playersStats)
             );
         } else  {
-            return this._roundRobinDraw.makeStartDraw(tournament.id.toString(), playersStats);
+            return this._roundRobinDraw.makeStartDraw(tournament, playersStats);
         } 
     }
 }

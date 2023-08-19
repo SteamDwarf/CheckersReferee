@@ -4,6 +4,7 @@ import { DataBaseError } from "./DataBase.error";
 import { InternalServerError } from "./InternalServer.error";
 import { injectable } from "inversify";
 import { MongoServerError } from "mongodb";
+import { AuthError } from "./Auth.error";
 
 @injectable()
 class ErrorHandler {
@@ -26,6 +27,8 @@ class ErrorHandler {
             if(error.message === "Document failed validation") {
                 console.log((error as MongoServerError)?.errInfo?.details?.schemaRulesNotSatisfied[0]?.propertiesNotSatisfied);
                 return new DataBaseError(error);
+            } else if(error.name === "JsonWebTokenError") {
+                return new AuthError("Недостаточно прав доступа.");
             }
     
             return new InternalServerError();

@@ -28,12 +28,18 @@ const PORT = process.env.PORT || '5000';
 const URI = process.env.URI || 'http://localhost';
 const MONGO_URI = process.env.MONGO_URI || "127.0.0.1:27017";
 const DOCUMENTS_PATH = path.resolve(__dirname, "assets/documents");
+const ACCESS_SECRET = process.env.ACCESS_SECRET || "";
+const REFRESH_SECRET = process.env.REFRESH_SECRET || "";
+const COOKIE_SECRET = process.env.COOKIE_SECRET || "";
 
 const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<string>(MAIN.AppURI).toConstantValue(URI);
     bind<string>(MAIN.AppPort).toConstantValue(PORT);
     bind<string>(MAIN.DatabaseURI).toConstantValue(MONGO_URI);
     bind<string>(MAIN.DocumentsPath).toConstantValue(DOCUMENTS_PATH);
+    bind<string>(MAIN.AccessSecret).toConstantValue(ACCESS_SECRET);
+    bind<string>(MAIN.RefreshSecret).toConstantValue(REFRESH_SECRET);
+    bind<string>(MAIN.CookieSecret).toConstantValue(COOKIE_SECRET);
 
     bind<DataBase>(MAIN.Database).to(DataBase).inSingletonScope();
     bind<DocumentsDatabase>(MAIN.DocumentsDatabase).to(DocumentsDatabase).inSingletonScope();

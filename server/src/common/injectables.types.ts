@@ -3,6 +3,9 @@ export const MAIN = {
     AppPort: Symbol.for("AppPort"),
     DatabaseURI: Symbol.for("DatabaseURI"),
     DocumentsPath: Symbol.for("DocumentsPath"),
+    AccessSecret: Symbol.for("AccessSecret"),
+    RefreshSecret: Symbol.for("RefreshSecret"),
+    CookieSecret: Symbol.for("CookieSecret"),
     Database: Symbol.for("Database"),
     DocumentsDatabase: Symbol.for("DocumentsDatabase"),
     App: Symbol.for("App"),
@@ -23,6 +26,7 @@ export const REPOSITORIES = {
 
 export const SERVICES = {
     Auth: Symbol.for("AuthService"),
+    JWT: Symbol.for("JWT"),
     SportsCategory: Symbol.for("SportsCategoryService"),
     Player: Symbol.for("PlayerService"),
     PlayerStats: Symbol.for("PlayerStatsService"),

@@ -4,22 +4,23 @@ import Utils from "../utils/Utils";
 import Draw from "./Draw";
 import PlayerStatsDocument from "../playerStats/PlayerStatsDocument.entity";
 import GamePlain from "../games/GamePlain.entity";
+import TournamentDocument from "../tournaments/TournamentDocument.entity";
 
 class RoundRobinDraw extends Draw{
     constructor(gameService: GameService, playerStatsService: PlayerStatsService, utils: Utils) {
         super(utils);
     }
 
-    public async makeStartDraw(tournamentID: string, playersStats: PlayerStatsDocument[]) {
+    public async makeStartDraw(tournament: TournamentDocument, playersStats: PlayerStatsDocument[]) {
         const playersData = playersStats.length % 2 === 0 ? [...playersStats] : [...playersStats, this.fakePlayer];
-        const toursCount = playersData.length - 1;
+        const toursCount = tournament.toursCount || playersData.length - 1;
         const games: GamePlain[] = [];
 
         for(let i = 0; i < toursCount; i++) {
             for (let j = 0; j < playersData.length / 2; j++) {
                 const player1 = playersData[j];
                 const player2 = playersData[playersData.length - 1 - j];
-                const game = await this.makeGame(tournamentID, player1, player2);
+                const game = await this.makeGame(tournament.id, player1, player2);
 
                 //player1.lastColor = game.player1CheckersColor;
                 player1.addCompetitor(player2.id);

@@ -3,24 +3,31 @@ import BaseController from "../common/Base.controller";
 import ControllerRoute from "../common/ControllerRouter";
 import PlayerService from "./Players.service";
 import { inject, injectable } from "inversify";
-import { SERVICES } from "../common/injectables.types";
+import { MIDDLEWARES, SERVICES } from "../common/injectables.types";
 import ValidateMiddleware from "../common/Validate.middleware";
 import PlayerCreateDTO from "./dtos/PlayerCreate.dto";
 import PlayerUpdateDTO from "./dtos/PlayerUpdate.dto";
 import PlayerExistMiddleware from "./middlewares/PlayerExist.middleware";
+import AuthMiddleware from "../auth/Auth.middleware";
+import JWTService from "../jwt/JWT.service";
 
 @injectable()
 class PlayerController extends BaseController{
     private readonly _playerExistMiddleware: PlayerExistMiddleware;
 
-    constructor(@inject(SERVICES.Player) private readonly _playerService: PlayerService) {
+    constructor(
+        @inject(SERVICES.Player) private readonly _playerService: PlayerService,
+        @inject(MIDDLEWARES.Auth) private readonly _authMiddleware: AuthMiddleware
+    ) {
         super();
         this._playerExistMiddleware = new PlayerExistMiddleware(this._playerService);
 
         this.initRoutes([
             new ControllerRoute('/', 'get', [], this.get),
             new ControllerRoute('/', 'post', 
-                [new ValidateMiddleware(PlayerCreateDTO)], 
+                [
+                    new ValidateMiddleware(PlayerCreateDTO),
+                ], 
                 this.create
             ),
             new ControllerRoute('/:id', 'get', [], this.getById),
@@ -32,7 +39,9 @@ class PlayerController extends BaseController{
                 this.update
             ),
             new ControllerRoute('/:id', 'delete', 
-                [this._playerExistMiddleware], 
+                [
+                    this._playerExistMiddleware
+                ], 
                 this.delete
             ),
         ])

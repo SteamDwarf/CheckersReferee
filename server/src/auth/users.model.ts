@@ -9,6 +9,7 @@ export interface IUserWithID {
     _id: ObjectId,
     login: string,
     password: string,
+    token?: string,
     role?: UserRoles
 }
 
@@ -30,6 +31,10 @@ export const userSchema = {
                 "password": {
                     bsonType: "string",
                     description: "Поле password является обязательным и должно быть строкой"
+                },
+                "token": {
+                    bsonType: "string",
+                    description: "Поле token должно быть строкой"
                 },
                 "role": {
                     bsonType: "string",

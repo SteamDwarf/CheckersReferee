@@ -1,4 +1,4 @@
-import { IsArray, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { ValidationMessages } from "../../common/enums";
 import { SportsDesciplines, TournamentSystems } from "../tournaments.model";
 
@@ -58,6 +58,10 @@ class TournamentCreateDTO {
     @IsOptional()
     @IsString({message: ValidationMessages.IsString})
     timeControl?: string;
+
+    @IsOptional()
+    @IsNumber({}, {message: ValidationMessages.IsNumber})
+    toursCount?: number;
 
     @IsNotEmpty({message: ValidationMessages.IsNotEmpty})
     @IsIn(Object.values(TournamentSystems), {message: ValidationMessages.IsIn(Object.values(TournamentSystems))})

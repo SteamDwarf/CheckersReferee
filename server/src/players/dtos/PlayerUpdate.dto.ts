@@ -58,6 +58,8 @@ class PlayerUpdateDTO {
     @IsNumber({}, {message: ValidationMessages.IsNumber})
     @Min(255, {message: ValidationMessages.Min(255)})
     previousAdamovichRank?: number;
+
+    //TODO добавить newSportCategory
 }
 
 export default PlayerUpdateDTO;
