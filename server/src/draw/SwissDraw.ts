@@ -13,14 +13,18 @@ class SwissDraw extends Draw {
     }
 
     public async makeStartDraw(tournament: TournamentDocument, sortedPlayersStats: PlayerStatsDocument[]) {
-        //const sortedPlayersStats = this.playerStatsService.getSortedPlayersStats(playersStats);
-        const playersData = sortedPlayersStats.length % 2 === 0 ? 
-                            [...sortedPlayersStats] : 
-                            [...sortedPlayersStats, this.fakePlayer];
+        const games: GamePlain[] = [];
+        let playersData = [...sortedPlayersStats];
+
+        if(sortedPlayersStats.length % 2 !== 0) {
+            const {game, playersStats} = await this.excludeFreePlayer(playersData);
+
+            if(game) games.push(game);
+            playersData = playersStats;
+        }
         
         const toursCount = tournament.toursCount || this.getToursCount(sortedPlayersStats.length);
         const splitedPlayers = this.utils.splitArrayByItemsCount(playersData, 6).map(array => this.utils.splitArrayBySubArraysCount(array, 2));
-        const games: GamePlain[] = [];
 
         for(let i = 0; i < splitedPlayers.length; i++) {
             const group = splitedPlayers[i];
@@ -29,15 +33,13 @@ class SwissDraw extends Draw {
                 const player2 = group[1][j];
                 const game = await this.makeGame(tournament.id, player1, player2);
             
-               // player1.lastColor = game.player1CheckersColor;
                 player1.addCompetitor(player2.id);
 
-                //player2.lastColor = game.player2CheckersColor;
                 player2.addCompetitor(player1.id);
 
-                console.log(player1.playerName, player1.lastColor, player1.colorUsed);
+               /*  console.log(player1.playerName, player1.lastColor, player1.colorUsed);
                 console.log(player2.playerName, player2.lastColor, player2.colorUsed);
-                console.log("==========================================================")
+                console.log("==========================================================") */
 
                 games.push(game);     
             }
@@ -47,36 +49,53 @@ class SwissDraw extends Draw {
         return {games, toursCount};
     }
 
-    public async makeDrawAfterTour(tournamentID: string, playersStats: PlayerStatsDocument[]) {
-        //let sortedPlayers = this.playerStatsService.getSortedPlayersStats(playersStats);
-        const sortedPlayers = playersStats.length % 2 === 0 ? 
-                        [...playersStats] : 
-                        [...playersStats, this.fakePlayer];
+    public async makeDrawAfterTour(tournamentID: string, sortedPlayersStats: PlayerStatsDocument[]) {
+        const games: GamePlain[] = [];
+        let playersData = [...sortedPlayersStats];
 
-        //this.fakePlayer.competitorsID = [];
-        console.log(this.fakePlayer);
+        if(sortedPlayersStats.length % 2 !== 0) {
+            const {game, playersStats} = await this.excludeFreePlayer(playersData);
 
-        const scoreGroups: PlayerStatsDocument[][] = this.makeScoreGroups(sortedPlayers);
+            if(game) games.push(game);
+            playersData = playersStats;
+        }
+
+        const scoreGroups: PlayerStatsDocument[][] = this.makeScoreGroups(playersData);
         const splitedScoreGroups = scoreGroups.map(scoreGroup => this.utils.splitArrayBySubArraysCount(scoreGroup, 2));
         const pairs = this.makeDraw(splitedScoreGroups);
-        const games = [];
 
         for(const pair of pairs) {
             const game = await this.makeGame(tournamentID, pair[0], pair[1]);
 
             games.push(game);
 
-            //pair[0].lastColor = game.player1CheckersColor;
-            //pair[1].lastColor = game.player2CheckersColor;
 
-            console.log(pair[0].playerName, pair[0].lastColor, pair[0].colorUsed);
+            /* console.log(pair[0].playerName, pair[0].lastColor, pair[0].colorUsed);
             console.log(pair[1].playerName, pair[1].lastColor, pair[1].colorUsed);
             console.log(pair[0].playerName, "score:", pair[0].score);
             console.log(pair[1].playerName, "score", pair[1].score);
-            console.log("==========================================");
+            console.log("=========================================="); */
         }
 
         return games;
+    }
+
+    private async excludeFreePlayer(sortedPlayersStats: PlayerStatsDocument[]) {
+        for(let i = sortedPlayersStats.length - 1; i >= 0; i-- ) {
+            const player = sortedPlayersStats[i];
+
+            if(!player.competitorsID.includes(this.fakePlayer.id)) {
+                const game = await this.makeGame(player.tournamentID, this.fakePlayer, player);
+                let playersStats = [...sortedPlayersStats];
+
+                player.addCompetitor(this.fakePlayer.id);
+                playersStats = playersStats.filter(p => p.id !== player.id);
+
+                return {game, playersStats};
+            }
+        }
+
+        return {game: undefined, playersStats: sortedPlayersStats}
     }
 
     private getToursCount (playersCount: number) {
