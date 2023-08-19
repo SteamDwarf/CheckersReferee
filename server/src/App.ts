@@ -12,6 +12,8 @@ import GameController from './games/Games.controller';
 import { inject, injectable } from 'inversify';
 import { CONTROLLERS, MAIN, MIDDLEWARES } from './common/injectables.types';
 import DocumentsController from './documents/Documents.controller';
+import cookieParser from 'cookie-parser';
+
 
 @injectable()
 class App {
@@ -20,6 +22,7 @@ class App {
     constructor(
         @inject(MAIN.AppPort) private readonly _port: string, 
         @inject(MAIN.AppURI) private readonly _uri: string, 
+        @inject(MAIN.CookieSecret) private readonly _cookieSecret: string, 
         @inject(MAIN.Database) private readonly _db: DataBase,
         @inject(CONTROLLERS.Auth) private readonly _authController: AuthController, 
         @inject(CONTROLLERS.SportsCategory) private readonly _sportsCategoryController: SportsCategoryController,

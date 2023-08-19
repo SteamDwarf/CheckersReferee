@@ -18,12 +18,5 @@
   "bugs": {
     "url": "https://gitlab.com/web840/CheckersReferee/issues"
   },
-  "homepage": "https://gitlab.com/web840/CheckersReferee#readme",
-  "dependencies": {
-    "jsonwebtoken": "^9.0.1"
-  },
-  "devDependencies": {
-    "@types/cookie-parser": "^1.4.3",
-    "@types/jsonwebtoken": "^9.0.2"
-  }
+  "homepage": "https://gitlab.com/web840/CheckersReferee#readme"
 }
