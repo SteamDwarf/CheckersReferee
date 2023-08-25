@@ -44,7 +44,7 @@ class TournamentPlain {
         this.referees = tournamentData.referees || [];
         this.coaches = tournamentData.coaches || [];
         this.timeControl = tournamentData.timeControl || "";
-        this.toursCount = 0;
+        this.toursCount = tournamentData.toursCount || 0;
         this.currentTour = 0;
         this.tournamentSystem = tournamentData.tournamentSystem;
         this.playersIDs = tournamentData.playersIDs || [];

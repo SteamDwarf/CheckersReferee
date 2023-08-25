@@ -31,6 +31,8 @@ const DOCUMENTS_PATH = path.resolve(__dirname, "assets/documents");
 const ACCESS_SECRET = process.env.ACCESS_SECRET || "";
 const REFRESH_SECRET = process.env.REFRESH_SECRET || "";
 const COOKIE_SECRET = process.env.COOKIE_SECRET || "";
+const ACCESS_TOKEN_LIFE = process.env.ACCESS_TOKEN_LIFE || "15m";
+const REFRESH_TOKEN_LIFE = process.env.REFRESH_TOKEN_LIFE || "30d";
 
 const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<string>(MAIN.AppURI).toConstantValue(URI);
@@ -40,6 +42,8 @@ const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<string>(MAIN.AccessSecret).toConstantValue(ACCESS_SECRET);
     bind<string>(MAIN.RefreshSecret).toConstantValue(REFRESH_SECRET);
     bind<string>(MAIN.CookieSecret).toConstantValue(COOKIE_SECRET);
+    bind<string>(MAIN.AccessTokenLife).toConstantValue(ACCESS_TOKEN_LIFE);
+    bind<string>(MAIN.RefreshTokenLife).toConstantValue(REFRESH_TOKEN_LIFE);
 
     bind<DataBase>(MAIN.Database).to(DataBase).inSingletonScope();
     bind<DocumentsDatabase>(MAIN.DocumentsDatabase).to(DocumentsDatabase).inSingletonScope();

@@ -8,7 +8,7 @@ import { IJWTPayload } from "../common/interfaces";
 @injectable()
 class JWTService extends BaseService {
 
-    public sign(login: string, secret: string):Promise<string> {
+    public sign(login: string, secret: string, expiresIn: string):Promise<string> {
         return new Promise<string>((resolve, reject) => {
             sign(
                 {
@@ -17,7 +17,8 @@ class JWTService extends BaseService {
                 },
                 secret,
                 {
-                    algorithm: "HS256"
+                    algorithm: "HS256",
+                    expiresIn
                 },
                 ((error, token) => {
                     if(error) reject(error);

@@ -27,7 +27,7 @@ export type DocumentTypes = IPlayer |
 export type DBCollections = Collection | Collection<OptionalId<IUserWithID>>;
 
 export interface IDBCollections {
-    users?: Collection<OptionalId<IUserWithID>>,
+    users?: Collection,
     sportsCategories?: Collection,
     players?: Collection,
     tournaments?: Collection,

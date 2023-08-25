@@ -6,6 +6,9 @@ export const MAIN = {
     AccessSecret: Symbol.for("AccessSecret"),
     RefreshSecret: Symbol.for("RefreshSecret"),
     CookieSecret: Symbol.for("CookieSecret"),
+    AccessTokenLife: Symbol.for("AccessTokenLife"),
+    RefreshTokenLife: Symbol.for("RefreshTokenLife"),
+
     Database: Symbol.for("Database"),
     DocumentsDatabase: Symbol.for("DocumentsDatabase"),
     App: Symbol.for("App"),

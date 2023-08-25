@@ -20,15 +20,27 @@ class AuthController extends BaseController{
                 new ControllerRoute('/', 'post', 
                     [new ValidateMiddleware(UserAuthDTO)], 
                     this.auth
+                ),
+                new ControllerRoute('/refresh', 'get',
+                    [],
+                    this.refresh
                 )
             ]
         )
     }
 
     private async auth (request: Request, response: Response){
-        const userDocument = await this._authService.auth(request.body);
+        const {login, accessToken, refreshToken} = await this._authService.auth(request.body);
 
-        response.json(userDocument.data);
+        response.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000});
+        response.json({login, accessToken});
+    }
+
+    private async refresh(request: Request, response: Response) {
+        const cookies = request.cookies;
+        const accessToken = await this._authService.refresh(cookies);
+
+        response.json({accessToken});
     }
 }
 

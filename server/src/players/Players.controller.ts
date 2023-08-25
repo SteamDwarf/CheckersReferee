@@ -26,6 +26,7 @@ class PlayerController extends BaseController{
             new ControllerRoute('/', 'get', [], this.get),
             new ControllerRoute('/', 'post', 
                 [
+                    //this._authMiddleware,
                     new ValidateMiddleware(PlayerCreateDTO),
                 ], 
                 this.create
@@ -40,6 +41,7 @@ class PlayerController extends BaseController{
             ),
             new ControllerRoute('/:id', 'delete', 
                 [
+                    //this._authMiddleware,
                     this._playerExistMiddleware
                 ], 
                 this.delete

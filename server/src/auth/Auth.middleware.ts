@@ -15,13 +15,14 @@ class AuthMiddleware implements IMiddlewareAsync {
 
     public async execute(request: Request, response: Response, next: NextFunction) {
         const token = request.headers.authorization?.split(" ")[1];
-        
+        //TODO пропускает просроченный token
         try {
             if(token) {
-                await this._jwtService.verify(token, this._secret);
+                const payload = await this._jwtService.verify(token, this._secret);
+                console.log(payload);
                 next();
             }
-            else throw new AuthError("Недостаточно прав доступа. Необходима авторизация.")
+            else throw new AuthError("Вы не авторизованы.")
         } catch(error) {
             next(error);
         }

@@ -4,5 +4,6 @@ export enum ErrorNames {
     NOT_FOUND_ERROR = "Данные не найдены",
     SERVER_ERROR = "Ошибка сервера",
     AUTH_ERROR = "Ошибка авторизации",
-    VALIDATE_ERROR = "Ошибка валидации"
+    VALIDATE_ERROR = "Ошибка валидации",
+    FORBIDDEN_ERROR = "Ошибка доступа"
 }
