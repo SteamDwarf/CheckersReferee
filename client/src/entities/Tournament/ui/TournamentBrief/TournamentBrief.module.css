@@ -1,0 +1,51 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    /* width: 350px; */
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+}
+
+.mainInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mainInfo p {
+    margin-bottom: 8px;
+}
+
+.icon {
+    margin-right: 4px;
+    font-size: 14px;
+    color: rgb(59, 89, 152);
+}
+
+.title {
+    max-width: 200px;
+    max-height: 50px;
+    overflow: hidden;
+    font-size: 18px;
+}
+
+.address, .referee, .date, .system {
+    font-size: 12px;
+}
+
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

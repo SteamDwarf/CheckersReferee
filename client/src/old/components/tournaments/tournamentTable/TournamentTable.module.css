@@ -1,0 +1,122 @@
+.subHeader {
+    display: flex;
+    justify-content: center;
+    column-gap: 36px;
+    width: 900px;
+    margin: 0 auto;
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.tableContainer {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    margin-bottom: 16px;
+    /* margin-top: 32px; */
+    font-family: 'Raleway', sans-serif;
+}
+
+.table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    
+}
+
+.table th, .table td {
+    border: 1px solid #4268c0;
+    padding: 4px;
+}
+
+.table th {
+    font-weight: normal;
+}
+
+.noPaddings {
+    padding: 0px !important;
+}
+
+
+.tableHeader {
+    background-color: rgb(231, 241, 255);
+}
+
+.tableHeader th:first-child {
+    /* padding-left: 8px; */
+    border-radius: 4px 0 0 4px;
+}
+.tableHeader th:last-child {
+    border-radius: 0px 4px 4px 0px;
+}
+
+
+/* .td40 {
+    min-width: 40px;
+    max-width: 40px; 
+}
+
+.td20 {
+    min-width: 20px;
+    max-width: 20px;
+} */
+
+.tdNumber {
+    width: 40px;
+}
+
+.tdName {
+    width: 350px;
+    height: 35px;
+}
+
+.tdBirthday {
+    width: 70px;
+}
+
+.tdSportsCategory {
+    width: 70px;
+}
+
+.tdCity {
+    width: 100px;
+}
+
+.tdSportsOrganization {
+    width: 100px;
+}
+
+/* .tdCompetitors {
+    width: 20px;
+} */
+.tdTours {
+    width: 20px;
+    min-width: 85px;
+    padding: 0px !important;
+}
+
+.tdToursTitle {
+    border: none !important;
+    padding-bottom: 1px;
+    padding: 0px !important;
+}
+
+.tdScore {
+    width: 50px;
+}
+
+.tdGorinRank {
+    width: 50px;
+}
+
+.tdAdamovichRank {
+    width: 70px;
+}
+
+.tdPlace {
+    width: 30px;
+}

@@ -1,0 +1,34 @@
+.playersListContainer {
+    width: 980px;
+    margin: 40px auto;
+}
+
+.playersListHeader {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 16px;
+    /* display: flex;
+    justify-content: flex-end;
+    align-items: center; */
+}
+
+/* .playersListFooter {
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 16px;
+    margin-top: 16px;
+} */
+
+.saveContainer {
+    display: flex;
+    column-gap: 16px;
+}
+
+.searchPlayersForm {
+    width: 100%;
+}
+
+/* .playersListTitle {
+    text-align: left;
+} */

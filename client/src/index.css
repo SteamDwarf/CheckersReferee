@@ -1,0 +1,39 @@
+@font-face {
+  font-family: 'Raleway';
+  src: url('assets/fonts/Raleway-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('assets/fonts/Raleway-Bold.ttf');
+  font-weight: bold;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  --container-pd: 24px;
+  --text-color: #535353;
+  --text-size: 16px;
+  --blue-color: #4e9fef;
+
+  /*font-family: 'Raleway', sans-serif;*/
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /* background-color: #fafcff; */
+}
+
+p {
+  color: var(--text-color);
+}
+
+a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+

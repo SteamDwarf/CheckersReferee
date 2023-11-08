@@ -1,0 +1,33 @@
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* width: 100%;
+    height: 100%; */
+    bottom: 0;
+    right: 0;
+    background-color: rgba(65, 65, 65, 0.47);
+}
+
+.contentContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 9%;
+    width: 1020px;
+}
+
+/* .contentContainer > div, .contentContainer > form{
+    position: relative;
+} */
+
+.closeButton {
+    position: absolute;
+    font-size: 56px;
+    color: #fff;
+    z-index: 2;
+    top: -10%;
+    right: -5%;
+    cursor: pointer;
+}

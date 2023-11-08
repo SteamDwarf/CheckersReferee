@@ -1,0 +1,59 @@
+.button {
+    background-color: transparent;
+    outline: none;
+    font-size: 16px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: color 0.3s, background-color 0.3s;
+    
+    cursor: pointer;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+}
+
+.blue {
+    border: 2px solid rgb(91, 140, 255);
+    color: #4874d9;
+}
+
+.blue:hover:not(:disabled) {
+    background-color: #5b8cff;
+    color: #fff;
+}
+
+.blue:disabled {
+    border: 2px solid #b7ccff;
+    color: #b7ccff;
+}
+
+.green {
+    border: 2px solid #048355;
+    color: #048355;
+}
+
+.green:hover:not(:disabled) {
+    background-color: #048355;
+    color: #fff;
+}
+
+.purple {
+    border: 2px solid #8a6adb;
+    color: #8a6adb;
+}
+
+.purple:hover:not(:disabled) {
+    background-color: #8a6adb;
+    color: #fff;
+}
+
+.red {
+    border: 2px solid #ee6055;
+    color: #ee6055;
+}
+
+.red:hover:not(:disabled) {
+    background-color: #ee6055;
+    color: #fff;
+}

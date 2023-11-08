@@ -1,0 +1,15 @@
+.createTournamentPage {
+    width: 400px;
+    margin: 0 auto;
+    margin-bottom: 48px !important;
+}
+
+.title {
+    color: rgb(34, 34, 34);
+}
+
+
+
+.createTournamentForm {
+    margin-bottom: 24px;
+}

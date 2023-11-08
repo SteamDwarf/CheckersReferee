@@ -1,0 +1,24 @@
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.inlineField {
+    /* align-items: center; */
+    column-gap: 8px;
+}
+
+.blockField {
+    flex-direction: column;
+    align-items:flex-start;
+}
+
+.value {
+    text-align: left;
+}
+
+.label {
+    color: #363636;
+    font-weight: 700;
+    text-align: left;
+}

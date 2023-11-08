@@ -1,0 +1,1 @@
+export { TournamentInfoPage } from './TournamentInfoPage.page.tsx';

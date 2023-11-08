@@ -1,0 +1,44 @@
+.playersList {
+    /* position: relative; */
+    display: grid;
+    row-gap: 12px;
+    width: 100%;
+    /* border: 2px solid rgb(93, 154, 238);
+    border-radius: 4px; */
+}
+
+.row {
+    display: grid;
+    column-gap: 18px;
+    /* grid-template-columns: 280px 120px 120px 80px 80px 80px 80px; */   
+    grid-template-columns: 310px 120px 160px 90px 80px 80px;   
+    align-items: center;
+    justify-items: center;
+    color: rgb(54, 54, 54);
+    padding: 6px 12px;
+    /* box-shadow: 0px -1px 8px 0px rgba(112, 112, 112, 1); */
+    border: 2px solid rgb(93, 154, 238);
+    border-radius: 4px;
+}
+
+.header {
+    /* position: fixed; */
+    width: 100%;
+    font-weight: bold;
+    background-color: rgb(231, 241, 255);
+}
+
+.playersContainer {
+    display: grid;
+    row-gap: 12px;
+    /* margin-top: 72px; */
+}
+
+.left {
+    width: 100%;
+    text-align: left;
+}
+
+.button {
+    cursor: pointer;
+}

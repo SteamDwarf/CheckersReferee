@@ -1,0 +1,11 @@
+.container {
+    max-width: 816px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.tournamentsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}

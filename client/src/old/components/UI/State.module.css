@@ -1,0 +1,23 @@
+.loader {
+    font-size: 36px;
+    color: rgb(93, 154, 238);
+}
+
+.state {
+    background-color: transparent;
+    /* color: rgb(54, 54, 54); */
+    font-size: 14px;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 4px;
+}
+
+
+
+.success {
+    background-color: #3EB489;
+}
+
+.error {
+    background-color: #E4717A;
+}

@@ -1,0 +1,1 @@
+export { TournamentDetailsHeader } from './TournamentDetailsHeader.widget';
