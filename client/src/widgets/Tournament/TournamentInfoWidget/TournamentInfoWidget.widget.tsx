@@ -5,6 +5,7 @@ import styles from './TournamentInfoWidget.module.css';
 import { TournamentStatus } from "features/Tournament/TournamentStatus";
 import { LabeledField } from "shared/UIKit/LabeledField";
 import { formatDate } from "shared/lib/dateFormater";
+import { FieldTextType } from "shared/UIKit/Editables/InputField/InputField.ui";
 
 interface ITournamentInfoWidgetProps {
     tournament: ITournament
@@ -35,7 +36,7 @@ export const TournamentInfoWidget:FC<ITournamentInfoWidgetProps> = ({tournament,
                             onSave={(data) => setTournament({...tournament, cp: data})}
                         >
                             <LabeledField label="КП №">{tournament.cp}</LabeledField>
-                        </InputField>
+                        </InputField>    
 
                         <InputField 
                             key={tournament.country}
@@ -67,9 +68,7 @@ export const TournamentInfoWidget:FC<ITournamentInfoWidgetProps> = ({tournament,
                             value={tournament.startDate}
                             onSave={(data) => setTournament({...tournament, startDate: data})}
                         >
-                            <LabeledField label="Дата начала">
-                                {formatDate(tournament.startDate || '')}
-                            </LabeledField>
+                            <LabeledField label="Дата начала">{tournament.startDate}</LabeledField>
                         </InputField>
 
                         <InputField 
@@ -78,14 +77,18 @@ export const TournamentInfoWidget:FC<ITournamentInfoWidgetProps> = ({tournament,
                             value={tournament.endDate}
                             onSave={(data) => setTournament({...tournament, endDate: data})}
                         >
-                            <LabeledField label="Дата окончания">
-                                {formatDate(tournament.endDate || '')}
-                            </LabeledField>
+                            <LabeledField label="Дата окончания">{tournament.endDate}</LabeledField>
                         </InputField>
                     </div>
 
                     <div className={styles.infoColumn}>
-
+                        <InputField 
+                            key={tournament.mainReferee}
+                            value={tournament.mainReferee}
+                            onSave={(data) => setTournament({...tournament, mainReferee: data})}
+                        >
+                            <LabeledField label="Главный судья">{tournament.mainReferee}</LabeledField>
+                        </InputField>
                     </div>
                 </section>
                 <section className={styles.additionalInfo}>
