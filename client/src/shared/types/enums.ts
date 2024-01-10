@@ -4,3 +4,8 @@ export enum FetchStatus {
     succeeded = 'succeeded',
     failed = 'failed'
 }
+
+
+export enum FieldTypes {
+    date = 'date'
+}

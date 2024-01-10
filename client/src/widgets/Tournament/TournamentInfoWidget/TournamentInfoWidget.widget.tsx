@@ -3,9 +3,9 @@ import { FC } from "react"
 import { InputField } from "shared/UIKit/Editables/InputField";
 import styles from './TournamentInfoWidget.module.css';
 import { TournamentStatus } from "features/Tournament/TournamentStatus";
+import { FieldTypes } from "shared/types";
 import { LabeledField } from "shared/UIKit/LabeledField";
-import { formatDate } from "shared/lib/dateFormater";
-import { FieldTextType } from "shared/UIKit/Editables/InputField/InputField.ui";
+import { TournamentSystemField } from "features/Tournament/TournamentSystemField";
 
 interface ITournamentInfoWidgetProps {
     tournament: ITournament
@@ -68,7 +68,7 @@ export const TournamentInfoWidget:FC<ITournamentInfoWidgetProps> = ({tournament,
                             value={tournament.startDate}
                             onSave={(data) => setTournament({...tournament, startDate: data})}
                         >
-                            <LabeledField label="Дата начала">{tournament.startDate}</LabeledField>
+                            <LabeledField type={FieldTypes.date} label="Дата начала">{tournament.startDate}</LabeledField>
                         </InputField>
 
                         <InputField 
@@ -77,7 +77,7 @@ export const TournamentInfoWidget:FC<ITournamentInfoWidgetProps> = ({tournament,
                             value={tournament.endDate}
                             onSave={(data) => setTournament({...tournament, endDate: data})}
                         >
-                            <LabeledField label="Дата окончания">{tournament.endDate}</LabeledField>
+                            <LabeledField type={FieldTypes.date} label="Дата окончания">{tournament.endDate}</LabeledField>
                         </InputField>
                     </div>
 
@@ -89,6 +89,30 @@ export const TournamentInfoWidget:FC<ITournamentInfoWidgetProps> = ({tournament,
                         >
                             <LabeledField label="Главный судья">{tournament.mainReferee}</LabeledField>
                         </InputField>
+
+                        <InputField 
+                            key={tournament.mainSecretary}
+                            value={tournament.mainSecretary}
+                            onSave={(data) => setTournament({...tournament, mainSecretary: data})}
+                        >
+                            <LabeledField label="Главный секретарь">{tournament.mainSecretary}</LabeledField>
+                        </InputField>
+
+                        <InputField 
+                            key={tournament.timeControl}
+                            value={tournament.timeControl}
+                            onSave={(data) => setTournament({...tournament, timeControl: data})}
+                        >
+                            <LabeledField label="Контроль">{tournament.timeControl}</LabeledField>
+                        </InputField>
+                        
+                        <TournamentSystemField 
+                            key={tournament.tournamentSystem}
+                            value={tournament.tournamentSystem}
+                            onSave={(data) => setTournament({...tournament, tournamentSystem: data})}
+                        > 
+                            <LabeledField label="Система турнира">{tournament.tournamentSystem}</LabeledField>
+                        </TournamentSystemField>
                     </div>
                 </section>
                 <section className={styles.additionalInfo}>
